@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - DocIntel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DI</div>
+                <span class="text-2xl font-semibold text-gray-900">DocIntel</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="local_index.html" class="text-gray-600 hover:text-gray-900">Home</a>
+                
+                <!-- Products Dropdown -->
+                <div class="relative group">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Products 
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="Logo_header.jpg" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Dropdown -->
+                <div class="relative group">
+                    <a href="pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Pricing 
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="Logo_header.jpg" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">Log in</button>
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                    Get Started Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-24" aria-labelledby="privacy-title">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <img src="Logo_header.jpg" alt="DocIntel Logo" class="mx-auto h-32 mb-8">
+            <h1 id="privacy-title" class="text-5xl font-bold mb-6">Privacy Policy</h1>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="py-20 bg-white" aria-labelledby="privacy-content">
+        <div class="max-w-4xl mx-auto px-6 prose text-lg">
+            <p><strong>Last Updated: June 29, 2026</strong></p>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">What We Do Not Do</h2>
+            <ul class="list-disc pl-6 space-y-3">
+                <li>We do not store, save, or keep copies of any documents, contracts, or text you upload or paste.</li>
+                <li>Your input is processed temporarily to generate the analysis and then discarded.</li>
+                <li>We do not use your data for training AI models or any other purpose.</li>
+            </ul>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">How It Works</h2>
+            <ul class="list-disc pl-6 space-y-3">
+                <li>Your documents are sent to the Grok API (xAI) for analysis.</li>
+                <li>xAI processes the request in memory and does not store your content.</li>
+                <li>The results are returned to you and not retained on our servers.</li>
+            </ul>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Data Security</h2>
+            <ul class="list-disc pl-6 space-y-3">
+                <li>All communication is encrypted.</li>
+                <li>We only collect the minimum data necessary to provide the service (no accounts required for basic use).</li>
+            </ul>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Your Rights</h2>
+            <p>You control your data. Nothing is stored after your session ends.</p>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Legal Disclaimer</h2>
+            <p>DocIntel and TermsGuard AI are provided "as is" without warranty of any kind. The analysis and summaries are AI-generated and should not be considered legal advice. Always consult with a qualified attorney for legal matters. We are not responsible for any decisions made based on the output of this tool.</p>
+
+            <p class="mt-8">By using DocIntel / TermsGuard AI, you agree to this privacy approach and legal disclaimer.</p>
+
+            <p class="mt-8">For questions, contact us at <a href="mailto:your-email@example.com">your-email@example.com</a>.</p>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p>&copy; 2026 DocIntel. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

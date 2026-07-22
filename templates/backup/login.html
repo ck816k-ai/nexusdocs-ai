@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TermsGuard</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 8px;
+        }
+        p {
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: white;
+            color: #333;
+            border: 1px solid #dadce0;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .google-btn:hover {
+            border-color: #4285f4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>Welcome to TermsGuard</h1>
+        <p>Sign in to start analyzing documents</p>
+        
+        <a href="/auth/google" class="google-btn">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="20" height="20">
+            Continue with Google
+        </a>
+        
+        <p style="font-size: 0.85rem; margin-top: 32px; color: #94a3b8;">
+            By signing in, you agree to our <a href="/privacy.html">Privacy Policy</a>
+        </p>
+    </div>
+</body>
+</html>

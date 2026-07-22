@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusDocs.ai - Understand Documents with AI</title>
+    <link rel="icon" type="image/png" href="static/images/logo-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .hero-bg { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Left: Logo -->
+            <div class="flex items-center gap-3">
+                <img src="static/images/logo-icon.png" 
+                     alt="NexusDocs.ai" 
+                     class="h-10 w-10 rounded-full">
+                <span class="text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+            </div>
+
+            <!-- Center Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Home</a>
+                
+                <!-- Products Dropdown -->
+                <div class="relative group">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Products
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="/termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Dropdown -->
+                <div class="relative group">
+                    <a href="/pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Pricing
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="/pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#" class="text-gray-600 hover:text-gray-900 font-medium">Blog</a>
+                <a href="/about.html" class="text-gray-600 hover:text-gray-900 font-medium">About</a>
+            </div>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-4">
+                <a href="/login" class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">
+                    Log in
+                </a>
+                <a href="/login" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                    Get Started Free
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-bg text-white py-24">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h1 class="text-6xl font-bold leading-tight mb-6">
+                AI-Powered Document Intelligence
+            </h1>
+            <p class="text-xl text-blue-100 max-w-2xl mx-auto mb-10">
+                Understand contracts, terms, and complex documents in plain English.<br>
+                Built for privacy, speed, and real business use.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/termguard.html" 
+                   class="px-8 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg hover:bg-gray-100 inline-block text-center">
+                    Try TermsGuard Free
+                </a>
+                <button onclick="alert('Demo coming soon!')" 
+                        class="px-8 py-4 border border-white/50 rounded-2xl font-semibold text-lg hover:bg-white/10">
+                    Watch Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools / Apps Grid -->
+    <section class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold text-center mb-4">Our Tools</h2>
+            <p class="text-center text-gray-600 mb-12">Start with TermsGuard. More tools coming soon.</p>
+            
+            <div class="flex justify-center">
+                <div class="border border-gray-200 rounded-3xl p-10 hover:shadow-2xl transition-all max-w-md w-full text-center">
+                    <img src="/static/images/Logo_header.png" alt="TermsGuard" class="mx-auto h-32 w-auto object-contain mb-6">
+                    <h3 class="text-3xl font-semibold mb-3">TermsGuard</h3>
+                    <p class="text-gray-600 mb-8">Make complex contracts and terms easy to understand with AI.</p>
+                    <a href="/termguard.html" 
+                       class="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700 block">
+                        Launch TermsGuard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold text-center mb-16">Why NexusDocs.ai?</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">🔒</div>
+                    <h3 class="font-semibold mb-2">Privacy First</h3>
+                    <p class="text-gray-600">Your documents are never stored. Processed privately with Grok.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h3 class="font-semibold mb-2">Instant Insights</h3>
+                    <p class="text-gray-600">Plain English summaries, risk highlights, and interactive Q&amp;A.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl mb-4">📄</div>
+                    <h3 class="font-semibold mb-2">Works with Anything</h3>
+                    <p class="text-gray-600">Upload PDFs or paste text. Export professional reports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-blue-600 text-white text-center">
+        <div class="max-w-2xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold mb-6">Ready to understand your documents?</h2>
+            <a href="/termguard.html" 
+               class="px-10 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg inline-block hover:bg-gray-100">
+                Start Free with TermsGuard
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+        <p class="mt-4 text-xs">
+            <a href="/privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> |
+            Legal Disclaimer: AI-generated analysis for informational purposes only. Not legal advice.
+        </p>
+    </div>
+</footer>
+</body>
+</html>

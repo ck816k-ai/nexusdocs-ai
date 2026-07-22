@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - DocIntel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+        <!-- Navigation -->
+<!-- Navigation -->
+<nav class="bg-white border-b sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <!-- Left: Logo -->
+        <div class="flex items-center gap-3">
+            <img src="../static/images/logo-icon.png" 
+                 alt="NexusDocs.ai" 
+                 class="h-9 w-9 rounded-full">
+            <span class="text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+        </div>
+       
+        <!-- Menu -->
+        <div class="hidden md:flex items-center gap-8">
+            <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+           
+            <!-- Products Dropdown -->
+            <div class="relative group">
+                <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Products
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- Pricing Dropdown -->
+            <div class="relative group">
+                <a href="pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Pricing
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+           
+            <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+            <a href="about.html" class="text-gray-600 hover:text-gray-900">About</a>
+        </div>
+        
+        <!-- Right side -->
+        <div class="flex items-center gap-4">
+            <!--<a href="/login" class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">
+                Log in -->
+            </a>
+            <a href="/login" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                Get Started Free
+            </a>
+        </div>
+    </div>
+</nav>
+    <!-- Hero -->
+    <section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-24">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <img src="/static/images/logo-icon.png" alt="NexusDocs.ai" class="mx-auto h-32 mb-8">
+            <h1 class="text-5xl font-bold mb-6">About NexusDocs.ai</h1>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-6 prose text-lg">
+            <h2 class="text-4xl font-semibold mb-8">Bridging the Gap Between Complex Data and Instant Clarity</h2>
+            <p>In a fast-paced business world, the bottleneck shouldn't be the paperwork. Every day, organizations sign contracts, review terms and conditions, and navigate mountains of complex documentation—often blindly or at the expense of valuable hours.</p>
+            <p>We believe that understanding what you are about to sign shouldn't require a law degree or days of manual review. That’s why we built the next generation of AI-Powered Document Intelligence for Modern Operations.</p>
+            
+            <h2 class="text-3xl font-semibold mt-16 mb-6">What We Do</h2>
+            <p>We transform how organizations interact with their most critical text. Our platform allows teams to instantly query complex contracts, regulatory documents, and fine-print terms and conditions, turning dense legalese into actionable, conversational insights in seconds.</p>
+            <p>Whether you are auditing a vendor agreement, verifying compliance, or doing a final check before a major signing, we provide the clarity you need to move forward with absolute confidence.</p>
+            
+            <h2 class="text-3xl font-semibold mt-16 mb-6">Why Choose Us?</h2>
+            <p>Document intelligence requires more than just standard AI. It requires an architecture you can trust with your most sensitive data.</p>
+            <ul class="list-disc pl-6 space-y-4">
+                <li><strong>Custom RAG Architecture:</strong> Our platform is engineered from the ground up using Retrieval-Augmented Generation (RAG) framework. This ensures highly accurate, context-aware answers without the "hallucinations" of generic AI.</li>
+                <li><strong>Built for Speed:</strong> Stop waiting on manual reviews. Get precise answers to complex document queries instantly.</li>
+                <li><strong>Uncompromising Security & Privacy:</strong> Your data is yours alone. Our infrastructure is built to meet the strictest data governance standards, ensuring your confidential documents and contracts remain entirely private and secure. Please see our privacy policy.</li>
+            </ul>
+            
+            <h2 class="text-3xl font-semibold mt-16 mb-6">Our Mission</h2>
+            <p>To empower modern operations with the speed and intelligence to navigate complex agreements effortlessly, minimizing risk and accelerating growth.</p>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p>&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - NexusDocs.ai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<!-- Navigation -->
+<nav class="bg-white border-b sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="../static/images/logo-icon.png" alt="NexusDocs.ai" class="h-9 w-9 rounded-full">
+            <span class="text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+            <!-- Products Dropdown -->
+            <div class="relative group">
+                <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Products <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pricing Dropdown -->
+            <div class="relative group">
+                <a href="pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Pricing <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+            <a href="about.html" class="text-gray-600 hover:text-gray-900">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/login" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                Get Started Free
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Pricing Header -->
+<section class="py-20 bg-gradient-to-r from-blue-700 to-blue-600 text-white text-center">
+    <div class="max-w-3xl mx-auto px-6">
+        <img src="/static/images/Logo_header.png" alt="NexusDocs.ai" class="mx-auto h-20 mb-8">
+        <h1 class="text-5xl font-bold mb-6">Simple, Flexible Pricing</h1>
+        <p class="text-xl opacity-90">Start free. Scale as you grow. No long-term contracts.</p>
+    </div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Free Tier -->
+            <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-8">
+                <h3 class="text-2xl font-semibold mb-2">Free</h3>
+                <p class="text-gray-500 mb-6">Try before you buy</p>
+                <div class="text-5xl font-bold mb-8">$0<span class="text-lg font-normal text-gray-500">/month</span></div>
+                <ul class="space-y-4 mb-10 text-gray-600">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 3 analyses per month</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> <strong>Unlimited Q&A</strong> per document</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Basic PDF exports</li>
+                </ul>
+                <button onclick="window.location.href='/termguard.html'" class="w-full py-4 border border-gray-300 rounded-2xl font-medium hover:bg-gray-50 transition-colors">
+                    Start Free
+                </button>
+            </div>
+
+            <!-- Pay-as-you-go (Recommended) -->
+            <div class="pricing-card bg-white border-2 border-blue-600 rounded-3xl p-8 relative">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-sm font-bold px-6 py-1 rounded-full">RECOMMENDED</div>
+                <h3 class="text-2xl font-semibold mb-2">Pay as You Go</h3>
+                <p class="text-gray-500 mb-6">Perfect for occasional use</p>
+                <div class="text-5xl font-bold mb-2">$6.99</div>
+                <p class="text-gray-500 mb-8">per document analysis</p>
+                <ul class="space-y-4 mb-10 text-gray-600">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Full analysis</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> <strong>Unlimited Q&A</strong> per document</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Professional PDF exports</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> No monthly commitment</li>
+                </ul>
+                <button onclick="window.location.href='/login'" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700 transition-colors">
+                    Buy Credits
+                </button>
+            </div>
+
+            <!-- Pro Subscription -->
+            <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-8">
+                <h3 class="text-2xl font-semibold mb-2">Pro</h3>
+                <p class="text-gray-500 mb-6">For frequent users</p>
+                <div class="text-5xl font-bold mb-8">$19<span class="text-lg font-normal text-gray-500">/month</span></div>
+                <ul class="space-y-4 mb-10 text-gray-600">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 30 analyses/month</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> <strong>Unlimited Q&A</strong></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Advanced features + priority support</li>
+                </ul>
+                <button onclick="window.location.href='/login'" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700 transition-colors">
+                    Subscribe Now
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-4xl font-semibold text-center mb-12">Frequently Asked Questions</h2>
+        <div class="space-y-8">
+            <div>
+                <h3 class="font-semibold text-xl mb-3">How does the Free tier work?</h3>
+                <p class="text-gray-600">You get 3 full document analyses per month. Each full analysis (Summary + Risks) uses 2 credits, and each follow-up question uses 1 credit.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-xl mb-3">Can I upgrade or downgrade anytime?</h3>
+                <p class="text-gray-600">Yes. You can change your plan or switch to pay-as-you-go at any time from your account dashboard.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-xl mb-3">Is my data private?</h3>
+                <p class="text-gray-600">Absolutely. We do not store your documents. Everything is processed temporarily and deleted after analysis.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-xl mb-3">What payment methods do you accept?</h3>
+                <p class="text-gray-600">We accept all major credit cards via Stripe. No long-term contracts required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+        <p class="mt-4 text-xs">
+            <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> |
+            <span class="text-gray-500">Not legal advice. Consult a qualified attorney.</span>
+        </p>
+    </div>
+</footer>
+</body>
+</html>

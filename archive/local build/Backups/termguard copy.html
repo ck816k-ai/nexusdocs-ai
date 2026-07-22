@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TermsGuard - DocIntel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DI</div>
+                <span class="text-2xl font-semibold text-gray-900">DocIntel</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="local_index.html" class="text-gray-600 hover:text-gray-900">Home</a>
+                <a href="products.html" class="text-gray-600 hover:text-gray-900">Products</a>
+                <a href="pricing.html" class="text-gray-600 hover:text-gray-900">Pricing</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">Log in</button>
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'" 
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                    Get Started Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-20">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <img src="Logo_header.jpg" alt="TermsGuard" class="mx-auto h-24 mb-8">
+            <h1 class="text-5xl font-bold mb-6">TermsGuard</h1>
+            <p class="text-2xl text-blue-100 max-w-2xl mx-auto">Make complex contracts and terms easy to understand with AI</p>
+        </div>
+    </section>
+
+    <!-- Functionality -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold text-center mb-16">How TermsGuard Works</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="text-center">
+                    <div class="text-6xl mb-6">📤</div>
+                    <h3 class="font-semibold text-xl mb-3">Upload or Paste</h3>
+                    <p class="text-gray-600">Upload a PDF or simply copy and paste terms & conditions.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-6xl mb-6">🧠</div>
+                    <h3 class="font-semibold text-xl mb-3">AI Analysis</h3>
+                    <p class="text-gray-600">Powered AI, we extract key points, risks, and obligations in plain English.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-6xl mb-6">💬</div>
+                    <h3 class="font-semibold text-xl mb-3">Ask Questions</h3>
+                    <p class="text-gray-600">Ask anything about the document and get clear answers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold text-center mb-12">See TermsGuard in Action</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <img src="screenshot1.jpg" alt="Screenshot 1" class="rounded-2xl shadow-lg">
+                <img src="screenshot2.jpg" alt="Screenshot 2" class="rounded-2xl shadow-lg">
+                <img src="screenshot3.jpg" alt="Screenshot 3" class="rounded-2xl shadow-lg">
+            </div>
+            <p class="text-center text-gray-500 mt-8">Replace these with your actual screenshots</p>
+        </div>
+    </section>
+
+    <!-- Security & Privacy -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-semibold mb-6">Security & Privacy First</h2>
+            <div class="prose mx-auto text-left">
+                <ul class="list-disc pl-6 space-y-3 text-lg">
+                    <li>We do not store or keep copies of your documents</li>
+                    <li>Your data is processed temporarily and then discarded</li>
+                    <li>Powered by xAI's privacy-first Grok API</li>
+                    <li>All communication is encrypted</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-blue-600 text-white text-center">
+        <div class="max-w-2xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold mb-6">Ready to simplify your contracts?</h2>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'" 
+                        class="px-10 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg">
+                    Try Free Now
+                </button>
+                <button onclick="window.location.href='pricing.html'" 
+                        class="px-10 py-4 border border-white/50 rounded-2xl font-semibold text-lg">
+                    See Pricing
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p>&copy; 2026 DocIntel. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

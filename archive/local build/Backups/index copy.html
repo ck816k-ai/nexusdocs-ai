@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>TermsGuard AI</title>
+    <link rel="icon" type="image/jpeg" href="favicon_logo.jpg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { 
+            font-family: 'Inter', Arial, sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #f8fafc, #e0f2fe); 
+            color: #1e2937; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            background: white; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+        }
+        header { 
+            background: linear-gradient(90deg, #1e40af, #3b82f6); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            gap: 20px; 
+        }
+        h1 { margin: 0; font-size: 2.4rem; font-weight: 600; }
+        .main { padding: 30px; }
+        .input-area { 
+            border: 3px dashed #60a5fa; 
+            border-radius: 20px; 
+            padding: 40px; 
+            text-align: center; 
+            background: #f0f9ff; 
+            margin-bottom: 30px; 
+        }
+        textarea { 
+            width: 100%; 
+            min-height: 220px; 
+            padding: 18px; 
+            border: 2px solid #cbd5e1; 
+            border-radius: 12px; 
+            font-size: 1rem; 
+            resize: vertical; 
+            line-height: 1.6; 
+            box-sizing: border-box; 
+        }
+        button { 
+            background: #2563eb; 
+            color: white; 
+            border: none; 
+            padding: 14px 32px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            font-size: 1.05rem; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            box-shadow: 0 4px 12px rgba(37,99,235,0.2); 
+        }
+        button:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .section { 
+            background: #f8fafc; 
+            border-radius: 16px; 
+            padding: 28px; 
+            margin-bottom: 25px; 
+            box-shadow: 0 6px 12px -2px rgba(0,0,0,0.04); 
+        }
+        .highlight { background: #fef08c; padding: 3px 7px; border-radius: 4px; }
+        .results { display: none; }
+        #highlightedText { 
+            white-space: pre-wrap; 
+            line-height: 1.75; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            max-height: 500px; 
+            overflow-y: auto; 
+            font-size: 0.95rem; 
+            border: 1px solid #e2e8f0; 
+        }
+     /* Mobile responsiveness */
+       	@media (max-width: 768px) {
+            .container { margin: 10px; border-radius: 16px; }
+            header { 
+                flex-direction: column; 
+                text-align: center; 
+                padding: 25px 20px; 
+                gap: 15px; 
+            }
+            header img { height: 70px; }
+            .main { padding: 20px; }
+            .input-area { padding: 30px; }
+            textarea { min-height: 180px; }
+            h1 { font-size: 2.1rem; }
+            button { padding: 14px 28px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="display: flex; align-items: center; justify-content: flex-start; padding: 35px 60px; gap: 25px;">
+    	     <img src="Logo_header.jpg" alt="TermsGuard AI" style="height: 85px; flex-shrink: 0;">
+    	     <div>
+        	  <h1 style="margin: 0;">TermsGuard AI</h1>
+       		  <p style="margin: 8px 0 0 0; opacity: 0.95;">Understand contracts & terms in plain English • Powered by AI</p>
+    	     </div>
+	 </header>
+        <div class="main">
+            <div class="section input-area">
+                <h2>📄 Upload PDF or Paste Text</h2>
+                <input type="file" id="pdfUpload" accept=".pdf" style="margin-bottom: 15px;">
+                <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
+                <button onclick="analyzeDocument()">Analyze</button>
+            </div>
+            <div id="results" class="results">
+                <h2 style="text-align:center;">📊 Analysis Results</h2>
+                <div class="section">
+                    <h3>📝 Plain English Summary</h3>
+                    <div id="summary"></div>
+                </div>
+                <div class="section">
+                    <h3>⚠️ Privacy & Legal Risks</h3>
+                    <div id="risks"></div>
+                </div>
+                <div class="section">
+                    <h3>🔍 Highlighted Key Language</h3>
+                    <div id="highlightedText"></div>
+                </div>
+                <div class="section">
+                    <h3>💬 Ask a Question</h3>
+                    <input type="text" id="question" placeholder="E.g., Does this allow selling my personal data?" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px;">
+                    <button onclick="askQuestion()">Ask</button>
+                    <div id="answer" style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;"></div>
+                </div>
+                <button onclick="exportToPDF()" style="background: #10b981; margin-top: 10px;">📄 Export Results to PDF</button>
+            </div>
+        </div>
+    </div>
+
+        <script>
+        console.log("Script loaded");
+        let documentText = "";
+        let fullHighlighted = "";
+        let currentPage = 1;
+        const pageSize = 4000;
+
+        async function analyzeDocument() {
+            console.log("Analyze clicked");
+            const file = document.getElementById('pdfUpload').files[0];
+            const paste = document.getElementById('pasteText').value.trim();
+            document.getElementById('results').style.display = "block";
+            document.getElementById('summary').innerHTML = "Processing...";
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        const pdf = await pdfjsLib.getDocument({data: typedarray}).promise;
+                        let fullText = "";
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            fullText += textContent.items.map(item => item.str).join(" ") + "\n\n";
+                        }
+                        documentText = fullText;
+                        processWithGrok(cleanText(fullText));
+                    } catch (err) {
+                        document.getElementById('summary').innerHTML = "PDF Error: " + err.message;
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else if (paste) {
+                documentText = paste;
+                processWithGrok(cleanText(paste));
+            } else {
+                alert("Upload a PDF or paste text");
+                document.getElementById('results').style.display = "none";
+            }
+        }
+
+        function cleanText(text) {
+            return text
+                .replace(/\s+/g, ' ')
+                .replace(/(\n\s*){2,}/g, '\n\n')
+                .trim();
+        }
+
+        async function processWithGrok(text) {
+            try {
+                const res = await fetch('https://termsguard-poc-1.onrender.com/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text, type: 'summary'})
+                });
+                const data = await res.json();
+                document.getElementById('summary').innerHTML = formatResponse(data.result || "No summary");
+
+                const r = await fetch('https://termsguard-poc-1.onrender.com/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text, type: 'risks'})
+                });
+                const rd = await r.json();
+                document.getElementById('risks').innerHTML = formatResponse(rd.result || "No risks");
+
+                // Highlighted with pagination
+                fullHighlighted = cleanText(text)
+                    .replace(/\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi, 
+                        match => `<span class="highlight">${match}</span>`);
+                currentPage = 1;
+                renderHighlightedPage();
+            } catch (e) {
+                document.getElementById('summary').innerHTML = "Error: " + e.message;
+                console.error(e);
+            }
+        }
+
+        function renderHighlightedPage() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageText = fullHighlighted.substring(start, end);
+            const totalPages = Math.ceil(fullHighlighted.length / pageSize);
+            
+            let html = pageText + (end < fullHighlighted.length ? "<br><br><em>... (continued on next page)</em>" : "");
+            
+            document.getElementById('highlightedText').innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 4px; gap: 12px; flex-wrap: wrap;">
+                    <button onclick="prevPage()" style="padding: 8px 16px;">← Previous</button>
+                    <button onclick="nextPage()" style="padding: 8px 16px;">Next →</button>
+                    <span style="margin-left: auto; color: #64748b; font-size: 0.95rem;">
+                        Page ${currentPage} of ${totalPages}
+                    </span>
+                </div>
+                ${html}
+            `;
+        }
+
+        function nextPage() {
+            const maxPage = Math.ceil(fullHighlighted.length / pageSize);
+            if (currentPage < maxPage) {
+                currentPage++;
+                renderHighlightedPage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderHighlightedPage();
+            }
+        }
+
+        function formatResponse(text) {
+            if (!text) return "No response.";
+            return text.replace(/\n/g, '<br>').replace(/^\* /gm, '• ').replace(/^- /gm, '• ');
+        }
+
+        async function askQuestion() {
+            const q = document.getElementById('question').value.trim();
+            if (!q || !documentText) {
+                alert("Analyze a document first, then ask a question.");
+                return;
+            }
+            document.getElementById('answer').innerHTML = "Processing answer...";
+            try {
+                const res = await fetch('https://termsguard-poc-1.onrender.com/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: documentText, type: 'question', question: q})
+                });
+                const data = await res.json();
+                document.getElementById('answer').innerHTML = `<strong>Answer:</strong><br>${formatResponse(data.result || data.error)}`;
+            } catch (e) {
+                document.getElementById('answer').innerHTML = "Error: " + e.message;
+            }
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+         
+            const logoImg = new Image();
+            logoImg.src = "pdf_logo.jpg";
+         
+            logoImg.onload = function() {
+                // Logo on first page
+                doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+             
+                // Centered title
+                doc.setFontSize(18);
+                const title = "TermsGuard AI - Analysis Report";
+                const titleWidth = doc.getTextWidth(title);
+                doc.text(title, (doc.internal.pageSize.getWidth() - titleWidth) / 2, 55);
+             
+                let y = 75;
+             
+                // Summary on first page
+                doc.setFontSize(14);
+                doc.text("Plain English Summary", 20, y);
+                y += 10;
+                doc.setFontSize(11);
+                const summaryText = document.getElementById('summary').innerText || "No summary available";
+                const summaryLines = doc.splitTextToSize(summaryText, 170);
+                doc.text(summaryLines, 20, y);
+             
+                // Page number on first page
+                doc.setFontSize(10);
+                doc.text("Page 1 of 3", doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 20, { align: "center" });
+             
+                // New page for Risks
+                doc.addPage();
+                doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+             
+                doc.setFontSize(18);
+                doc.text(title, (doc.internal.pageSize.getWidth() - titleWidth) / 2, 55);
+             
+                y = 75;
+                doc.setFontSize(14);
+                doc.text("Privacy & Legal Risks", 20, y);
+                y += 10;
+                doc.setFontSize(11);
+                const risksText = document.getElementById('risks').innerText || "No risks available";
+                const risksLines = doc.splitTextToSize(risksText, 170);
+                doc.text(risksLines, 20, y);
+             
+                // Page number on second page
+                doc.setFontSize(10);
+                doc.text("Page 2 of 3", doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 20, { align: "center" });
+             
+                // Page 3 - Question & Answer (if asked)
+                const q = document.getElementById('question').value.trim();
+                const answerText = document.getElementById('answer').innerText;
+                if (q && answerText) {
+                    doc.addPage();
+                    doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+                 
+                    doc.setFontSize(18);
+                    doc.text(title, (doc.internal.pageSize.getWidth() - titleWidth) / 2, 55);
+                 
+                    y = 75;
+                    doc.setFontSize(14);
+                    doc.text("Question Asked", 20, y);
+                    y += 10;
+                    doc.setFontSize(11);
+                    doc.text(q, 20, y);
+                    y += 20;
+                 
+                    doc.setFontSize(14);
+                    doc.text("Answer", 20, y);
+                    y += 10;
+                    doc.setFontSize(11);
+                    const answerLines = doc.splitTextToSize(answerText, 170);
+                    doc.text(answerLines, 20, y);
+                 
+                    doc.setFontSize(10);
+                    doc.text("Page 3 of 3", doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 20, { align: "center" });
+                }
+             
+                doc.save("TermsGuard_Analysis_Report.pdf");
+            };
+         
+            if (logoImg.complete) {
+                logoImg.onload();
+            }
+        }
+    </script>
+</body>
+</html>

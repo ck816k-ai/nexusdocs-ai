@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>TermsGuard AI</title>
+    <link rel="icon" type="image/jpeg" href="favicon_logo.jpg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', Arial, sans-serif; margin: 0; background: linear-gradient(135deg, #f8fafc, #e0f2fe); color: #1e2937; }
+        .container { max-width: 1200px; margin: 20px auto; background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); overflow: hidden; position: relative; }
+        header { background: linear-gradient(90deg, #1e40af, #3b82f6); color: white; padding: 30px; text-align: center; display: flex; align-items: center; justify-content: flex-start; gap: 20px; }
+        h1 { margin: 0; font-size: 2.4rem; font-weight: 600; }
+        .main { padding: 30px; }
+        .input-area { border: 3px dashed #60a5fa; border-radius: 20px; padding: 40px; text-align: center; background: #f0f9ff; margin-bottom: 30px; }
+        textarea { width: 100%; min-height: 220px; padding: 18px; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 1rem; resize: vertical; line-height: 1.6; box-sizing: border-box; }
+        button { background: #2563eb; color: white; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 1.05rem; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+        button:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .section { background: #f8fafc; border-radius: 16px; padding: 28px; margin-bottom: 25px; box-shadow: 0 6px 12px -2px rgba(0,0,0,0.04); }
+        .highlight { background: #fef08c; padding: 3px 7px; border-radius: 4px; }
+        #highlightedText { white-space: pre-wrap; line-height: 1.75; background: white; padding: 25px; border-radius: 12px; max-height: 500px; overflow-y: auto; font-size: 0.95rem; border: 1px solid #e2e8f0; }
+        .signout-btn { position: absolute; top: 25px; right: 30px; padding: 8px 20px; background: #ef4444; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 100; }
+        .signout-btn:hover { background: #dc2626; }
+        @media (max-width: 768px) {
+            .container { margin: 10px; border-radius: 16px; }
+            header { flex-direction: column; text-align: center; padding: 25px 20px; gap: 15px; }
+            .signout-btn { top: 15px; right: 15px; font-size: 13px; padding: 6px 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/logout" class="signout-btn">Sign Out</a>
+       
+        <header style="display: flex; align-items: center; justify-content: flex-start; padding: 35px 60px; gap: 25px;">
+          <img src="/static/images/Logo_header.png" alt="TermsGuard AI" style="height: 85px; flex-shrink: 0;">
+          <div>
+           <h1 style="margin: 0;">TermsGuard AI</h1>
+           <p style="margin: 8px 0 0 0; opacity: 0.95;">Summarize the key terms of any contract or agreement before you sign. <br> Powered by AI</p>
+          </div>
+        </header>
+
+        <div class="bg-gray-100 py-3 px-6 flex items-center gap-4 border-b">
+            <button onclick="window.location.href='/'" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700 transition-colors">
+                ← Back to Home
+            </button>
+            <button onclick="window.location.href='/termguard.html'" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700 transition-colors">
+                ← Back to Products
+            </button>
+        </div>
+     
+        <div class="main">
+            <div class="section input-area">
+                <h2>📄 Upload PDF or Paste Text</h2>
+                <input type="file" id="pdfUpload" accept=".pdf" style="margin-bottom: 15px;">
+                <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
+                <button onclick="analyzeDocument()">Analyze</button>
+            </div>
+
+            <div class="section">
+                <h3>📝 Plain English Summary</h3>
+                <div id="summary" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
+            </div>
+            <div class="section">
+                <h3>⚠️ Privacy & Legal Risks</h3>
+                <div id="risks" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
+            </div>
+            <div class="section">
+			
+    <div class="section">
+    <h3>🔍 Highlighted Key Language</h3>
+    
+    <!-- Pagination Controls -->
+    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+        <button onclick="prevPage()" style="padding: 6px 14px;">← Previous</button>
+        <span id="pageInfo" style="font-weight: 600; min-width: 100px;">Page 1 of 1</span>
+        <button onclick="nextPage()" style="padding: 6px 14px;">Next →</button>
+    </div>
+
+    <div id="highlightedText" style="white-space: pre-wrap; line-height: 1.75; background: white; padding: 25px; border-radius: 12px; max-height: 480px; overflow-y: auto; font-size: 0.95rem; border: 1px solid #e2e8f0;"></div>
+</div>
+
+            <div class="section">
+                <h3>💬 Ask a Question</h3>
+                <input type="text" id="question" placeholder="E.g., Does this allow selling my personal data?" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px;">
+                <button onclick="askQuestion()">Ask</button>
+                <div id="answer" style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;"></div>
+            </div>
+
+            <button onclick="exportToPDF()" style="background: #10b981; margin-top: 10px;">📄 Export to PDF</button>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        let documentText = "";
+
+        async function analyzeDocument() {
+            const paste = document.getElementById('pasteText').value.trim();
+            const fileInput = document.getElementById('pdfUpload');
+            const file = fileInput.files[0];
+
+            document.getElementById('summary').innerHTML = "Processing...";
+            document.getElementById('risks').innerHTML = "Processing...";
+            document.getElementById('highlightedText').innerHTML = "Processing...";
+
+            let text = "";
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        let fullText = "";
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            fullText += textContent.items.map(item => item.str).join(" ") + "\n\n";
+                        }
+                        text = fullText;
+                        documentText = text;
+                        await processWithGrok(text);
+                    } catch (err) {
+                        document.getElementById('summary').innerHTML = "PDF Error: " + err.message;
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+                return;
+            } else if (paste) {
+                text = paste;
+                documentText = text;
+                await processWithGrok(text);
+            } else {
+                alert("Please paste some text or upload a PDF file.");
+            }
+        }
+
+        async function processWithGrok(text) {
+    const shortText = text.substring(0, 5000);
+    try {
+        // Summary
+        const summaryRes = await fetch('http://127.0.0.1:8080/analyze', {
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            credentials: 'include',
+            body: JSON.stringify({text: shortText, type: 'summary'})
+        });
+
+        if (!summaryRes.ok) {
+            const errorData = await summaryRes.json().catch(() => ({}));
+            if (summaryRes.status === 403) {
+                document.getElementById('summary').innerHTML = 
+                    `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached (3 analyses this month)."}</strong>`;
+                document.getElementById('risks').innerHTML = "";
+                return;  // Stop further processing
+            } else {
+                throw new Error(errorData.error || "Analysis failed");
+            }
+        }
+
+        const summaryData = await summaryRes.json();
+        document.getElementById('summary').innerHTML = summaryData.result ? 
+            summaryData.result.replace(/\n/g, '<br>') : "No summary received";
+
+        // Risks (only if summary succeeded)
+        const risksRes = await fetch('http://127.0.0.1:8080/analyze', {
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            credentials: 'include',
+            body: JSON.stringify({text: shortText, type: 'risks'})
+        });
+
+        if (!risksRes.ok) {
+            // Optional: handle risk-specific errors
+        } else {
+            const risksData = await risksRes.json();
+            document.getElementById('risks').innerHTML = risksData.result ? 
+                risksData.result.replace(/\n/g, '<br>') : "No risks identified";
+        }
+
+        // Highlighted text
+        let highlighted = shortText.replace(/\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
+            match => `<span class="highlight">${match}</span>`);
+        updateHighlightedPagination(highlighted);
+
+    } catch (e) {
+        console.error(e);
+        document.getElementById('summary').innerHTML = "Error: " + (e.message || e);
+        document.getElementById('risks').innerHTML = "";
+    }
+}
+        async function askQuestion() {
+            const q = document.getElementById('question').value.trim();
+            if (!q || !documentText) {
+                alert("Analyze a document first, then ask a question.");
+                return;
+            }
+            document.getElementById('answer').innerHTML = "Processing...";
+            try {
+                const res = await fetch('http://127.0.0.1:8080/analyze', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include',
+                    body: JSON.stringify({text: documentText.substring(0, 5000), type: 'question', question: q})
+                });
+                const data = await res.json();
+                document.getElementById('answer').innerHTML = `<strong>Answer:</strong><br>${(data.result || data.error).replace(/\n/g, '<br>')}`;
+            } catch (e) {
+                document.getElementById('answer').innerHTML = "Error: " + e.message;
+            }
+        }
+
+        function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const logoImg = new Image();
+    logoImg.src = "pdf_logo.jpg";
+
+    logoImg.onload = function() {
+        addContentWithLogo(doc, logoImg);
+    };
+    logoImg.onerror = function() {
+        console.log("Logo not found, generating without logo");
+        addContentWithLogo(doc, null);
+    };
+    setTimeout(() => {
+        if (doc.internal.getNumberOfPages() === 1) addContentWithLogo(doc, null);
+    }, 300);
+}
+
+function addContentWithLogo(doc, logoImg) {
+    let y = 20;
+    if (logoImg) {
+        doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+        y = 55;
+    }
+
+    doc.setFontSize(18);
+    doc.text("TermsGuard AI - Analysis Report", 20, y);
+    y += 20;
+
+    // Summary
+    doc.setFontSize(14);
+    doc.text("Plain English Summary", 20, y);
+    y += 10;
+    doc.setFontSize(11);
+    const summaryText = document.getElementById('summary').innerText || "No summary";
+    const summaryLines = doc.splitTextToSize(summaryText, 170);
+    doc.text(summaryLines, 20, y);
+    y += summaryLines.length * 7 + 25;
+
+    // Risks on new page
+    doc.addPage();
+    y = 20;
+    if (logoImg) doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+    doc.setFontSize(18);
+    doc.text("TermsGuard AI - Analysis Report", 20, y);
+    y += 20;
+    doc.setFontSize(14);
+    doc.text("Privacy & Legal Risks", 20, y);
+    y += 10;
+    doc.setFontSize(11);
+    const risksText = document.getElementById('risks').innerText || "No risks";
+    const risksLines = doc.splitTextToSize(risksText, 170);
+    doc.text(risksLines, 20, y);
+    y += risksLines.length * 7 + 25;
+
+    // Question & Answer (if asked)
+    const q = document.getElementById('question').value.trim();
+    const answerText = document.getElementById('answer').innerText;
+    if (q && answerText && answerText.includes("Answer:")) {
+        doc.addPage();
+        y = 20;
+        if (logoImg) doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
+        doc.setFontSize(18);
+        doc.text("TermsGuard AI - Analysis Report", 20, y);
+        y += 20;
+        doc.setFontSize(14);
+        doc.text("Question Asked", 20, y);
+        y += 10;
+        doc.setFontSize(11);
+        const qLines = doc.splitTextToSize(q, 170);
+        doc.text(qLines, 20, y);
+        y += qLines.length * 7 + 15;
+
+        doc.setFontSize(14);
+        doc.text("Answer", 20, y);
+        y += 10;
+        doc.setFontSize(11);
+        const aLines = doc.splitTextToSize(answerText.replace("Answer:", "").trim(), 170);
+        doc.text(aLines, 20, y);
+    }
+
+    doc.save("TermsGuard_Analysis_Report.pdf");
+}
+let fullHighlighted = "";
+let currentPage = 1;
+const pageSize = 4500;   // characters per page
+
+function updateHighlightedPagination(text) {
+    fullHighlighted = text;
+    currentPage = 1;
+    showCurrentHighlightedPage();
+}
+
+function showCurrentHighlightedPage() {
+    const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageText = fullHighlighted.substring(start, end);
+
+    document.getElementById('highlightedText').innerHTML = pageText || "No content to display";
+    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
+    if (currentPage < totalPages) {
+        currentPage++;
+        showCurrentHighlightedPage();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        showCurrentHighlightedPage();
+    }
+}
+        console.log("TermsGuard script loaded - Ready");
+    </script>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-12" style="text-align: center;">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-sm">&copy; 2026 TermsGuard AI. All rights reserved.</p>
+            <p class="mt-4 text-xs">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> |
+                Legal Disclaimer: This tool provides AI-generated analysis for informational purposes only. It is not legal advice.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusDocs.ai - TermsGuard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<!-- Free Tier Note Bar -->
+<div style="background: linear-gradient(90deg, #f0f9ff, #e0f2fe); padding: 16px 30px; text-align: center; border-bottom: 1px solid #bae6fd; font-size: 0.96rem;">
+    <strong>Free Tier Note:</strong> 9 analyses credits per month
+    <div style="margin-top: 6px; font-size: 0.9rem; color: #475569;">
+        • Full document analysis (Summary + Risks) = <strong>2 credits</strong><br>
+        • Each follow-up question = <strong>1 credit</strong>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav class="bg-white border-b sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="../static/images/logo-icon.png" alt="NexusDocs.ai" class="h-9 w-9 rounded-full">
+            <span class="text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+            <div class="relative group">
+                <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Products <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group">
+                <a href="pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                    Pricing <i class="fas fa-chevron-down text-xs"></i>
+                </a>
+                <div class="absolute hidden group-hover:block pt-3">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                        <a href="pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                            <img src="/static/images/Logo_header.png" alt="TermsGuard" class="w-20 h-15 object-contain">
+                            <div>
+                                <div class="font-semibold">TermsGuard</div>
+                                <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+            <a href="about.html" class="text-gray-600 hover:text-gray-900">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/login" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                Get Started Free
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-20">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+        <img src="/static/images/Logo_header.png" alt="TermsGuard" class="mx-auto h-24 mb-8">
+        <h1 class="text-5xl font-bold mb-6">TermsGuard</h1>
+        <p class="text-2xl text-blue-100 max-w-2xl mx-auto">Make complex contracts and terms easy to understand with AI</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+            <a href="index.html" class="px-10 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg inline-block text-center">
+                Try Free Now
+            </a>
+            <a href="pricing.html" class="px-10 py-4 border border-white/50 text-white rounded-2xl font-semibold text-lg inline-block text-center hover:bg-white/10">
+                See Pricing
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Key Features -->
+<section class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-semibold text-center mb-16">Powerful Contract Features</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="text-center">
+                <div class="text-5xl mb-6">📄</div>
+                <h3 class="font-semibold text-xl mb-3">PDF & Text Upload</h3>
+                <p class="text-gray-600">Upload contracts, terms of service, NDAs, or simply paste text.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-6">📝</div>
+                <h3 class="font-semibold text-xl mb-3">Plain English Summary</h3>
+                <p class="text-gray-600">Get a clear, concise summary of what the document actually means.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-6">⚠️</div>
+                <h3 class="font-semibold text-xl mb-3">Risk Detection</h3>
+                <p class="text-gray-600">Automatically flags privacy risks, data selling, liability, and unfair clauses.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-6">🔍</div>
+                <h3 class="font-semibold text-xl mb-3">Highlighted Key Language</h3>
+                <p class="text-gray-600">Important clauses are highlighted for easy scanning.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-6">💬</div>
+                <h3 class="font-semibold text-xl mb-3">Ask Anything</h3>
+                <p class="text-gray-600">Chat with your document — "Can they sell my data?" "What are my cancellation rights?"</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-6">📤</div>
+                <h3 class="font-semibold text-xl mb-3">Professional PDF Export</h3>
+                <p class="text-gray-600">Download beautiful reports with your analysis, ready to share or save.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How TermsGuard Works -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-semibold text-center mb-16">How TermsGuard Works</h2>
+        <div class="grid md:grid-cols-3 gap-10">
+            <div class="text-center">
+                <div class="text-6xl mb-6">📤</div>
+                <h3 class="font-semibold text-xl mb-3">Upload or Paste</h3>
+                <p class="text-gray-600">Upload a PDF or simply copy and paste terms & conditions.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-6xl mb-6">🧠</div>
+                <h3 class="font-semibold text-xl mb-3">AI Analysis</h3>
+                <p class="text-gray-600">Powered by Grok, we extract key points, risks, and obligations in plain English.</p>
+            </div>
+            <div class="text-center">
+                <div class="text-6xl mb-6">💬</div>
+                <h3 class="font-semibold text-xl mb-3">Ask Questions</h3>
+                <p class="text-gray-600">Ask anything about the document and get clear answers.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Screenshots -->
+<section class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-semibold text-center mb-12">See TermsGuard in Action</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <img src="/static/images/screenshot2.png" alt="Screenshot 2" onclick="showImage(this.src)" class="rounded-2xl shadow-lg cursor-pointer hover:scale-105 transition-transform">
+            <img src="/static/images/screenshot3.png" alt="Screenshot 3" onclick="showImage(this.src)" class="rounded-2xl shadow-lg cursor-pointer hover:scale-105 transition-transform">
+            <img src="/static/images/screenshot4.png" alt="Screenshot 4" onclick="showImage(this.src)" class="rounded-2xl shadow-lg cursor-pointer hover:scale-105 transition-transform">
+        </div>
+    </div>
+</section>
+
+<!-- Security & Privacy -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-4xl font-semibold mb-6">Security & Privacy First</h2>
+        <div class="prose mx-auto text-left">
+            <ul class="list-disc pl-6 space-y-3 text-lg">
+                <li>We do not store or keep copies of your documents</li>
+                <li>Your data is processed temporarily and then discarded</li>
+                <li>Powered by xAI's privacy-first Grok API</li>
+                <li>All communication is encrypted</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-gray-900 text-gray-400 py-12" style="text-align: center;">
+    <div class="max-w-6xl mx-auto px-6" style="text-align: center;">
+        <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+        <p class="mt-4 text-xs">
+            <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> |
+            <span class="text-gray-500">Legal Disclaimer: These tools provide AI-generated analysis for informational purposes only. It is not legal advice. Consult a qualified attorney for legal matters.</span>
+        </p>
+    </div>
+</footer>
+
+<script>
+    function setTier() {
+        const tier = document.getElementById('tier').value;
+        fetch('http://127.0.0.1:5000/set_tier', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: 'test', tier: tier})
+        }).then(() => {
+            alert('Tier set to ' + tier + '. Usage reset for testing.');
+        });
+    }
+
+    function showImage(src) {
+        document.getElementById('modalImage').src = src;
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+</script>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center z-50">
+    <div class="max-w-4xl max-h-[90vh] p-4">
+        <img id="modalImage" src="" alt="Screenshot" class="max-h-[90vh] mx-auto rounded-2xl">
+        <button onclick="closeModal()" class="absolute top-8 right-8 text-white text-4xl hover:text-gray-300">×</button>
+    </div>
+</div>
+</body>
+</html>

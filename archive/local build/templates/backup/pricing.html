@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - DocIntel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+        <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DI</div>
+                <span class="text-2xl font-semibold text-gray-900">DocIntel</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="local_index.html" class="text-gray-600 hover:text-gray-900">Home</a>
+                
+                <!-- Products Dropdown -->
+                <div class="relative group">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Products 
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="Logo_header.jpg" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <div class="text-sm text-gray-500">Contract & Terms Analysis</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="pricing.html" class="text-gray-600 hover:text-gray-900">Pricing</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+                <a href="about.html" class="text-gray-600 hover:text-gray-900">About</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">Log in</button>
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                    Get Started Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pricing Header -->
+    <section class="py-20 bg-white text-center">
+        <div class="max-w-3xl mx-auto px-6">
+            <h1 class="text-5xl font-bold mb-6">Simple, transparent pricing</h1>
+            <p class="text-xl text-gray-600">Start free. Scale as you grow. No hidden fees.</p>
+        </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Free -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-8">
+                    <h3 class="text-2xl font-semibold mb-2">Free</h3>
+                    <p class="text-gray-500 mb-6">Perfect for occasional use</p>
+                    <div class="text-5xl font-bold mb-8">$0<span class="text-lg font-normal text-gray-500">/month</span></div>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 3 analyses/month</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Basic Q&amp;A</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> PDF export</li>
+                    </ul>
+                    <button onclick="window.location.href='http://127.0.0.1:8080/index.html'" 
+                            class="w-full py-4 border border-gray-300 rounded-2xl font-medium hover:bg-gray-50">
+                        Get Started Free
+                    </button>
+                </div>
+
+                <!-- Starter -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-8 relative">
+                    <div class="absolute -top-3 right-6 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">POPULAR</div>
+                    <h3 class="text-2xl font-semibold mb-2">Starter</h3>
+                    <p class="text-gray-500 mb-6">Great for individuals</p>
+                    <div class="text-5xl font-bold mb-8">$9<span class="text-lg font-normal text-gray-500">/month</span></div>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 20 analyses/month</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Unlimited Q&amp;A</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> PDF export with branding</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Priority support</li>
+                    </ul>
+                    <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700">
+                        Subscribe - $9/month
+                    </button>
+                </div>
+
+                <!-- Pro -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-8">
+                    <h3 class="text-2xl font-semibold mb-2">Pro</h3>
+                    <p class="text-gray-500 mb-6">For power users &amp; teams</p>
+                    <div class="text-5xl font-bold mb-8">$29<span class="text-lg font-normal text-gray-500">/month</span></div>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Unlimited analyses</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Advanced risk analysis</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Team sharing</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> API access</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Priority processing</li>
+                    </ul>
+                    <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium hover:bg-blue-700">
+                        Subscribe - $29/month
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pay-per-use -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-semibold mb-4">Or pay as you go</h2>
+            <p class="text-gray-600 mb-12">Perfect for occasional users</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+                <div class="border border-gray-200 rounded-3xl p-8">
+                    <h3 class="font-semibold text-xl mb-2">$4.99</h3>
+                    <p class="text-gray-600">Standard Document Analysis (up to 50 pages)</p>
+                </div>
+                <div class="border border-gray-200 rounded-3xl p-8">
+                    <h3 class="font-semibold text-xl mb-2">$9.99</h3>
+                    <p class="text-gray-600">Large Document Analysis (50+ pages)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-12" style="text-align: center;">
+        <div class="max-w-6xl mx-auto px-6" style="text-align: center;">
+            <p class="text-sm">&copy; 2026 DocIntel. All rights reserved.</p>
+            <p class="mt-4 text-xs">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> | 
+                <span class="text-gray-500">Legal Disclaimer: These tools provides AI-generated analysis for informational purposes only. It is not legal advice. Consult a qualified attorney for legal matters.</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

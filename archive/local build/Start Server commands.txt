@@ -1,0 +1,42 @@
+python3 app_local.py
+
+python3 -m http.server 8080
+
+
+
+
+Your local site URL is:
+http://127.0.0.1:8080/termguard.html
+(Assuming your termguard.html file is in the folder where the server is running)
+
+If you renamed it to local_index.html, use:
+http://127.0.0.1:8080/local_index.html
+Make sure the static server is running:
+
+
+http://127.0.0.1:8080/login
+
+Browser clear storage for local storage.
+clear storage
+
+Logout from a session to reauthenticate.
+http://127.0.0.1:8080/logout
+
+
+VENV Environment
+
+cd ~/termsguard-poc
+source venv/bin/activate
+cd local_build
+python3 app_local.py
+
+
+source/venv/bin/activate
+venv/bin/deactive
+
+how to clear the database user count must do this where the user.db's are
+
+sqlite3 "/Users/charleskishpaugh/termsguard-poc/local build/users.db" "UPDATE users SET monthly_analyses = 0 WHERE email = 'ck816k@gmail.com';"
+
+
+

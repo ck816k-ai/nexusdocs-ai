@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocIntel - Understand Documents with AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .hero-bg { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+    </style>
+</head>
+<body class="bg-gray-50">
+	<a href="#main-content" 
+       class="sr-only focus:not-sr-only fixed top-4 left-4 bg-blue-600 text-white px-4 py-2 rounded-xl z-50">
+        Skip to main content
+    </a>
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DI</div>
+                <span class="text-2xl font-semibold text-gray-900">DocIntel</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="local_index.html" class="text-gray-600 hover:text-gray-900">Home</a>
+               
+                <!-- Products Dropdown -->
+                <div class="relative group">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Products
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="termguard.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="/static/images/Logo_header.jpg" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <!--<div class="text-sm text-gray-500">Contract & Terms Analysis</div> -->
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Pricing Dropdown -->
+                <div class="relative group">
+                    <a href="pricing.html" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+                        Pricing
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute hidden group-hover:block pt-3">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72">
+                            <a href="pricing.html" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl">
+                                <img src="/static/images/Logo_header.jpg" alt="TermsGuard" class="w-20 h-15 object-contain">
+                                <div>
+                                    <div class="font-semibold">TermsGuard</div>
+                                    <!--<div class="text-sm text-gray-500">Contract & Terms Analysis</div> -->
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               
+                <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
+                <a href="about.html" class="text-gray-600 hover:text-gray-900">About</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl font-medium">Log in</button>
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
+                    Get Started Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="main-content" class="hero-bg text-white py-24">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h1 class="text-6xl font-bold leading-tight mb-6">
+                AI-Powered Document Intelligence for Modern Operations.
+            </h1>
+            <p class="text-xl text-blue-100 max-w-2xl mx-auto mb-10">
+                Instantly query complex contracts and terms and conditions. Understanding what you're about to sign.
+                <br>"Custom RAG architecture built for speed, security, and privacy".
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                        class="px-8 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg hover:bg-gray-100">
+                    Try TermsGuard Free
+                </button>
+                <button class="px-8 py-4 border border-white/50 rounded-2xl font-semibold text-lg hover:bg-white/10">
+                    Watch Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+        <!-- Apps Grid -->
+        <section class="py-10 bg-white">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-semibold text-center mb-4">Our Tools</h2>
+                <p class="text-center text-gray-600 mb-8">Start with TermsGuard. More coming soon.</p>
+                
+                <div class="flex justify-center py-8">
+                    <div class="border border-gray-200 rounded-3xl p-8 hover:shadow-xl transition-all group max-w-md w-full mx-auto text-center">
+                        <img src="/static/images/Logo_header.jpg" alt="TermsGuard" class="mx-auto h-28 w-auto object-contain mb-4">
+                        <h3 class="text-2xl font-semibold mb-2">TermsGuard</h3>
+                        <p class="text-gray-600 mb-6">Make complex contracts and terms easy to understand.</p>
+                        <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                                class="w-full py-3 bg-blue-600 text-white rounded-2xl font-medium group-hover:bg-blue-700">
+                            Launch TermsGuard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Features -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold text-center mb-16">Why DocIntel?</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">🔒</div>
+                    <h3 class="font-semibold mb-2">Privacy First</h3>
+                    <p class="text-gray-600">Your documents are never stored. Processed privately.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h3 class="font-semibold mb-2">Instant Insights</h3>
+                    <p class="text-gray-600">Plain English summaries, risk highlights, and Q&amp;A.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl mb-4">📱</div>
+                    <h3 class="font-semibold mb-2">Easy to Use</h3>
+                    <p class="text-gray-600">Upload a PDF or paste text. Get results in seconds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-blue-600 text-white text-center">
+        <div class="max-w-2xl mx-auto px-6">
+            <h2 class="text-4xl font-semibold mb-6">Ready to understand your documents?</h2>
+            <button onclick="window.location.href='http://127.0.0.1:8080/index.html'"
+                    class="px-10 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg">
+                Start Free with TermsGuard
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-12" style="text-align: center;">
+        <div class="max-w-6xl mx-auto px-6" style="text-align: center;">
+            <p class="text-sm">&copy; 2026 DocIntel. All rights reserved.</p>
+            <p class="mt-4 text-xs">
+                <a href="privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a> | 
+                <span class="text-gray-500">Legal Disclaimer: These tools provides AI-generated analysis for informational purposes only. It is not legal advice. Consult a qualified attorney for legal matters.</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
