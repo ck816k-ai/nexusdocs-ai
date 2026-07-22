@@ -142,7 +142,7 @@
     const shortText = text.substring(0, 5000);
     try {
         // Summary
-        const summaryRes = await fetch('https://nexusdocs-ai.onrender.com/analyze', {
+        const summaryRes = await fetch('/analyze', {
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
             credentials: 'include',
@@ -166,7 +166,7 @@
             summaryData.result.replace(/\n/g, '<br>') : "No summary received";
 
         // Risks (only if summary succeeded)
-        const risksRes = await fetch('https://nexusdocs-ai.onrender.com/analyze', {
+        const risksRes = await fetch('/analyze', {
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
             credentials: 'include',
@@ -200,7 +200,7 @@
             }
             document.getElementById('answer').innerHTML = "Processing...";
             try {
-                const res = await fetch('https://nexusdocs-ai.onrender.com/analyze', {
+                const res = await fetch('/analyze', {
                     method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include',
                     body: JSON.stringify({text: documentText.substring(0, 5000), type: 'question', question: q})
                 });
