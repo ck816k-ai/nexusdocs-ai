@@ -340,5 +340,15 @@ def my_usage():
     })
 
 
+@app.route('/reset_my_usage')
+@login_required
+def reset_my_usage():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE users SET monthly_analyses = 0 WHERE id = ?", (current_user.id,))
+    conn.commit()
+    conn.close()
+    return f"✅ Usage reset for {current_user.email}. You can now analyze again."
+
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=8080)
