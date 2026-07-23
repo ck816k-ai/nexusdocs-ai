@@ -307,53 +307,70 @@ def stripe_webhook():
         event = stripe.Webhook.construct_event(
             payload, sig_header, STRIPE_WEBHOOK_SECRET
         )
-    except ValueError:
+    except ValueError as e:
+        print("Invalid payload:", e)
         return 'Invalid payload', 400
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
+        print("Invalid signature:", e)
         return 'Invalid signature', 400
 
     # Handle the event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        customer_email = session.get('customer_email') or session.get('customer_details', {}).get('email')
-        price_id = session.get('metadata', {}).get('price_id')
 
-        if not customer_email:
-            print("No customer email found in session")
-            return jsonify(success=True)
+        # Safely get email and price_id
+        customer_email = None
+        if hasattr(session, 'customer_email') and session.customer_email:
+            customer_email = session.customer_email
+        elif hasattr(session, 'customer_details') and session.customer_details:
+            customer_email = getattr(session.customer_details, 'email', None)
+
+        # Get price_id from metadata
+        price_id = None
+        if hasattr(session, 'metadata') and session.metadata:
+            price_id = session.metadata.get('price_id') if hasattr(session.metadata, 'get') else session.metadata.get('price_id', None)
+            # Fallback for StripeObject
+            if not price_id:
+                try:
+                    price_id = session.metadata['price_id']
+                except Exception:
+                    price_id = None
 
         print(f"Payment successful for: {customer_email} | Price: {price_id}")
 
-        # Update the user’s tier in Supabase
+        if not customer_email:
+            print("No customer email found")
+            return jsonify(success=True)
+
         try:
             if price_id == PRICE_PRO:
                 # Upgrade to Pro
                 supabase.table('users').update({
                     'tier': 'pro',
-                    'credits': 9999   # or whatever high number you want for unlimited
+                    'credits': 9999
                 }).eq('email', customer_email).execute()
                 print(f"Upgraded {customer_email} to Pro")
 
             elif price_id == PRICE_CREDITS:
                 # Add 15 credits
-                # First get current credits
                 result = supabase.table('users').select('credits').eq('email', customer_email).execute()
-                current_credits = result.data[0]['credits'] if result.data else 0
+                current_credits = 0
+                if result.data and len(result.data) > 0:
+                    current_credits = result.data[0].get('credits', 0) or 0
 
                 supabase.table('users').update({
                     'credits': current_credits + 15
                 }).eq('email', customer_email).execute()
                 print(f"Added 15 credits to {customer_email}")
 
+            else:
+                print(f"Unknown price_id: {price_id}")
+
         except Exception as e:
-            print(f"Error updating user: {e}")
+            print(f"Error updating user in Supabase: {e}")
 
     elif event['type'] == 'customer.subscription.deleted':
-        # User cancelled subscription → set back to free
-        subscription = event['data']['object']
-        customer_id = subscription.get('customer')
-        # You may need to look up the email from the customer ID if needed
-        print(f"Subscription cancelled for customer: {customer_id}")
+        print("Subscription cancelled event received")
 
     return jsonify(success=True)
 # ====================== API ROUTES ======================
