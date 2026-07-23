@@ -93,7 +93,11 @@ oauth.register(
     authorize_url='https://twitter.com/i/oauth2/authorize',
     access_token_url='https://api.twitter.com/2/oauth2/token',
     api_base_url='https://api.twitter.com/2/',
-    client_kwargs={'scope': 'users.read offline.access', 'token_endpoint_auth_method': 'client_secret_post'}
+    client_kwargs={
+        'scope': 'users.read offline.access',
+        'token_endpoint_auth_method': 'client_secret_post',
+        'code_challenge_method': 'S256'      # ← This is the critical line
+    }
 )
 
 GROK_API_KEY = os.getenv('GROK_API_KEY')
@@ -180,10 +184,7 @@ def google_callback():
 @app.route('/auth/x')
 def x_login():
     redirect_uri = "https://nexusdocs.ai/auth/x/callback"
-    return oauth.x.authorize_redirect(
-        redirect_uri,
-        scope='users.read offline.access'
-    )
+    return oauth.x.authorize_redirect(redirect_uri)
 
 @app.route('/auth/x/callback')
 def x_callback():
