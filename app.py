@@ -4,9 +4,9 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
+from supabase import create_client, Client
 import os
 import requests
-import sqlite3
 
 load_dotenv()
 
@@ -19,81 +19,44 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=60)
 app.secret_key = os.getenv("SECRET_KEY")
 CORS(app)
 
-# ====================== DATABASE SETUP ======================
-DB_PATH = 'users.db'
+# ====================== SUPABASE SETUP ======================
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            email TEXT,
-            name TEXT,
-            tier TEXT DEFAULT 'free',
-            credits INTEGER DEFAULT 0,
-            monthly_analyses INTEGER DEFAULT 0,
-            last_reset_date TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+# ====================== Get / Update User Data ======================
+def get_user_data(user_id, email=None, name=None):
+    """Fetch user from Supabase. Create if doesn't exist."""
+    response = supabase.table("user_usage").select("*").eq("user_id", user_id).execute()
+
+    if response.data:
+        return response.data[0]
+
+    # Create new user
+    new_user = {
+        "user_id": user_id,
+        "email": email or f"user_{user_id}",
+        "tier": "free",
+        "analyses_used": 0
+    }
+    insert_response = supabase.table("user_usage").insert(new_user).execute()
+    return insert_response.data[0]
 
 
-init_db()
+def update_usage(user_id):
+    """Increment analyses_used by 1"""
+    user = get_user_data(user_id)
+    new_count = user["analyses_used"] + 1
 
-# ====================== Get_User_DATA ======================
-def get_user_data(user_id):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
+    supabase.table("user_usage").update({
+        "analyses_used": new_count,
+        "updated_at": datetime.utcnow().isoformat()
+    }).eq("user_id", user_id).execute()
 
-    c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    row = c.fetchone()
-
-    if not row:
-        email = getattr(current_user, 'email', f"user_{user_id}")
-        name = getattr(current_user, 'name', 'User')
-
-        c.execute("INSERT INTO users (id, email, name, monthly_analyses, last_reset_date) VALUES (?, ?, ?, 0, ?)",
-                  (user_id, email, name, datetime.now().date().isoformat()))
-        conn.commit()
-
-        c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-        row = c.fetchone()
-
-    conn.close()
-    return row
+    return new_count
 
 
-def update_usage(user_id, increment=True):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    today = datetime.now().date().isoformat()
-
-    print(f"UPDATE_USAGE called for user {user_id}, increment={increment}, today={today}")
-
-    # Check current state
-    c.execute("SELECT id, monthly_analyses, last_reset_date FROM users WHERE id = ?", (user_id,))
-    data = c.fetchone()
-    print(f"Before update: {data}")
-
-    if data and data[2] != today:
-        c.execute("UPDATE users SET monthly_analyses = 0, last_reset_date = ? WHERE id = ?", (today, user_id))
-        conn.commit()
-        print("Daily reset applied")
-
-    if increment:
-        c.execute("UPDATE users SET monthly_analyses = monthly_analyses + 1 WHERE id = ?", (user_id,))
-        conn.commit()
-        print("Increment applied")
-
-    # Verify after update
-    c.execute("SELECT monthly_analyses FROM users WHERE id = ?", (user_id,))
-    new_count = c.fetchone()[0]
-    print(f"After update: monthly_analyses = {new_count}")
-
-    conn.close()
 # ====================== AUTH SETUP ======================
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -172,7 +135,6 @@ def login_page():
     return render_template('login.html')
 
 
-# Protected app page
 @app.route('/tg_app')
 @app.route('/tg_app.html')
 @app.route('/app')
@@ -181,13 +143,12 @@ def tg_app():
     return render_template('tg_app.html')
 
 
-# ====================== AUTH ROUTES (add your full callback routes here) ======================
-# ... Paste your full google_callback, x_callback, logout, etc. here if they are missing ...
-
+# ====================== AUTH ROUTES ======================
 @app.route('/auth/google')
 def google_login():
     redirect_uri = "https://nexusdocs.ai/auth/google/callback"
     return google.authorize_redirect(redirect_uri)
+
 
 @app.route('/auth/google/callback')
 def google_callback():
@@ -196,13 +157,17 @@ def google_callback():
         user_info = google.parse_id_token(token, nonce=token.get('nonce'))
 
         email = user_info['email']
+        name = user_info.get('name')
 
-        user = User(email, email, user_info.get('name'))
+        user = User(email, email, name)
         login_user(user, remember=True)
 
         session['email'] = email
-        session['name'] = user_info.get('name')
+        session['name'] = name
         session.permanent = True
+
+        # Ensure user exists in Supabase
+        get_user_data(email, email, name)
 
         return redirect('/tg_app')
 
@@ -211,43 +176,39 @@ def google_callback():
         traceback.print_exc()
         return f"Login failed: {str(e)}", 500
 
-   # ====================== X (Twitter) Login ======================
+
 @app.route('/auth/x')
 def x_login():
-    print("X Login URL being generated...")
     redirect_uri = url_for('x_callback', _external=True)
-    return oauth.x.authorize_redirect(
-        redirect_uri,
-        scope='users.read offline.access'
-    )
+    return oauth.x.authorize_redirect(redirect_uri, scope='users.read offline.access')
+
 
 @app.route('/auth/x/callback')
 def x_callback():
     try:
         token = oauth.x.authorize_access_token()
-        print("Token received:", token)  # Debug
-
         resp = oauth.x.get('users/me?user.fields=id,name,username')
-        print("User response:", resp.json())  # Debug
-
         user_info = resp.json().get('data', {})
 
         email = user_info.get('email') or f"{user_info.get('username')}@x.com"
+        name = user_info.get('name') or user_info.get('username')
 
-        user = User(email, email, user_info.get('name') or user_info.get('username'))
+        user = User(email, email, name)
         login_user(user, remember=True)
 
         session['email'] = email
-        session['name'] = user_info.get('name') or user_info.get('username')
+        session['name'] = name
         session.permanent = True
+
+        get_user_data(email, email, name)
 
         return redirect('/tg_app')
 
     except Exception as e:
         import traceback
-        print("X Login Error:")
         traceback.print_exc()
         return f"X Login failed: {str(e)}", 500
+
 
 @app.route('/logout')
 def logout():
@@ -255,40 +216,44 @@ def logout():
     session.clear()
     return redirect('/login')
 
+
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
 @login_required
 def analyze():
-    print("=== ANALYZE ROUTE STARTED ===")
-
     try:
         data = request.json
         user_id = current_user.id
         text = data.get('text', '')[:5000]
         prompt_type = data.get('type', 'summary')
 
-        user_data = get_user_data(user_id)
-        tier = user_data[3] if user_data and len(user_data) > 3 else 'free'
-        monthly_analyses = user_data[5] if user_data and len(user_data) > 5 else 0
+        user = get_user_data(user_id)
+        tier = user.get("tier", "free")
+        analyses_used = user.get("analyses_used", 0)
 
-        print(f"DEBUG: User {current_user.email} | Tier: {tier} | Monthly Analyses BEFORE: {monthly_analyses}")
+        print(f"DEBUG: User {current_user.email} | Tier: {tier} | Credits used: {analyses_used}")
 
-        # Check limit BEFORE processing
-        if tier == 'free' and monthly_analyses >= 9:
+        # Free tier limit
+        if tier == "free" and analyses_used >= 9:
             return jsonify({
-                "error": "Free tier limit reached (3 analyses this month). Upgrade your plan or purchase credits to continue.",
+                "error": "Free tier limit reached (9 credits this month). Upgrade your plan to continue.",
                 "limit_reached": True,
-                "monthly_analyses": monthly_analyses
+                "analyses_used": analyses_used
             }), 403
 
+        # Build prompt + credit cost
         if prompt_type == 'question':
             q = data.get('question', '')
             user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
+            credit_cost = 1
         elif prompt_type == 'risks':
             user_prompt = f"Extract key privacy, data selling, sharing, and legal risks in bullet points:\n\n{text}"
-        else:
+            credit_cost = 1
+        else:  # summary
             user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
+            credit_cost = 1
 
+        # Call Grok
         response = requests.post(
             "https://api.x.ai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROK_API_KEY}", "Content-Type": "application/json"},
@@ -305,26 +270,20 @@ def analyze():
         result = response.json()
         content = result.get('choices', [{}])[0].get('message', {}).get('content', str(result))
 
-        # Update usage AFTER successful analysis
-        update_usage(user_id)
-
-        # Refresh count
-        updated_data = get_user_data(user_id)
-        # monthly_analyses is now at index 5 (0-based)
-        new_count = updated_data[5] if updated_data and len(updated_data) > 5 else monthly_analyses + 1
-
-        print(f"DEBUG: Updated data from DB: {updated_data}")
-        
-        print(f"DEBUG: User {current_user.email} | Tier: {tier} | Monthly Analyses AFTER: {new_count}")
+        # Deduct the correct number of credits
+        new_count = analyses_used + credit_cost
+        supabase.table("user_usage").update({
+            "analyses_used": new_count,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq("user_id", user_id).execute()
 
         return jsonify({
             "result": content,
             "tier": tier,
-            "monthly_analyses": new_count
+            "analyses_used": new_count
         })
 
     except Exception as e:
-        print("ERROR in /analyze:", str(e))
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
@@ -332,23 +291,41 @@ def analyze():
 @app.route('/my_usage', methods=['GET'])
 @login_required
 def my_usage():
-    user_data = get_user_data(current_user.id)
+    user = get_user_data(current_user.id)
     return jsonify({
-        "tier": user_data[3],
-        "credits": user_data[4],
-        "monthly_analyses": user_data[5],
+        "tier": user.get("tier", "free"),
+        "analyses_used": user.get("analyses_used", 0)
     })
+
+
+# ====================== HIDDEN ADMIN RESET ======================
+@app.route('/admin/reset_usage/<user_id>')
+def admin_reset_usage(user_id):
+    """
+    Hidden admin route to reset a user's credits.
+    Example: https://yoursite.com/admin/reset_usage/user@example.com
+    """
+    try:
+        supabase.table("user_usage").update({
+            "analyses_used": 0,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq("user_id", user_id).execute()
+
+        return f"✅ Usage reset for {user_id}"
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
 
 @app.route('/reset_my_usage')
 @login_required
 def reset_my_usage():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("UPDATE users SET monthly_analyses = 0 WHERE id = ?", (current_user.id,))
-    conn.commit()
-    conn.close()
-    return f"✅ Usage reset for {current_user.email}. You can now analyze again."
+    """Allow logged-in user to reset their own usage (for testing)"""
+    supabase.table("user_usage").update({
+        "analyses_used": 0
+    }).eq("user_id", current_user.id).execute()
+
+    return f"✅ Your usage has been reset ({current_user.email})"
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=8080)
