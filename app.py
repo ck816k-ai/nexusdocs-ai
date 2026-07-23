@@ -298,8 +298,11 @@ def success():
     </html>
     """
 
+
 @app.route('/stripe-webhook', methods=['POST'])
 def stripe_webhook():
+    print("=== WEBHOOK RECEIVED ===")
+
     payload = request.data
     sig_header = request.headers.get('Stripe-Signature')
 
@@ -307,59 +310,50 @@ def stripe_webhook():
         event = stripe.Webhook.construct_event(
             payload, sig_header, STRIPE_WEBHOOK_SECRET
         )
-    except ValueError as e:
-        print("Invalid payload:", e)
-        return 'Invalid payload', 400
-    except stripe.error.SignatureVerificationError as e:
-        print("Invalid signature:", e)
-        return 'Invalid signature', 400
+        print("Signature verified successfully")
+    except Exception as e:
+        print(f"Webhook verification failed: {e}")
+        return jsonify({"error": "verification failed"}), 400
 
-    if event['type'] == 'checkout.session.completed':
-        # Convert Stripe object to a normal dictionary
-        session = event['data']['object']
-        if hasattr(session, 'to_dict'):
-            session = session.to_dict()
-        else:
-            session = dict(session)
+    try:
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
 
-        customer_email = session.get('customer_email')
-        if not customer_email:
-            customer_details = session.get('customer_details') or {}
-            customer_email = customer_details.get('email')
-
-        metadata = session.get('metadata') or {}
-        price_id = metadata.get('price_id')
-
-        print(f"=== WEBHOOK SUCCESS ===")
-        print(f"Email: {customer_email}")
-        print(f"Price ID: {price_id}")
-
-        if customer_email:
+            # Safely convert to dict
             try:
+                session_dict = session.to_dict() if hasattr(session, 'to_dict') else dict(session)
+            except Exception:
+                session_dict = session
+
+            customer_email = session_dict.get('customer_email')
+            if not customer_email:
+                customer_details = session_dict.get('customer_details') or {}
+                customer_email = customer_details.get('email')
+
+            metadata = session_dict.get('metadata') or {}
+            price_id = metadata.get('price_id')
+
+            print(f"Email: {customer_email} | Price: {price_id}")
+
+            if customer_email and price_id:
                 if price_id == PRICE_PRO:
                     supabase.table('user_usage').update({
                         'tier': 'pro',
                         'analyses_used': 0
                     }).eq('email', customer_email).execute()
-                    print(f"Upgraded {customer_email} to Pro")
-
+                    print("Updated to Pro")
                 elif price_id == PRICE_CREDITS:
                     supabase.table('user_usage').update({
                         'tier': 'credits',
                         'analyses_used': 0
                     }).eq('email', customer_email).execute()
-                    print(f"Added credits package for {customer_email}")
+                    print("Updated to credits")
 
-                else:
-                    print(f"Unknown price_id: {price_id}")
+    except Exception as e:
+        print(f"Error processing webhook: {e}")
 
-            except Exception as e:
-                print(f"Supabase error: {e}")
-
-    # Always return a clean 200
-    response = jsonify({"status": "success"})
-    response.status_code = 200
-    return response
+    print("=== WEBHOOK FINISHED SUCCESSFULLY ===")
+    return jsonify({"status": "success"}), 200
 
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
