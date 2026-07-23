@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 from supabase import create_client, Client
 import os
 import requests
+import stripe
 
 load_dotenv()
 
@@ -24,6 +25,13 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# ====================== STRIPE SETUP ========================
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+
+# Your Price IDs
+PRICE_PRO = "price_1TwKdLL7SZXKHM4vJ5gz4fzP"
+PRICE_CREDITS = "price_1TwKfgL7SZXKHM4vXS4m2kar"
 
 # ====================== Get / Update User Data ======================
 def get_user_data(user_id, email=None, name=None):
@@ -235,6 +243,58 @@ def logout():
     session.clear()
     return redirect('/login')
 
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        data = request.json
+        price_id = data.get('price_id')
+        user_email = session.get('email')
+
+        if not user_email:
+            return jsonify({"error": "Please log in first"}), 401
+
+        # Determine mode (subscription or one-time)
+        mode = 'subscription' if price_id == PRICE_PRO else 'payment'
+
+        checkout_session = stripe.checkout.Session.create(
+            customer_email=user_email,
+            line_items=[{
+                'price': price_id,
+                'quantity': 1,
+            }],
+            mode=mode,
+            success_url='https://nexusdocs.ai/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://nexusdocs.ai/pricing.html',
+            metadata={
+                'user_email': user_email,
+                'price_id': price_id
+            }
+        )
+        return jsonify({'url': checkout_session.url})
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+
+@app.route('/success')
+def success():
+    return """
+    <html>
+    <head>
+        <title>Payment Successful</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+        <div class="bg-white p-10 rounded-2xl shadow-lg text-center max-w-md">
+            <div class="text-5xl mb-4">🎉</div>
+            <h1 class="text-2xl font-bold mb-2">Payment Successful!</h1>
+            <p class="text-gray-600 mb-6">Your account has been upgraded. You can now enjoy the full features.</p>
+            <a href="/tg_app" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium">
+                Go to TermsGuard
+            </a>
+        </div>
+    </body>
+    </html>
+    """
 
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
