@@ -95,7 +95,7 @@ oauth.register(
     api_base_url='https://api.twitter.com/2/',
     client_kwargs={
         'scope': 'users.read offline.access',
-        'token_endpoint_auth_method': 'client_secret_post',
+        'token_endpoint_auth_method': 'client_secret_basic',
         'code_challenge_method': 'S256'      # ← This is the critical line
     }
 )
@@ -185,6 +185,7 @@ def google_callback():
 def x_login():
     redirect_uri = "https://nexusdocs.ai/auth/x/callback"
     return oauth.x.authorize_redirect(redirect_uri)
+
 
 @app.route('/auth/x/callback')
 def x_callback():
