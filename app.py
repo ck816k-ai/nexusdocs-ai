@@ -191,12 +191,21 @@ def x_login():
 def x_callback():
     try:
         token = oauth.x.authorize_access_token()
+        print("=== TOKEN ===")
+        print(token)
 
+        # Try getting user info
         resp = oauth.x.get('users/me', params={'user.fields': 'id,name,username'})
+
+        print("=== RESPONSE STATUS ===")
+        print(resp.status_code)
+        print("=== RESPONSE BODY ===")
+        print(resp.text)
+
         user_info = resp.json().get('data', {})
 
         if not user_info:
-            return "Failed to get user info from X", 400
+            return f"Failed to get user info from X<br><br>Status: {resp.status_code}<br>Response: {resp.text}", 400
 
         username = user_info.get('username', 'xuser')
         name = user_info.get('name') or username
