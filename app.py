@@ -315,7 +315,7 @@ def stripe_webhook():
         return 'Invalid signature', 400
 
     if event['type'] == 'checkout.session.completed':
-        # Convert to normal dictionary
+        # Convert Stripe object to a normal dictionary
         session = event['data']['object']
         if hasattr(session, 'to_dict'):
             session = session.to_dict()
@@ -334,34 +334,30 @@ def stripe_webhook():
         print(f"Email: {customer_email}")
         print(f"Price ID: {price_id}")
 
-        if not customer_email:
-            print("No email found – skipping update")
-            return jsonify(success=True)
+        if customer_email:
+            try:
+                if price_id == PRICE_PRO:
+                    supabase.table('user_usage').update({
+                        'tier': 'pro',
+                        'analyses_used': 0
+                    }).eq('email', customer_email).execute()
+                    print(f"Upgraded {customer_email} to Pro")
 
-        try:
-            if price_id == PRICE_PRO:
-                # Upgrade to Pro
-                supabase.table('user_usage').update({
-                    'tier': 'pro',
-                    'analyses_used': 0
-                }).eq('email', customer_email).execute()
-                print(f"Upgraded {customer_email} to Pro")
+                elif price_id == PRICE_CREDITS:
+                    supabase.table('user_usage').update({
+                        'tier': 'credits',
+                        'analyses_used': 0
+                    }).eq('email', customer_email).execute()
+                    print(f"Added credits package for {customer_email}")
 
-            elif price_id == PRICE_CREDITS:
-                # Credits package
-                supabase.table('user_usage').update({
-                    'tier': 'credits',
-                    'analyses_used': 0
-                }).eq('email', customer_email).execute()
-                print(f"Added credits package for {customer_email}")
+                else:
+                    print(f"Unknown price_id: {price_id}")
 
-            else:
-                print(f"Unknown price_id: {price_id}")
+            except Exception as e:
+                print(f"Supabase error: {e}")
 
-        except Exception as e:
-            print(f"Supabase error: {e}")
-
-    return jsonify(success=True)
+    # Always return a clean 200
+    return jsonify({"status": "success"}), 200
 
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
