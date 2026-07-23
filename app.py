@@ -314,37 +314,32 @@ def stripe_webhook():
         print("Invalid signature:", e)
         return 'Invalid signature', 400
 
-    # Handle the event
     if event['type'] == 'checkout.session.completed':
+        # Convert Stripe object to a normal dictionary
         session = event['data']['object']
+        if hasattr(session, 'to_dict'):
+            session = session.to_dict()
+        else:
+            session = dict(session)
 
-        # Safely get email and price_id
-        customer_email = None
-        if hasattr(session, 'customer_email') and session.customer_email:
-            customer_email = session.customer_email
-        elif hasattr(session, 'customer_details') and session.customer_details:
-            customer_email = getattr(session.customer_details, 'email', None)
+        customer_email = session.get('customer_email')
+        if not customer_email:
+            customer_details = session.get('customer_details') or {}
+            customer_email = customer_details.get('email')
 
-        # Get price_id from metadata
-        price_id = None
-        if hasattr(session, 'metadata') and session.metadata:
-            price_id = session.metadata.get('price_id') if hasattr(session.metadata, 'get') else session.metadata.get('price_id', None)
-            # Fallback for StripeObject
-            if not price_id:
-                try:
-                    price_id = session.metadata['price_id']
-                except Exception:
-                    price_id = None
+        metadata = session.get('metadata') or {}
+        price_id = metadata.get('price_id')
 
-        print(f"Payment successful for: {customer_email} | Price: {price_id}")
+        print(f"=== WEBHOOK SUCCESS ===")
+        print(f"Email: {customer_email}")
+        print(f"Price ID: {price_id}")
 
         if not customer_email:
-            print("No customer email found")
+            print("No email found – skipping update")
             return jsonify(success=True)
 
         try:
             if price_id == PRICE_PRO:
-                # Upgrade to Pro
                 supabase.table('users').update({
                     'tier': 'pro',
                     'credits': 9999
@@ -352,14 +347,13 @@ def stripe_webhook():
                 print(f"Upgraded {customer_email} to Pro")
 
             elif price_id == PRICE_CREDITS:
-                # Add 15 credits
                 result = supabase.table('users').select('credits').eq('email', customer_email).execute()
-                current_credits = 0
-                if result.data and len(result.data) > 0:
-                    current_credits = result.data[0].get('credits', 0) or 0
+                current = 0
+                if result.data:
+                    current = result.data[0].get('credits') or 0
 
                 supabase.table('users').update({
-                    'credits': current_credits + 15
+                    'credits': current + 15
                 }).eq('email', customer_email).execute()
                 print(f"Added 15 credits to {customer_email}")
 
@@ -367,12 +361,10 @@ def stripe_webhook():
                 print(f"Unknown price_id: {price_id}")
 
         except Exception as e:
-            print(f"Error updating user in Supabase: {e}")
-
-    elif event['type'] == 'customer.subscription.deleted':
-        print("Subscription cancelled event received")
+            print(f"Supabase error: {e}")
 
     return jsonify(success=True)
+
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
 @login_required
