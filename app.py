@@ -94,7 +94,7 @@ oauth.register(
     access_token_url='https://api.twitter.com/2/oauth2/token',
     api_base_url='https://api.twitter.com/2/',
     client_kwargs={
-        'scope': 'users.read offline.access',
+        'scope': 'users.read tweet.read offline.access',
         'token_endpoint_auth_method': 'client_secret_basic',
         'code_challenge_method': 'S256'      # ← This is the critical line
     }
@@ -191,21 +191,23 @@ def x_login():
 def x_callback():
     try:
         token = oauth.x.authorize_access_token()
-        print("=== TOKEN ===")
-        print(token)
+        print("TOKEN:", token)
 
-        # Try getting user info
-        resp = oauth.x.get('users/me', params={'user.fields': 'id,name,username'})
+        # Explicitly pass the token
+        resp = oauth.x.get(
+            'users/me',
+            params={'user.fields': 'id,name,username'},
+            token=token
+        )
 
-        print("=== RESPONSE STATUS ===")
-        print(resp.status_code)
-        print("=== RESPONSE BODY ===")
-        print(resp.text)
+        print("STATUS:", resp.status_code)
+        print("BODY:", resp.text)
 
-        user_info = resp.json().get('data', {})
+        data = resp.json()
+        user_info = data.get('data', {})
 
         if not user_info:
-            return f"Failed to get user info from X<br><br>Status: {resp.status_code}<br>Response: {resp.text}", 400
+            return f"Failed to get user info<br>Status: {resp.status_code}<br>Response: {resp.text}", 400
 
         username = user_info.get('username', 'xuser')
         name = user_info.get('name') or username
