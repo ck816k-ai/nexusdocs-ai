@@ -100,13 +100,30 @@
             <div class="section">
 			
     <div class="section">
-    <h3>🔍 Highlighted Key Language</h3>
-    
+    <h3 style="margin-bottom: 16px; white-space: nowrap;">
+        🔍 Highlighted Key Language
+    </h3>
+   
     <!-- Pagination Controls -->
-    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
-        <button onclick="prevPage()" style="padding: 6px 14px;">← Previous</button>
-        <span id="pageInfo" style="font-weight: 600; min-width: 100px;">Page 1 of 1</span>
-        <button onclick="nextPage()" style="padding: 6px 14px;">Next →</button>
+    <div style="
+        margin-bottom: 16px; 
+        display: flex; 
+        flex-wrap: wrap; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px;
+    ">
+        <button onclick="prevPage()" style="padding: 8px 16px; min-width: 110px;">
+            ← Previous
+        </button>
+        
+        <span id="pageInfo" style="font-weight: 600; min-width: 90px; text-align: center;">
+            Page 1 of 1
+        </span>
+        
+        <button onclick="nextPage()" style="padding: 8px 16px; min-width: 110px;">
+            Next →
+        </button>
     </div>
 
     <div id="highlightedText" style="white-space: pre-wrap; line-height: 1.75; background: white; padding: 25px; border-radius: 12px; max-height: 480px; overflow-y: auto; font-size: 0.95rem; border: 1px solid #e2e8f0;"></div>
