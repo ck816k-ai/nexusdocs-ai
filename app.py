@@ -29,6 +29,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # ====================== STRIPE SETUP ========================
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 # Your Price IDs
 PRICE_PRO = "price_1TwKdLL7SZXKHM4vJ5gz4fzP"
