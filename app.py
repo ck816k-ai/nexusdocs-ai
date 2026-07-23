@@ -179,19 +179,26 @@ def google_callback():
 
 @app.route('/auth/x')
 def x_login():
-    redirect_uri = url_for('x_callback', _external=True)
-    return oauth.x.authorize_redirect(redirect_uri, scope='users.read offline.access')
-
+    redirect_uri = "https://nexusdocs.ai/auth/x/callback"
+    return oauth.x.authorize_redirect(
+        redirect_uri,
+        scope='users.read offline.access'
+    )
 
 @app.route('/auth/x/callback')
 def x_callback():
     try:
         token = oauth.x.authorize_access_token()
-        resp = oauth.x.get('users/me?user.fields=id,name,username')
+
+        resp = oauth.x.get('users/me', params={'user.fields': 'id,name,username'})
         user_info = resp.json().get('data', {})
 
-        email = user_info.get('email') or f"{user_info.get('username')}@x.com"
-        name = user_info.get('name') or user_info.get('username')
+        if not user_info:
+            return "Failed to get user info from X", 400
+
+        username = user_info.get('username', 'xuser')
+        name = user_info.get('name') or username
+        email = f"{username}@x.com"
 
         user = User(email, email, name)
         login_user(user, remember=True)
@@ -208,7 +215,6 @@ def x_callback():
         import traceback
         traceback.print_exc()
         return f"X Login failed: {str(e)}", 500
-
 
 @app.route('/logout')
 def logout():
