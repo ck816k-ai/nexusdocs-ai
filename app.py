@@ -315,7 +315,7 @@ def stripe_webhook():
         return 'Invalid signature', 400
 
     if event['type'] == 'checkout.session.completed':
-        # Convert Stripe object to a normal dictionary
+        # Convert to normal dictionary
         session = event['data']['object']
         if hasattr(session, 'to_dict'):
             session = session.to_dict()
@@ -340,22 +340,20 @@ def stripe_webhook():
 
         try:
             if price_id == PRICE_PRO:
-                supabase.table('users').update({
+                # Upgrade to Pro
+                supabase.table('user_usage').update({
                     'tier': 'pro',
-                    'credits': 9999
+                    'analyses_used': 0
                 }).eq('email', customer_email).execute()
                 print(f"Upgraded {customer_email} to Pro")
 
             elif price_id == PRICE_CREDITS:
-                result = supabase.table('users').select('credits').eq('email', customer_email).execute()
-                current = 0
-                if result.data:
-                    current = result.data[0].get('credits') or 0
-
-                supabase.table('users').update({
-                    'credits': current + 15
+                # Credits package
+                supabase.table('user_usage').update({
+                    'tier': 'credits',
+                    'analyses_used': 0
                 }).eq('email', customer_email).execute()
-                print(f"Added 15 credits to {customer_email}")
+                print(f"Added credits package for {customer_email}")
 
             else:
                 print(f"Unknown price_id: {price_id}")
