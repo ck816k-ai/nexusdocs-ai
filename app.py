@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, redirect, url_for, session, render_template
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask import request
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
@@ -296,6 +297,64 @@ def success():
     </html>
     """
 
+@app.route('/stripe-webhook', methods=['POST'])
+def stripe_webhook():
+    payload = request.data
+    sig_header = request.headers.get('Stripe-Signature')
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        return 'Invalid payload', 400
+    except stripe.error.SignatureVerificationError:
+        return 'Invalid signature', 400
+
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        customer_email = session.get('customer_email') or session.get('customer_details', {}).get('email')
+        price_id = session.get('metadata', {}).get('price_id')
+
+        if not customer_email:
+            print("No customer email found in session")
+            return jsonify(success=True)
+
+        print(f"Payment successful for: {customer_email} | Price: {price_id}")
+
+        # Update the user’s tier in Supabase
+        try:
+            if price_id == PRICE_PRO:
+                # Upgrade to Pro
+                supabase.table('users').update({
+                    'tier': 'pro',
+                    'credits': 9999   # or whatever high number you want for unlimited
+                }).eq('email', customer_email).execute()
+                print(f"Upgraded {customer_email} to Pro")
+
+            elif price_id == PRICE_CREDITS:
+                # Add 15 credits
+                # First get current credits
+                result = supabase.table('users').select('credits').eq('email', customer_email).execute()
+                current_credits = result.data[0]['credits'] if result.data else 0
+
+                supabase.table('users').update({
+                    'credits': current_credits + 15
+                }).eq('email', customer_email).execute()
+                print(f"Added 15 credits to {customer_email}")
+
+        except Exception as e:
+            print(f"Error updating user: {e}")
+
+    elif event['type'] == 'customer.subscription.deleted':
+        # User cancelled subscription → set back to free
+        subscription = event['data']['object']
+        customer_id = subscription.get('customer')
+        # You may need to look up the email from the customer ID if needed
+        print(f"Subscription cancelled for customer: {customer_id}")
+
+    return jsonify(success=True)
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
 @login_required
