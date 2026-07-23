@@ -357,7 +357,9 @@ def stripe_webhook():
                 print(f"Supabase error: {e}")
 
     # Always return a clean 200
-    return jsonify({"status": "success"}), 200
+    response = jsonify({"status": "success"})
+    response.status_code = 200
+    return response
 
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
