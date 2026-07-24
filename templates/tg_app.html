@@ -197,46 +197,60 @@
             }
         }
 
-        async function processWithGrok(text) {
+async function processWithGrok(text) {
     const shortText = text.substring(0, 12000);
     try {
         // Summary
         const summaryRes = await fetch('/analyze', {
-            method: 'POST', 
-            headers: {'Content-Type': 'application/json'}, 
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
             credentials: 'include',
             body: JSON.stringify({text: shortText, type: 'summary'})
         });
-
         if (!summaryRes.ok) {
             const errorData = await summaryRes.json().catch(() => ({}));
             if (summaryRes.status === 403) {
-                document.getElementById('summary').innerHTML = 
-                    `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached (3 analyses this month)."}</strong>`;
+                document.getElementById('summary').innerHTML =
+                    `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached."}</strong>`;
                 document.getElementById('risks').innerHTML = "";
-                return;  // Stop further processing
+                return;
             } else {
                 throw new Error(errorData.error || "Analysis failed");
             }
         }
 
         const summaryData = await summaryRes.json();
-        document.getElementById('summary').innerHTML = summaryData.result ? 
+
+        // ===== UPDATE CREDITS DISPLAY =====
+        if (summaryData.analyses_used !== undefined && summaryData.limit !== undefined) {
+            const remaining = summaryData.limit - summaryData.analyses_used;
+            const creditsEl = document.getElementById('creditsDisplay');
+            const creditsText = document.getElementById('creditsText');
+
+            if (summaryData.tier === 'pro') {
+                creditsText.innerHTML = "Unlimited (Pro)";
+            } else {
+                creditsText.innerHTML = `${remaining} / ${summaryData.limit}`;
+            }
+            creditsEl.style.display = 'block';
+        }
+        // ==================================
+
+        document.getElementById('summary').innerHTML = summaryData.result ?
             summaryData.result.replace(/\n/g, '<br>') : "No summary received";
 
         // Risks (only if summary succeeded)
         const risksRes = await fetch('/analyze', {
-            method: 'POST', 
-            headers: {'Content-Type': 'application/json'}, 
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
             credentials: 'include',
             body: JSON.stringify({text: shortText, type: 'risks'})
         });
-
         if (!risksRes.ok) {
             // Optional: handle risk-specific errors
         } else {
             const risksData = await risksRes.json();
-            document.getElementById('risks').innerHTML = risksData.result ? 
+            document.getElementById('risks').innerHTML = risksData.result ?
                 risksData.result.replace(/\n/g, '<br>') : "No risks identified";
         }
 
