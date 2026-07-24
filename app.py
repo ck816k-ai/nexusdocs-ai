@@ -362,7 +362,7 @@ def analyze():
     try:
         data = request.json
         user_id = current_user.id
-        text = data.get('text', '')[:5000]
+        text = data.get('text', '')[:12000]
         prompt_type = data.get('type', 'summary')
 
         user = get_user_data(user_id)
