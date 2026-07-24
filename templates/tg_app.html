@@ -184,7 +184,7 @@
         }
 
         async function processWithGrok(text) {
-    const shortText = text.substring(0, 5000);
+    const shortText = text.substring(0, 12000);
     try {
         // Summary
         const summaryRes = await fetch('/analyze', {
@@ -247,7 +247,7 @@
             try {
                 const res = await fetch('/analyze', {
                     method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include',
-                    body: JSON.stringify({text: documentText.substring(0, 5000), type: 'question', question: q})
+                    body: JSON.stringify({text: documentText.substring(0, 12000), type: 'question', question: q})
                 });
                 const data = await res.json();
                 document.getElementById('answer').innerHTML = `<strong>Answer:</strong><br>${(data.result || data.error).replace(/\n/g, '<br>')}`;
