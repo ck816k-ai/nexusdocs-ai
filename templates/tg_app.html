@@ -88,12 +88,26 @@
                 <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
                 <button onclick="analyzeDocument()">Analyze</button>
             </div>
+<!-- Credits Remaining Display -->
+<div id="creditsDisplay" style="
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: #1e40af;
+    display: none;
+">
+    Credits remaining: <strong id="creditsText">—</strong>
+</div>
 
-            <div class="section">
-                <h3>📝 Plain English Summary</h3>
-                <div id="summary" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
-            </div>
-            <div class="section">
+<div class="section">
+    <h3>📝 Plain English Summary</h3>
+    <div id="summary" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
+</div>
+
+<div class="section">
     <h3>⚠️ Privacy & Legal Risks</h3>
     <div id="risks" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
 </div>
