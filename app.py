@@ -375,7 +375,7 @@ def analyze():
         TIER_LIMITS = {
             "free": 9,
             "credits": 45,
-            "pro": 99999          # effectively unlimited
+            "pro": 99999
         }
 
         limit = TIER_LIMITS.get(tier, 9)
@@ -388,7 +388,7 @@ def analyze():
                 "limit": limit
             }), 403
 
-        # ---------- Credit cost per request ----------
+        # ---------- Build prompt ----------
         if prompt_type == 'question':
             q = data.get('question', '')
             user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
@@ -400,7 +400,6 @@ def analyze():
             user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
             credit_cost = 1
 
-        # Double-check they still have enough credits for this request
         if analyses_used + credit_cost > limit:
             return jsonify({
                 "error": f"Not enough credits remaining. You need {credit_cost} credit(s).",
@@ -432,7 +431,7 @@ def analyze():
                 "updated_at": datetime.utcnow().isoformat()
             }).eq("user_id", user_id).execute()
         else:
-            new_count = analyses_used  # do not increase
+            new_count = analyses_used
 
         return jsonify({
             "result": content,
@@ -441,11 +440,11 @@ def analyze():
             "limit": limit
         })
 
-        except Exception as e:
+    except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
+    
 @app.route('/my_usage', methods=['GET'])
 @login_required
 def my_usage():
