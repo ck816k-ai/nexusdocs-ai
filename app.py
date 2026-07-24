@@ -376,6 +376,12 @@ def stripe_webhook():
             else:
                 print("→ invoice.paid received but no customer email found")
 
+    except Exception as e:
+        print(f"Error processing webhook: {e}")
+
+    print("=== WEBHOOK FINISHED SUCCESSFULLY ===")
+    return jsonify({"status": "success"}), 200
+
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
 @login_required
