@@ -316,10 +316,10 @@ def stripe_webhook():
         return jsonify({"error": "verification failed"}), 400
 
     try:
+        # ========== 1. First-time purchase ==========
         if event['type'] == 'checkout.session.completed':
             session = event['data']['object']
 
-            # Safely convert to dict
             try:
                 session_dict = session.to_dict() if hasattr(session, 'to_dict') else dict(session)
             except Exception:
@@ -333,7 +333,7 @@ def stripe_webhook():
             metadata = session_dict.get('metadata') or {}
             price_id = metadata.get('price_id')
 
-            print(f"Email: {customer_email} | Price: {price_id}")
+            print(f"Checkout completed | Email: {customer_email} | Price: {price_id}")
 
             if customer_email and price_id:
                 if price_id == PRICE_PRO:
@@ -341,13 +341,42 @@ def stripe_webhook():
                         'tier': 'pro',
                         'analyses_used': 0
                     }).eq('email', customer_email).execute()
-                    print("Updated to Pro")
+                    print("→ Set to Pro (first purchase)")
                 elif price_id == PRICE_CREDITS:
                     supabase.table('user_usage').update({
                         'tier': 'credits',
                         'analyses_used': 0
                     }).eq('email', customer_email).execute()
-                    print("Updated to credits")
+                    print("→ Set to Credits (first purchase)")
+
+        # ========== 2. Monthly renewal (Pro subscription) ==========
+        elif event['type'] == 'invoice.paid':
+            invoice = event['data']['object']
+
+            try:
+                invoice_dict = invoice.to_dict() if hasattr(invoice, 'to_dict') else dict(invoice)
+            except Exception:
+                invoice_dict = invoice
+
+            # Only process subscription invoices (not one-time payments)
+            if invoice_dict.get('billing_reason') == 'subscription_cycle':
+                customer_email = None
+
+                # Try to get email from customer
+                customer_id = invoice_dict.get('customer')
+                if customer_id:
+                    try:
+                        customer = stripe.Customer.retrieve(customer_id)
+                        customer_email = customer.email
+                    except Exception as e:
+                        print(f"Could not retrieve customer: {e}")
+
+                if customer_email:
+                    # Reset the counter for the new billing month
+                    supabase.table('user_usage').update({
+                        'analyses_used': 0
+                    }).eq('email', customer_email).execute()
+                    print(f"→ Monthly renewal: Reset analyses_used to 0 for {customer_email}")
 
     except Exception as e:
         print(f"Error processing webhook: {e}")
