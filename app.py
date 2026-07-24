@@ -424,12 +424,15 @@ def analyze():
         result = response.json()
         content = result.get('choices', [{}])[0].get('message', {}).get('content', str(result))
 
-        # ---------- Deduct credits ----------
-        new_count = analyses_used + credit_cost
-        supabase.table("user_usage").update({
-            "analyses_used": new_count,
-            "updated_at": datetime.utcnow().isoformat()
-        }).eq("user_id", user_id).execute()
+        # ---------- Deduct credits only for summary ----------
+        if prompt_type == 'summary':
+            new_count = analyses_used + credit_cost
+            supabase.table("user_usage").update({
+                "analyses_used": new_count,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("user_id", user_id).execute()
+        else:
+            new_count = analyses_used  # do not increase
 
         return jsonify({
             "result": content,
@@ -438,7 +441,7 @@ def analyze():
             "limit": limit
         })
 
-    except Exception as e:
+        except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
