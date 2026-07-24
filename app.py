@@ -412,7 +412,7 @@ def analyze():
             "https://api.x.ai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROK_API_KEY}", "Content-Type": "application/json"},
             json={
-                "model": "grok-4",
+                "model": "grok-4.5",
                 "messages": [
                     {"role": "system", "content": "You are a clear legal explainer. Use simple language."},
                     {"role": "user", "content": user_prompt}
