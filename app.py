@@ -371,15 +371,24 @@ def analyze():
 
         print(f"DEBUG: User {current_user.email} | Tier: {tier} | Credits used: {analyses_used}")
 
-        # Free tier limit
-        if tier == "free" and analyses_used >= 9:
+        # ---------- Credit limits ----------
+        TIER_LIMITS = {
+            "free": 9,
+            "credits": 45,
+            "pro": 99999          # effectively unlimited
+        }
+
+        limit = TIER_LIMITS.get(tier, 9)
+
+        if analyses_used >= limit:
             return jsonify({
-                "error": "Free tier limit reached (9 credits this month). Upgrade your plan to continue.",
+                "error": f"You have used all your credits ({analyses_used}/{limit}). Please upgrade your plan.",
                 "limit_reached": True,
-                "analyses_used": analyses_used
+                "analyses_used": analyses_used,
+                "limit": limit
             }), 403
 
-        # Build prompt + credit cost
+        # ---------- Credit cost per request ----------
         if prompt_type == 'question':
             q = data.get('question', '')
             user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
@@ -391,7 +400,14 @@ def analyze():
             user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
             credit_cost = 1
 
-        # Call Grok
+        # Double-check they still have enough credits for this request
+        if analyses_used + credit_cost > limit:
+            return jsonify({
+                "error": f"Not enough credits remaining. You need {credit_cost} credit(s).",
+                "limit_reached": True
+            }), 403
+
+        # ---------- Call Grok ----------
         response = requests.post(
             "https://api.x.ai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROK_API_KEY}", "Content-Type": "application/json"},
@@ -408,7 +424,7 @@ def analyze():
         result = response.json()
         content = result.get('choices', [{}])[0].get('message', {}).get('content', str(result))
 
-        # Deduct the correct number of credits
+        # ---------- Deduct credits ----------
         new_count = analyses_used + credit_cost
         supabase.table("user_usage").update({
             "analyses_used": new_count,
@@ -418,7 +434,8 @@ def analyze():
         return jsonify({
             "result": content,
             "tier": tier,
-            "analyses_used": new_count
+            "analyses_used": new_count,
+            "limit": limit
         })
 
     except Exception as e:
