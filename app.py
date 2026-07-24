@@ -358,31 +358,23 @@ def stripe_webhook():
             except Exception:
                 invoice_dict = invoice
 
-            # Only process subscription invoices (not one-time payments)
-            if invoice_dict.get('billing_reason') == 'subscription_cycle':
-                customer_email = None
+            customer_email = None
+            customer_id = invoice_dict.get('customer')
 
-                # Try to get email from customer
-                customer_id = invoice_dict.get('customer')
-                if customer_id:
-                    try:
-                        customer = stripe.Customer.retrieve(customer_id)
-                        customer_email = customer.email
-                    except Exception as e:
-                        print(f"Could not retrieve customer: {e}")
+            if customer_id:
+                try:
+                    customer = stripe.Customer.retrieve(customer_id)
+                    customer_email = customer.email
+                except Exception as e:
+                    print(f"Could not retrieve customer: {e}")
 
-                if customer_email:
-                    # Reset the counter for the new billing month
-                    supabase.table('user_usage').update({
-                        'analyses_used': 0
-                    }).eq('email', customer_email).execute()
-                    print(f"→ Monthly renewal: Reset analyses_used to 0 for {customer_email}")
-
-    except Exception as e:
-        print(f"Error processing webhook: {e}")
-
-    print("=== WEBHOOK FINISHED SUCCESSFULLY ===")
-    return jsonify({"status": "success"}), 200
+            if customer_email:
+                supabase.table('user_usage').update({
+                    'analyses_used': 0
+                }).eq('email', customer_email).execute()
+                print(f"→ Monthly renewal: Reset analyses_used to 0 for {customer_email}")
+            else:
+                print("→ invoice.paid received but no customer email found")
 
 # ====================== API ROUTES ======================
 @app.route('/analyze', methods=['POST'])
