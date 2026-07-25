@@ -137,10 +137,12 @@ def pricing():
     return render_template('pricing.html', email=email)
 
 
-@app.route('/about.html')
-@app.route('/about')
+@app.route('/about.html')  # use your real path if different
 def about():
-    return render_template('about.html')
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('about.html', email=email)
 
 
 @app.route('/privacy')
