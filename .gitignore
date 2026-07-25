@@ -5,3 +5,6 @@ archive/
 .env.backup
 .DS_Store
 *copy*.py
+.DS_Store
+archive/
+templates/backup/
