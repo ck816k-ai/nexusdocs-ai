@@ -122,16 +122,19 @@ def index():
     return render_template('index.html', email=email)
 
 
-@app.route('/termguard.html')
-@app.route('/termguard')
+@app.route('/termguard.html')   # or whatever the path is
 def termguard():
-    return render_template('termguard.html')
-
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('termguard.html', email=email)
 
 @app.route('/pricing.html')
-@app.route('/pricing')
 def pricing():
-    return render_template('pricing.html')
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('pricing.html', email=email)
 
 
 @app.route('/about.html')
