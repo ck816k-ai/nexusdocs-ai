@@ -183,7 +183,7 @@ def google_callback():
         # Ensure user exists in Supabase
         get_user_data(email, email, name)
 
-        return redirect('/tg_app')
+        return redirect('/')
 
     except Exception as e:
         import traceback
@@ -232,7 +232,7 @@ def x_callback():
 
         get_user_data(email, email, name)
 
-        return redirect('/tg_app')
+        return redirect('/')
 
     except Exception as e:
         import traceback
