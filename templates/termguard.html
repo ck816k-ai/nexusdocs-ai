@@ -70,14 +70,27 @@
             </div>
 
             <!-- Login buttons -->
-            <div class="flex items-center gap-2">
-                <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-                    Log in
-                </a>
-                <a href="/pricing.html" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
-                    Get Started Free
-                </a>
-            </div>
+            <!-- Auth buttons -->
+<div class="flex items-center gap-2">
+    {% if email %}
+        <span class="text-sm text-gray-600 hidden sm:inline">
+            Logged in as {{ email }}
+        </span>
+        <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
+            Open TermsGuard
+        </a>
+        <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
+            Log out
+        </a>
+    {% else %}
+        <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
+            Log in
+        </a>
+        <a href="/pricing.html" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
+            Get Started Free
+        </a>
+    {% endif %}
+</div>
         </div>
     </div>
 </nav>
