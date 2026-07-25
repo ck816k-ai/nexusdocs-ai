@@ -116,7 +116,10 @@ GROK_API_KEY = os.getenv('GROK_API_KEY')
 # ====================== PUBLIC PAGES ======================
 @app.route('/')
 def index():
-    return render_template('index.html')
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('index.html', email=email)
 
 
 @app.route('/termguard.html')
@@ -243,7 +246,7 @@ def x_callback():
 def logout():
     logout_user()
     session.clear()
-    return redirect('/login')
+    return redirect('/')
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
