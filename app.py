@@ -32,8 +32,8 @@ STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 # Your Price IDs
-PRICE_PRO = "price_1TwKdLL7SZXKHM4vJ5gz4fzP"
-PRICE_CREDITS = "price_1TwKfgL7SZXKHM4vXS4m2kar"
+PRICE_PRO = "price_1Tx7CSL1DZpx4P0VMkzrbzBY"
+PRICE_CREDITS = "price_1Tx7CRL1DZpx4P0V7yNjcgwD"
 
 # ====================== Get / Update User Data ======================
 def get_user_data(user_id, email=None, name=None):
