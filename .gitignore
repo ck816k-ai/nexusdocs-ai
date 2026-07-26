@@ -9,3 +9,6 @@ archive/
 archive/
 templates/backup/
 .env
+.DS_Store
+templates/pricing copy.html
+templates/pricing copy 2.html
