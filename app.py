@@ -178,6 +178,8 @@ def redirect_after_login():
         return redirect("/create-checkout?plan=credits")
     if next_action == "pro":
         return redirect("/create-checkout?plan=pro")
+    if next_action == "billing":
+        return redirect("/billing-portal")
     return redirect("/")
 
 # ====================== AUTH ROUTES ======================
@@ -303,6 +305,30 @@ def create_checkout():
         return redirect(checkout_session.url)
     except Exception as e:
         return f"Checkout error: {str(e)}", 500
+
+@app.route('/billing-portal')
+def billing_portal():
+    """Send logged-in user to Stripe Customer Portal to manage/cancel subscription."""
+    user_email = session.get('email')
+    if not user_email:
+        return redirect('/login?next=billing')
+
+    try:
+        customers = stripe.Customer.list(email=user_email, limit=1)
+        if not customers.data:
+            return (
+                "No billing account found for this email. "
+                "Subscribe first, or contact support if you already paid.",
+                404,
+            )
+
+        portal_session = stripe.billing_portal.Session.create(
+            customer=customers.data[0].id,
+            return_url='https://nexusdocs.ai/tg_app',
+        )
+        return redirect(portal_session.url)
+    except Exception as e:
+        return f"Billing portal error: {str(e)}", 500
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
