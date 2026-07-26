@@ -485,12 +485,12 @@ def analyze():
 
         # ---------- Credit limits ----------
         TIER_LIMITS = {
-            "free": 9,
+            "free": 3,
             "credits": 45,
             "pro": 99999
         }
 
-        limit = TIER_LIMITS.get(tier, 9)
+        limit = TIER_LIMITS.get(tier, 3)
 
         if analyses_used >= limit:
             return jsonify({
