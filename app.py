@@ -157,6 +157,8 @@ def terms():
 @app.route('/login')
 @app.route('/login.html')
 def login_page():
+    next_action = request.args.get('next', 'home')
+    session['login_next'] = next_action
     return render_template('login.html')
 
 
@@ -167,6 +169,16 @@ def login_page():
 def tg_app():
     return render_template('tg_app.html')
 
+def redirect_after_login():
+    next_action = session.pop("login_next", None) or "home"
+
+    if next_action == "app":
+        return redirect("/tg_app")
+    if next_action == "credits":
+        return redirect("/create-checkout?plan=credits")
+    if next_action == "pro":
+        return redirect("/create-checkout?plan=pro")
+    return redirect("/")
 
 # ====================== AUTH ROUTES ======================
 @app.route('/auth/google')
@@ -194,7 +206,7 @@ def google_callback():
         # Ensure user exists in Supabase
         get_user_data(email, email, name)
 
-        return redirect('/')
+        return redirect_after_login()
 
     except Exception as e:
         import traceback
@@ -243,7 +255,7 @@ def x_callback():
 
         get_user_data(email, email, name)
 
-        return redirect('/')
+        return redirect_after_login()
 
     except Exception as e:
         import traceback
@@ -255,6 +267,42 @@ def logout():
     logout_user()
     session.clear()
     return redirect('/')
+
+@app.route('/create-checkout')
+def create_checkout():
+    """After login: send user straight to Stripe for credits or pro."""
+    user_email = session.get('email')
+    if not user_email:
+        plan = request.args.get('plan', 'credits')
+        return redirect(f'/login?next={plan}')
+
+    plan = request.args.get('plan', 'credits')
+
+    if plan == 'pro':
+        price_id = PRICE_PRO
+        mode = 'subscription'
+    else:
+        price_id = PRICE_CREDITS
+        mode = 'payment'
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            customer_email=user_email,
+            line_items=[{
+                'price': price_id,
+                'quantity': 1,
+            }],
+            mode=mode,
+            success_url='https://nexusdocs.ai/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://nexusdocs.ai/pricing.html',
+            metadata={
+                'user_email': user_email,
+                'price_id': price_id
+            }
+        )
+        return redirect(checkout_session.url)
+    except Exception as e:
+        return f"Checkout error: {str(e)}", 500
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
