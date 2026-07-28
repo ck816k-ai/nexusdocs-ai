@@ -290,89 +290,107 @@ async function processWithGrok(text) {
             }
         }
 
-        function exportToPDF() {
+ function exportToPDF() {
+    const btn = document.querySelector('button[onclick*="exportToPDF"]');
+    if (btn) btn.disabled = true;
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const logoImg = new Image();
-    logoImg.src = "pdf_logo.jpg";
+    let saved = false;
 
-    logoImg.onload = function() {
-        addContentWithLogo(doc, logoImg);
+    const finish = (logoImg) => {
+        if (saved) return;
+        saved = true;
+        buildPdf(doc, logoImg);
+        if (btn) btn.disabled = false;
     };
-    logoImg.onerror = function() {
+
+    const logoImg = new Image();
+    logoImg.crossOrigin = "anonymous";
+    logoImg.onload = () => finish(logoImg);
+    logoImg.onerror = () => {
         console.log("Logo not found, generating without logo");
-        addContentWithLogo(doc, null);
+        finish(null);
     };
-    setTimeout(() => {
-        if (doc.internal.getNumberOfPages() === 1) addContentWithLogo(doc, null);
-    }, 300);
+    logoImg.src = "/static/images/pdf_logo.jpg"; // same folder as the app page, or use full URL: "https://nexusdocs.ai/pdf_logo.jpg"
 }
 
-function addContentWithLogo(doc, logoImg) {
-    let y = 20;
-    if (logoImg) {
-        doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
-        y = 55;
+function buildPdf(doc, logoImg) {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const title = "TermsGuard AI - Analysis Report";
+
+    const q = (document.getElementById('question')?.value || "").trim();
+    const answerText = document.getElementById('answer')?.innerText || "";
+    const hasQA = q && answerText && !answerText.includes("Processing");
+    const totalPages = hasQA ? 3 : 2;
+
+    function header(pageNum) {
+        if (logoImg) {
+            try {
+                doc.addImage(logoImg, "JPG", 20, 15, 50, 25);
+            } catch (e) {
+                console.log("addImage failed", e);
+            }
+        }
+        doc.setFontSize(18);
+        const titleWidth = doc.getTextWidth(title);
+        doc.text(title, (pageWidth - titleWidth) / 2, 55);
+
+        doc.setFontSize(10);
+        doc.text(
+            `Page ${pageNum} of ${totalPages}`,
+            pageWidth / 2,
+            pageHeight - 20,
+            { align: "center" }
+        );
     }
 
-    doc.setFontSize(18);
-    doc.text("TermsGuard AI - Analysis Report", 20, y);
-    y += 20;
-
-    // Summary
+    // Page 1 — Summary
+    header(1);
+    let y = 75;
     doc.setFontSize(14);
     doc.text("Plain English Summary", 20, y);
     y += 10;
     doc.setFontSize(11);
-    const summaryText = document.getElementById('summary').innerText || "No summary";
+    const summaryText = document.getElementById('summary')?.innerText || "No summary available";
     const summaryLines = doc.splitTextToSize(summaryText, 170);
     doc.text(summaryLines, 20, y);
-    y += summaryLines.length * 7 + 25;
 
-    // Risks on new page
+    // Page 2 — Risks
     doc.addPage();
-    y = 20;
-    if (logoImg) doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
-    doc.setFontSize(18);
-    doc.text("TermsGuard AI - Analysis Report", 20, y);
-    y += 20;
+    header(2);
+    y = 75;
     doc.setFontSize(14);
     doc.text("Privacy & Legal Risks", 20, y);
     y += 10;
     doc.setFontSize(11);
-    const risksText = document.getElementById('risks').innerText || "No risks";
+    const risksText = document.getElementById('risks')?.innerText || "No risks available";
     const risksLines = doc.splitTextToSize(risksText, 170);
     doc.text(risksLines, 20, y);
-    y += risksLines.length * 7 + 25;
 
-    // Question & Answer (if asked)
-    const q = document.getElementById('question').value.trim();
-    const answerText = document.getElementById('answer').innerText;
-    if (q && answerText && answerText.includes("Answer:")) {
+    // Page 3 — Q&A (optional)
+    if (hasQA) {
         doc.addPage();
-        y = 20;
-        if (logoImg) doc.addImage(logoImg, 'JPG', 20, 15, 50, 25);
-        doc.setFontSize(18);
-        doc.text("TermsGuard AI - Analysis Report", 20, y);
-        y += 20;
+        header(3);
+        y = 75;
         doc.setFontSize(14);
         doc.text("Question Asked", 20, y);
         y += 10;
         doc.setFontSize(11);
-        const qLines = doc.splitTextToSize(q, 170);
-        doc.text(qLines, 20, y);
-        y += qLines.length * 7 + 15;
-
+        doc.text(doc.splitTextToSize(q, 170), 20, y);
+        y += 20;
         doc.setFontSize(14);
         doc.text("Answer", 20, y);
         y += 10;
         doc.setFontSize(11);
-        const aLines = doc.splitTextToSize(answerText.replace("Answer:", "").trim(), 170);
-        doc.text(aLines, 20, y);
+        const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
+        doc.text(doc.splitTextToSize(cleaned, 170), 20, y);
     }
 
     doc.save("TermsGuard_Analysis_Report.pdf");
 }
+
 let fullHighlighted = "";
 let currentPage = 1;
 const pageSize = 4500;   // characters per page
