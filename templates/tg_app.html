@@ -326,13 +326,24 @@ function buildPdf(doc, logoImg) {
     const left = 20;
     const maxWidth = 170;
     const topY = 75;
-    const bottomMargin = 35; // keeps clear of page number
-    const lineHeight = 6;
+    const bottomMargin = 40;
+    const lineHeight = 7;
+    const bodyFontSize = 11;
+    const headingFontSize = 14;
     const title = "TermsGuard AI - Analysis Report";
 
     const q = (document.getElementById("question")?.value || "").trim();
     const answerText = document.getElementById("answer")?.innerText || "";
     const hasQA = q && answerText && !answerText.includes("Processing");
+
+    function cleanText(text) {
+        return (text || "")
+            .replace(/\*\*/g, "")      // strip markdown bold
+            .replace(/\*/g, "")
+            .replace(/[ \t]+/g, " ")
+            .replace(/\n{3,}/g, "\n\n")
+            .trim();
+    }
 
     function drawHeader() {
         if (logoImg) {
@@ -342,9 +353,12 @@ function buildPdf(doc, logoImg) {
                 console.log("addImage failed", e);
             }
         }
+        doc.setFont("helvetica", "normal");
         doc.setFontSize(18);
         const titleWidth = doc.getTextWidth(title);
         doc.text(title, (pageWidth - titleWidth) / 2, 55);
+        // Important: do NOT leave size 18 active for body text
+        doc.setFontSize(bodyFontSize);
     }
 
     function ensureSpace(y, needed) {
@@ -356,12 +370,13 @@ function buildPdf(doc, logoImg) {
         return y;
     }
 
-    /** Draw wrapped lines; returns next y */
     function writeLines(text, y, fontSize) {
-        doc.setFontSize(fontSize || 11);
-        const lines = doc.splitTextToSize(text || "", maxWidth);
+        const size = fontSize || bodyFontSize;
+        const lines = doc.splitTextToSize(cleanText(text), maxWidth);
         for (let i = 0; i < lines.length; i++) {
             y = ensureSpace(y, lineHeight);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(size); // reset after every possible page break
             doc.text(lines[i], left, y);
             y += lineHeight;
         }
@@ -369,48 +384,48 @@ function buildPdf(doc, logoImg) {
     }
 
     function writeHeading(label, y) {
-        y = ensureSpace(y, 14);
-        doc.setFontSize(14);
+        y = ensureSpace(y, 16);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(headingFontSize);
         doc.text(label, left, y);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(bodyFontSize);
         return y + 10;
     }
 
-    // --- Page 1 content ---
     drawHeader();
     let y = topY;
 
     y = writeHeading("Plain English Summary", y);
     const summaryText =
         document.getElementById("summary")?.innerText || "No summary available";
-    y = writeLines(summaryText, y, 11);
+    y = writeLines(summaryText, y, bodyFontSize);
     y += 12;
 
-    // Risks (may continue on same page or spill to new pages)
     y = writeHeading("Privacy & Legal Risks", y);
     const risksText =
         document.getElementById("risks")?.innerText || "No risks available";
-    y = writeLines(risksText, y, 11);
+    y = writeLines(risksText, y, bodyFontSize);
     y += 12;
 
-    // Optional Q&A
     if (hasQA) {
         y = writeHeading("Question Asked", y);
-        y = writeLines(q, y, 11);
+        y = writeLines(q, y, bodyFontSize);
         y += 8;
         y = writeHeading("Answer", y);
         const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
-        y = writeLines(cleaned, y, 11);
+        y = writeLines(cleaned, y, bodyFontSize);
     }
 
-    // Page numbers (correct total after all pages exist)
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
+        doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(
             `Page ${i} of ${totalPages}`,
             pageWidth / 2,
-            pageHeight - 20,
+            pageHeight - 18,
             { align: "center" }
         );
     }
