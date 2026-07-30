@@ -34,20 +34,23 @@
     <div class="container">
     <header style="
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 22px 28px;
     gap: 16px;
     background: linear-gradient(90deg, #1e40af, #3b82f6);
     color: white;
     position: relative;
+    min-height: 110px;
 ">
-    <!-- Centered Title -->
+    <!-- Truly centered title (full header width) -->
     <div style="
-        flex: 1;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
         text-align: center;
-        min-width: 200px;
+        width: min(520px, calc(100% - 280px));
+        pointer-events: none;
     ">
         <h1 style="margin: 0; font-size: 1.8rem; font-weight: 600;">TermsGuard AI</h1>
         <p style="margin: 6px 0 0 0; opacity: 0.95; font-size: 0.95rem; line-height: 1.4;">
@@ -56,13 +59,14 @@
         </p>
     </div>
 
-    <!-- Account actions: Manage + Sign Out -->
+    <!-- Account actions stay on the right -->
     <div style="
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 10px;
         flex-shrink: 0;
+        z-index: 1;
     ">
         <a href="/billing-portal"
            style="
