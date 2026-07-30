@@ -24,10 +24,39 @@
         .signout-btn { position: absolute; top: 25px; right: 30px; padding: 8px 20px; background: #ef4444; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 100; }
         .signout-btn:hover { background: #dc2626; }
         @media (max-width: 768px) {
-            .container { margin: 10px; border-radius: 16px; }
-            header { flex-direction: column; text-align: center; padding: 25px 20px; gap: 15px; }
-            .signout-btn { top: 15px; right: 15px; font-size: 13px; padding: 6px 14px; }
-        }
+    .container { margin: 10px; border-radius: 16px; }
+
+    header {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        gap: 12px;
+        min-height: auto;
+    }
+
+    /* Title: stop absolute centering on mobile so it stacks cleanly */
+    header > div:first-child {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        pointer-events: auto;
+        margin-bottom: 4px;
+    }
+
+    /* Buttons under the title */
+    header > div:last-child {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .signout-btn {
+        top: 15px;
+        right: 15px;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+}
     </style>
 </head>
 <body>
