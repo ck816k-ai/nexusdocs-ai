@@ -301,7 +301,12 @@ async function processWithGrok(text) {
     const finish = (logoImg) => {
         if (saved) return;
         saved = true;
-        buildPdf(doc, logoImg);
+        try {
+            buildPdf(doc, logoImg);
+        } catch (e) {
+            console.error(e);
+            alert("PDF export failed: " + e.message);
+        }
         if (btn) btn.disabled = false;
     };
 
@@ -312,20 +317,24 @@ async function processWithGrok(text) {
         console.log("Logo not found, generating without logo");
         finish(null);
     };
-    logoImg.src = "/static/images/pdf_logo.jpg"; // same folder as the app page, or use full URL: "https://nexusdocs.ai/pdf_logo.jpg"
+    logoImg.src = "/static/images/pdf_logo.jpg";
 }
 
 function buildPdf(doc, logoImg) {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
+    const left = 20;
+    const maxWidth = 170;
+    const topY = 75;
+    const bottomMargin = 35; // keeps clear of page number
+    const lineHeight = 6;
     const title = "TermsGuard AI - Analysis Report";
 
-    const q = (document.getElementById('question')?.value || "").trim();
-    const answerText = document.getElementById('answer')?.innerText || "";
+    const q = (document.getElementById("question")?.value || "").trim();
+    const answerText = document.getElementById("answer")?.innerText || "";
     const hasQA = q && answerText && !answerText.includes("Processing");
-    const totalPages = hasQA ? 3 : 2;
 
-    function header(pageNum) {
+    function drawHeader() {
         if (logoImg) {
             try {
                 doc.addImage(logoImg, "JPG", 20, 15, 50, 25);
@@ -336,56 +345,74 @@ function buildPdf(doc, logoImg) {
         doc.setFontSize(18);
         const titleWidth = doc.getTextWidth(title);
         doc.text(title, (pageWidth - titleWidth) / 2, 55);
+    }
 
+    function ensureSpace(y, needed) {
+        if (y + needed > pageHeight - bottomMargin) {
+            doc.addPage();
+            drawHeader();
+            return topY;
+        }
+        return y;
+    }
+
+    /** Draw wrapped lines; returns next y */
+    function writeLines(text, y, fontSize) {
+        doc.setFontSize(fontSize || 11);
+        const lines = doc.splitTextToSize(text || "", maxWidth);
+        for (let i = 0; i < lines.length; i++) {
+            y = ensureSpace(y, lineHeight);
+            doc.text(lines[i], left, y);
+            y += lineHeight;
+        }
+        return y;
+    }
+
+    function writeHeading(label, y) {
+        y = ensureSpace(y, 14);
+        doc.setFontSize(14);
+        doc.text(label, left, y);
+        return y + 10;
+    }
+
+    // --- Page 1 content ---
+    drawHeader();
+    let y = topY;
+
+    y = writeHeading("Plain English Summary", y);
+    const summaryText =
+        document.getElementById("summary")?.innerText || "No summary available";
+    y = writeLines(summaryText, y, 11);
+    y += 12;
+
+    // Risks (may continue on same page or spill to new pages)
+    y = writeHeading("Privacy & Legal Risks", y);
+    const risksText =
+        document.getElementById("risks")?.innerText || "No risks available";
+    y = writeLines(risksText, y, 11);
+    y += 12;
+
+    // Optional Q&A
+    if (hasQA) {
+        y = writeHeading("Question Asked", y);
+        y = writeLines(q, y, 11);
+        y += 8;
+        y = writeHeading("Answer", y);
+        const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
+        y = writeLines(cleaned, y, 11);
+    }
+
+    // Page numbers (correct total after all pages exist)
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
         doc.setFontSize(10);
         doc.text(
-            `Page ${pageNum} of ${totalPages}`,
+            `Page ${i} of ${totalPages}`,
             pageWidth / 2,
             pageHeight - 20,
             { align: "center" }
         );
-    }
-
-    // Page 1 — Summary
-    header(1);
-    let y = 75;
-    doc.setFontSize(14);
-    doc.text("Plain English Summary", 20, y);
-    y += 10;
-    doc.setFontSize(11);
-    const summaryText = document.getElementById('summary')?.innerText || "No summary available";
-    const summaryLines = doc.splitTextToSize(summaryText, 170);
-    doc.text(summaryLines, 20, y);
-
-    // Page 2 — Risks
-    doc.addPage();
-    header(2);
-    y = 75;
-    doc.setFontSize(14);
-    doc.text("Privacy & Legal Risks", 20, y);
-    y += 10;
-    doc.setFontSize(11);
-    const risksText = document.getElementById('risks')?.innerText || "No risks available";
-    const risksLines = doc.splitTextToSize(risksText, 170);
-    doc.text(risksLines, 20, y);
-
-    // Page 3 — Q&A (optional)
-    if (hasQA) {
-        doc.addPage();
-        header(3);
-        y = 75;
-        doc.setFontSize(14);
-        doc.text("Question Asked", 20, y);
-        y += 10;
-        doc.setFontSize(11);
-        doc.text(doc.splitTextToSize(q, 170), 20, y);
-        y += 20;
-        doc.setFontSize(14);
-        doc.text("Answer", 20, y);
-        y += 10;
-        doc.setFontSize(11);
-        const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
-        doc.text(doc.splitTextToSize(cleaned, 170), 20, y);
     }
 
     doc.save("TermsGuard_Analysis_Report.pdf");
