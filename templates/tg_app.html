@@ -87,13 +87,20 @@
     </a>
 </div>
      
-        <div class="main">
-            <div class="section input-area">
-                <h2>📄 Upload PDF or Paste Text</h2>
-                <input type="file" id="pdfUpload" accept=".pdf" style="margin-bottom: 15px;">
-                <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
-                <button onclick="analyzeDocument()">Analyze</button>
-            </div>
+        <<div class="main">
+    <div class="section input-area">
+        <h2>📄 Upload PDF or Paste Text</h2>
+        <input type="file" id="pdfUpload" accept=".pdf" style="margin-bottom: 15px;">
+        <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+            <button onclick="analyzeDocument()">Analyze</button>
+            <button type="button" onclick="startNewAnalysis()"
+                    style="background: #64748b;">
+                New analysis
+            </button>
+        </div>
+    </div>
+
 <!-- Credits Remaining Display -->
 <div id="creditsDisplay" style="
     background: #eff6ff;
@@ -163,6 +170,7 @@
         let documentText = "";
 
         async function analyzeDocument() {
+			clearAnalysisResults();
             const paste = document.getElementById('pasteText').value.trim();
             const fileInput = document.getElementById('pdfUpload');
             const file = fileInput.files[0];
@@ -466,6 +474,34 @@ function prevPage() {
         currentPage--;
         showCurrentHighlightedPage();
     }
+}
+
+		
+function clearAnalysisResults() {
+    documentText = "";
+    fullHighlighted = "";
+    currentPage = 1;
+
+    const ids = ["summary", "risks", "highlightedText", "answer"];
+    ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = "";
+    });
+
+    const question = document.getElementById("question");
+    if (question) question.value = "";
+
+    const pageInfo = document.getElementById("pageInfo");
+    if (pageInfo) pageInfo.textContent = "";
+}
+
+function startNewAnalysis() {
+    clearAnalysisResults();
+    const paste = document.getElementById("pasteText");
+    const fileInput = document.getElementById("pdfUpload");
+    if (paste) paste.value = "";
+    if (fileInput) fileInput.value = "";
+    document.querySelector(".input-area")?.scrollIntoView({ behavior: "smooth" });
 }
         console.log("TermsGuard script loaded - Ready");
     </script>
