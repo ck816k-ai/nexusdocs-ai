@@ -166,6 +166,10 @@ def login_page():
 def robots():
     return send_from_directory(app.root_path, 'robots.txt')
 
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(app.root_path, 'sitemap.xml')
+
 @app.route('/tg_app')
 @app.route('/tg_app.html')
 @app.route('/app')
