@@ -319,10 +319,15 @@ async function processWithGrok(text) {
                 risksData.result.replace(/\n/g, '<br>') : "No risks identified";
         }
 
-        // Highlighted text
-        let highlighted = shortText.replace(/\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
-            match => `<span class="highlight">${match}</span>`);
-        updateHighlightedPagination(highlighted);
+        // Highlighted text — free tier matches API cap (5,000 chars)
+const highlightLimit = (typeof currentTier !== 'undefined' && currentTier === 'free') ? 5000 : 12000;
+const textForHighlight = shortText.substring(0, highlightLimit);
+
+let highlighted = textForHighlight.replace(
+    /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
+    match => `<span class="highlight">${match}</span>`
+);
+updateHighlightedPagination(highlighted);
 
     } catch (e) {
         console.error(e);
