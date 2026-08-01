@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Public marketing pages are allowed by default
+
+# Do not crawl the app or auth flows
+Disallow: /tg_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /set_tier
+Disallow: /debug_tier
+
+Sitemap: https://nexusdocs.ai/sitemap.xml

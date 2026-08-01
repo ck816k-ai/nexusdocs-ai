@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, redirect, url_for, session, render_template
+from flask import send_from_directory
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask import request
@@ -161,6 +162,9 @@ def login_page():
     session['login_next'] = next_action
     return render_template('login.html')
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.root_path, 'robots.txt')
 
 @app.route('/tg_app')
 @app.route('/tg_app.html')
