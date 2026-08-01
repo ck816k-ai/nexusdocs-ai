@@ -219,19 +219,17 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         let documentText = "";
+        let currentTier = "free";
 
         async function analyzeDocument() {
-			clearAnalysisResults();
+            clearAnalysisResults();
             const paste = document.getElementById('pasteText').value.trim();
             const fileInput = document.getElementById('pdfUpload');
             const file = fileInput.files[0];
-
             document.getElementById('summary').innerHTML = "Processing...";
             document.getElementById('risks').innerHTML = "Processing...";
             document.getElementById('highlightedText').innerHTML = "Processing...";
-
             let text = "";
-
             if (file) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
@@ -262,79 +260,80 @@
             }
         }
 
-async function processWithGrok(text) {
-    const shortText = text.substring(0, 12000);
-    try {
-        // Summary
-        const summaryRes = await fetch('/analyze', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include',
-            body: JSON.stringify({text: shortText, type: 'summary'})
-        });
-        if (!summaryRes.ok) {
-            const errorData = await summaryRes.json().catch(() => ({}));
-            if (summaryRes.status === 403) {
-                document.getElementById('summary').innerHTML =
-                    `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached."}</strong>`;
+        async function processWithGrok(text) {
+            const shortText = text.substring(0, 12000);
+            try {
+                // Summary
+                const summaryRes = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    credentials: 'include',
+                    body: JSON.stringify({text: shortText, type: 'summary'})
+                });
+                if (!summaryRes.ok) {
+                    const errorData = await summaryRes.json().catch(() => ({}));
+                    if (summaryRes.status === 403) {
+                        document.getElementById('summary').innerHTML =
+                            `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached."}</strong>`;
+                        document.getElementById('risks').innerHTML = "";
+                        return;
+                    } else {
+                        throw new Error(errorData.error || "Analysis failed");
+                    }
+                }
+                const summaryData = await summaryRes.json();
+
+                // Tier from server (this is what drives highlight length)
+                if (summaryData.tier) {
+                    currentTier = String(summaryData.tier).toLowerCase();
+                }
+
+                // ===== UPDATE CREDITS DISPLAY =====
+                if (summaryData.analyses_used !== undefined && summaryData.limit !== undefined) {
+                    const remaining = summaryData.limit - summaryData.analyses_used;
+                    const creditsEl = document.getElementById('creditsDisplay');
+                    const creditsText = document.getElementById('creditsText');
+                    if (summaryData.tier === 'pro') {
+                        creditsText.innerHTML = "Unlimited (Pro)";
+                    } else {
+                        creditsText.innerHTML = `${remaining} / ${summaryData.limit}`;
+                    }
+                    creditsEl.style.display = 'block';
+                }
+                // ==================================
+
+                document.getElementById('summary').innerHTML = summaryData.result ?
+                    summaryData.result.replace(/\n/g, '<br>') : "No summary received";
+
+                // Risks (only if summary succeeded)
+                const risksRes = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    credentials: 'include',
+                    body: JSON.stringify({text: shortText, type: 'risks'})
+                });
+                if (risksRes.ok) {
+                    const risksData = await risksRes.json();
+                    document.getElementById('risks').innerHTML = risksData.result ?
+                        risksData.result.replace(/\n/g, '<br>') : "No risks identified";
+                }
+
+                // Highlighted text — free = 5k; paid (credits/pro) = 12k
+                const highlightLimit = (currentTier === 'credits' || currentTier === 'pro') ? 12000 : 5000;
+                const textForHighlight = shortText.substring(0, highlightLimit);
+                let highlighted = textForHighlight.replace(
+                    /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
+                    match => `<span class="highlight">${match}</span>`
+                );
+                updateHighlightedPagination(highlighted);
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('summary').innerHTML = "Error: " + (e.message || e);
                 document.getElementById('risks').innerHTML = "";
-                return;
-            } else {
-                throw new Error(errorData.error || "Analysis failed");
             }
         }
 
-        const summaryData = await summaryRes.json();
-
-        // ===== UPDATE CREDITS DISPLAY =====
-        if (summaryData.analyses_used !== undefined && summaryData.limit !== undefined) {
-            const remaining = summaryData.limit - summaryData.analyses_used;
-            const creditsEl = document.getElementById('creditsDisplay');
-            const creditsText = document.getElementById('creditsText');
-
-            if (summaryData.tier === 'pro') {
-                creditsText.innerHTML = "Unlimited (Pro)";
-            } else {
-                creditsText.innerHTML = `${remaining} / ${summaryData.limit}`;
-            }
-            creditsEl.style.display = 'block';
-        }
-        // ==================================
-
-        document.getElementById('summary').innerHTML = summaryData.result ?
-            summaryData.result.replace(/\n/g, '<br>') : "No summary received";
-
-        // Risks (only if summary succeeded)
-        const risksRes = await fetch('/analyze', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include',
-            body: JSON.stringify({text: shortText, type: 'risks'})
-        });
-        if (!risksRes.ok) {
-            // Optional: handle risk-specific errors
-        } else {
-            const risksData = await risksRes.json();
-            document.getElementById('risks').innerHTML = risksData.result ?
-                risksData.result.replace(/\n/g, '<br>') : "No risks identified";
-        }
-
-        // Highlighted text — free tier matches API cap (5,000 chars)
-const highlightLimit = (typeof currentTier !== 'undefined' && currentTier === 'free') ? 5000 : 12000;
-const textForHighlight = shortText.substring(0, highlightLimit);
-
-let highlighted = textForHighlight.replace(
-    /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
-    match => `<span class="highlight">${match}</span>`
-);
-updateHighlightedPagination(highlighted);
-
-    } catch (e) {
-        console.error(e);
-        document.getElementById('summary').innerHTML = "Error: " + (e.message || e);
-        document.getElementById('risks').innerHTML = "";
-    }
-}
         async function askQuestion() {
             const q = document.getElementById('question').value.trim();
             if (!q || !documentText) {
@@ -344,223 +343,216 @@ updateHighlightedPagination(highlighted);
             document.getElementById('answer').innerHTML = "Processing...";
             try {
                 const res = await fetch('/analyze', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include',
-                    body: JSON.stringify({text: documentText.substring(0, 12000), type: 'question', question: q})
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        text: documentText.substring(0, 12000),
+                        type: 'question',
+                        question: q
+                    })
                 });
                 const data = await res.json();
-                document.getElementById('answer').innerHTML = `<strong>Answer:</strong><br>${(data.result || data.error).replace(/\n/g, '<br>')}`;
+                document.getElementById('answer').innerHTML =
+                    `<strong>Answer:</strong><br>${(data.result || data.error).replace(/\n/g, '<br>')}`;
             } catch (e) {
                 document.getElementById('answer').innerHTML = "Error: " + e.message;
             }
         }
 
- function exportToPDF() {
-    const btn = document.querySelector('button[onclick*="exportToPDF"]');
-    if (btn) btn.disabled = true;
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    let saved = false;
-
-    const finish = (logoImg) => {
-        if (saved) return;
-        saved = true;
-        try {
-            buildPdf(doc, logoImg);
-        } catch (e) {
-            console.error(e);
-            alert("PDF export failed: " + e.message);
+        function exportToPDF() {
+            const btn = document.querySelector('button[onclick*="exportToPDF"]');
+            if (btn) btn.disabled = true;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let saved = false;
+            const finish = (logoImg) => {
+                if (saved) return;
+                saved = true;
+                try {
+                    buildPdf(doc, logoImg);
+                } catch (e) {
+                    console.error(e);
+                    alert("PDF export failed: " + e.message);
+                }
+                if (btn) btn.disabled = false;
+            };
+            const logoImg = new Image();
+            logoImg.crossOrigin = "anonymous";
+            logoImg.onload = () => finish(logoImg);
+            logoImg.onerror = () => {
+                console.log("Logo not found, generating without logo");
+                finish(null);
+            };
+            logoImg.src = "/static/images/pdf_logo.jpg";
         }
-        if (btn) btn.disabled = false;
-    };
 
-    const logoImg = new Image();
-    logoImg.crossOrigin = "anonymous";
-    logoImg.onload = () => finish(logoImg);
-    logoImg.onerror = () => {
-        console.log("Logo not found, generating without logo");
-        finish(null);
-    };
-    logoImg.src = "/static/images/pdf_logo.jpg";
-}
+        function buildPdf(doc, logoImg) {
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const left = 20;
+            const maxWidth = 170;
+            const topY = 75;
+            const bottomMargin = 40;
+            const lineHeight = 7;
+            const bodyFontSize = 11;
+            const headingFontSize = 14;
+            const title = "TermsGuard AI - Analysis Report";
+            const q = (document.getElementById("question")?.value || "").trim();
+            const answerText = document.getElementById("answer")?.innerText || "";
+            const hasQA = q && answerText && !answerText.includes("Processing");
 
-function buildPdf(doc, logoImg) {
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const left = 20;
-    const maxWidth = 170;
-    const topY = 75;
-    const bottomMargin = 40;
-    const lineHeight = 7;
-    const bodyFontSize = 11;
-    const headingFontSize = 14;
-    const title = "TermsGuard AI - Analysis Report";
+            function cleanText(text) {
+                return (text || "")
+                    .replace(/\*\*/g, "")
+                    .replace(/\*/g, "")
+                    .replace(/[ \t]+/g, " ")
+                    .replace(/\n{3,}/g, "\n\n")
+                    .trim();
+            }
 
-    const q = (document.getElementById("question")?.value || "").trim();
-    const answerText = document.getElementById("answer")?.innerText || "";
-    const hasQA = q && answerText && !answerText.includes("Processing");
+            function drawHeader() {
+                if (logoImg) {
+                    try {
+                        doc.addImage(logoImg, "JPG", 20, 15, 50, 25);
+                    } catch (e) {
+                        console.log("addImage failed", e);
+                    }
+                }
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(18);
+                const titleWidth = doc.getTextWidth(title);
+                doc.text(title, (pageWidth - titleWidth) / 2, 55);
+                doc.setFontSize(bodyFontSize);
+            }
 
-    function cleanText(text) {
-        return (text || "")
-            .replace(/\*\*/g, "")      // strip markdown bold
-            .replace(/\*/g, "")
-            .replace(/[ \t]+/g, " ")
-            .replace(/\n{3,}/g, "\n\n")
-            .trim();
-    }
+            function ensureSpace(y, needed) {
+                if (y + needed > pageHeight - bottomMargin) {
+                    doc.addPage();
+                    drawHeader();
+                    return topY;
+                }
+                return y;
+            }
 
-    function drawHeader() {
-        if (logoImg) {
-            try {
-                doc.addImage(logoImg, "JPG", 20, 15, 50, 25);
-            } catch (e) {
-                console.log("addImage failed", e);
+            function writeLines(text, y, fontSize) {
+                const size = fontSize || bodyFontSize;
+                const lines = doc.splitTextToSize(cleanText(text), maxWidth);
+                for (let i = 0; i < lines.length; i++) {
+                    y = ensureSpace(y, lineHeight);
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(size);
+                    doc.text(lines[i], left, y);
+                    y += lineHeight;
+                }
+                return y;
+            }
+
+            function writeHeading(label, y) {
+                y = ensureSpace(y, 16);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(headingFontSize);
+                doc.text(label, left, y);
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(bodyFontSize);
+                return y + 10;
+            }
+
+            drawHeader();
+            let y = topY;
+            y = writeHeading("Plain English Summary", y);
+            const summaryText =
+                document.getElementById("summary")?.innerText || "No summary available";
+            y = writeLines(summaryText, y, bodyFontSize);
+            y += 12;
+            y = writeHeading("Privacy & Legal Risks", y);
+            const risksText =
+                document.getElementById("risks")?.innerText || "No risks available";
+            y = writeLines(risksText, y, bodyFontSize);
+            y += 12;
+            if (hasQA) {
+                y = writeHeading("Question Asked", y);
+                y = writeLines(q, y, bodyFontSize);
+                y += 8;
+                y = writeHeading("Answer", y);
+                const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
+                y = writeLines(cleaned, y, bodyFontSize);
+            }
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.text(
+                    `Page ${i} of ${totalPages}`,
+                    pageWidth / 2,
+                    pageHeight - 18,
+                    { align: "center" }
+                );
+            }
+            doc.save("TermsGuard_Analysis_Report.pdf");
+        }
+
+        let fullHighlighted = "";
+        let currentPage = 1;
+        const pageSize = 4500;
+
+        function updateHighlightedPagination(text) {
+            fullHighlighted = text;
+            currentPage = 1;
+            showCurrentHighlightedPage();
+        }
+
+        function showCurrentHighlightedPage() {
+            const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageText = fullHighlighted.substring(start, end);
+            document.getElementById('highlightedText').innerHTML = pageText || "No content to display";
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
+            if (currentPage < totalPages) {
+                currentPage++;
+                showCurrentHighlightedPage();
             }
         }
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(18);
-        const titleWidth = doc.getTextWidth(title);
-        doc.text(title, (pageWidth - titleWidth) / 2, 55);
-        // Important: do NOT leave size 18 active for body text
-        doc.setFontSize(bodyFontSize);
-    }
 
-    function ensureSpace(y, needed) {
-        if (y + needed > pageHeight - bottomMargin) {
-            doc.addPage();
-            drawHeader();
-            return topY;
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                showCurrentHighlightedPage();
+            }
         }
-        return y;
-    }
 
-    function writeLines(text, y, fontSize) {
-        const size = fontSize || bodyFontSize;
-        const lines = doc.splitTextToSize(cleanText(text), maxWidth);
-        for (let i = 0; i < lines.length; i++) {
-            y = ensureSpace(y, lineHeight);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(size); // reset after every possible page break
-            doc.text(lines[i], left, y);
-            y += lineHeight;
+        function clearAnalysisResults() {
+            documentText = "";
+            fullHighlighted = "";
+            currentPage = 1;
+            const ids = ["summary", "risks", "highlightedText", "answer"];
+            ids.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = "";
+            });
+            const question = document.getElementById("question");
+            if (question) question.value = "";
+            const pageInfo = document.getElementById("pageInfo");
+            if (pageInfo) pageInfo.textContent = "";
         }
-        return y;
-    }
 
-    function writeHeading(label, y) {
-        y = ensureSpace(y, 16);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(headingFontSize);
-        doc.text(label, left, y);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(bodyFontSize);
-        return y + 10;
-    }
+        function startNewAnalysis() {
+            clearAnalysisResults();
+            const paste = document.getElementById("pasteText");
+            const fileInput = document.getElementById("pdfUpload");
+            if (paste) paste.value = "";
+            if (fileInput) fileInput.value = "";
+            document.querySelector(".input-area")?.scrollIntoView({ behavior: "smooth" });
+        }
 
-    drawHeader();
-    let y = topY;
-
-    y = writeHeading("Plain English Summary", y);
-    const summaryText =
-        document.getElementById("summary")?.innerText || "No summary available";
-    y = writeLines(summaryText, y, bodyFontSize);
-    y += 12;
-
-    y = writeHeading("Privacy & Legal Risks", y);
-    const risksText =
-        document.getElementById("risks")?.innerText || "No risks available";
-    y = writeLines(risksText, y, bodyFontSize);
-    y += 12;
-
-    if (hasQA) {
-        y = writeHeading("Question Asked", y);
-        y = writeLines(q, y, bodyFontSize);
-        y += 8;
-        y = writeHeading("Answer", y);
-        const cleaned = answerText.replace(/^Answer:\s*/i, "").trim();
-        y = writeLines(cleaned, y, bodyFontSize);
-    }
-
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-        doc.setPage(i);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(
-            `Page ${i} of ${totalPages}`,
-            pageWidth / 2,
-            pageHeight - 18,
-            { align: "center" }
-        );
-    }
-
-    doc.save("TermsGuard_Analysis_Report.pdf");
-}
-
-let fullHighlighted = "";
-let currentPage = 1;
-const pageSize = 4500;   // characters per page
-
-function updateHighlightedPagination(text) {
-    fullHighlighted = text;
-    currentPage = 1;
-    showCurrentHighlightedPage();
-}
-
-function showCurrentHighlightedPage() {
-    const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    const pageText = fullHighlighted.substring(start, end);
-
-    document.getElementById('highlightedText').innerHTML = pageText || "No content to display";
-    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
-}
-
-function nextPage() {
-    const totalPages = Math.ceil(fullHighlighted.length / pageSize) || 1;
-    if (currentPage < totalPages) {
-        currentPage++;
-        showCurrentHighlightedPage();
-    }
-}
-
-function prevPage() {
-    if (currentPage > 1) {
-        currentPage--;
-        showCurrentHighlightedPage();
-    }
-}
-
-		
-function clearAnalysisResults() {
-    documentText = "";
-    fullHighlighted = "";
-    currentPage = 1;
-
-    const ids = ["summary", "risks", "highlightedText", "answer"];
-    ids.forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = "";
-    });
-
-    const question = document.getElementById("question");
-    if (question) question.value = "";
-
-    const pageInfo = document.getElementById("pageInfo");
-    if (pageInfo) pageInfo.textContent = "";
-}
-
-function startNewAnalysis() {
-    clearAnalysisResults();
-    const paste = document.getElementById("pasteText");
-    const fileInput = document.getElementById("pdfUpload");
-    if (paste) paste.value = "";
-    if (fileInput) fileInput.value = "";
-    document.querySelector(".input-area")?.scrollIntoView({ behavior: "smooth" });
-}
         console.log("TermsGuard script loaded - Ready");
-    </script>
+</script>
 
     <footer class="bg-gray-900 text-gray-400 py-12 mt-12" style="text-align: center;">
         <div class="max-w-6xl mx-auto px-6">
