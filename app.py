@@ -499,14 +499,14 @@ def analyze():
 
         # Models: free = lighter; paid = full
         TIER_MODELS = {
-            "free": "grok-4",
+            "free": "grok-4.3",
             "credits": "grok-4.5",
             "pro": "grok-4.5"
         }
 
         limit = TIER_LIMITS.get(tier, 3)
         char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
-        model = TIER_MODELS.get(tier, "grok-4")
+        model = TIER_MODELS.get(tier, "grok-4.3")
 
         if analyses_used >= limit:
             return jsonify({
