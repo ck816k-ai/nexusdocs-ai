@@ -474,8 +474,8 @@ def analyze():
     try:
         data = request.json
         user_id = current_user.id
-        text = data.get('text', '')[:12000]
         prompt_type = data.get('type', 'summary')
+        raw_text = data.get('text', '') or ''
 
         user = get_user_data(user_id)
         tier = user.get("tier", "free")
@@ -483,49 +483,81 @@ def analyze():
 
         print(f"DEBUG: User {current_user.email} | Tier: {tier} | Credits used: {analyses_used}")
 
-        # ---------- Credit limits ----------
+        # ---------- Tier limits ----------
         TIER_LIMITS = {
             "free": 3,
             "credits": 45,
             "pro": 99999
         }
 
+        # Character caps: free = demo slice; paid = longer single pass
+        TIER_CHAR_LIMITS = {
+            "free": 5000,
+            "credits": 12000,
+            "pro": 12000
+        }
+
+        # Models: free = lighter; paid = full
+        TIER_MODELS = {
+            "free": "grok-4",
+            "credits": "grok-4.5",
+            "pro": "grok-4.5"
+        }
+
         limit = TIER_LIMITS.get(tier, 3)
+        char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
+        model = TIER_MODELS.get(tier, "grok-4")
 
         if analyses_used >= limit:
             return jsonify({
-                "error": f"You have used all your credits ({analyses_used}/{limit}). Please upgrade your plan.",
+                "error": f"You have used all your free analyses ({analyses_used}/{limit}). Please upgrade your plan.",
                 "limit_reached": True,
                 "analyses_used": analyses_used,
-                "limit": limit
+                "limit": limit,
+                "remaining": 0,
+                "tier": tier
             }), 403
+
+        # ---------- Apply character cap ----------
+        truncated = len(raw_text) > char_limit
+        text = raw_text[:char_limit]
 
         # ---------- Build prompt ----------
         if prompt_type == 'question':
             q = data.get('question', '')
             user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
-            credit_cost = 1
+            credit_cost = 0  # questions don't consume free analyses
         elif prompt_type == 'risks':
             user_prompt = f"Extract key privacy, data selling, sharing, and legal risks in bullet points:\n\n{text}"
-            credit_cost = 1
+            credit_cost = 0  # risks paired with summary; only summary deducts
         else:  # summary
             user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
             credit_cost = 1
 
-        if analyses_used + credit_cost > limit:
+        if prompt_type == 'summary' and analyses_used + credit_cost > limit:
             return jsonify({
-                "error": f"Not enough credits remaining. You need {credit_cost} credit(s).",
-                "limit_reached": True
+                "error": f"Not enough analyses remaining. You need {credit_cost}.",
+                "limit_reached": True,
+                "analyses_used": analyses_used,
+                "limit": limit,
+                "remaining": max(0, limit - analyses_used),
+                "tier": tier
             }), 403
 
         # ---------- Call Grok ----------
         response = requests.post(
             "https://api.x.ai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {GROK_API_KEY}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Bearer {GROK_API_KEY}",
+                "Content-Type": "application/json"
+            },
             json={
-                "model": "grok-4.5",
+                "model": model,
                 "messages": [
-                    {"role": "system", "content": "You are a clear legal explainer. Use simple language."},
+                    {
+                        "role": "system",
+                        "content": "You are a clear legal explainer. Use simple language."
+                    },
                     {"role": "user", "content": user_prompt}
                 ],
                 "temperature": 0.7
@@ -533,9 +565,13 @@ def analyze():
         )
 
         result = response.json()
-        content = result.get('choices', [{}])[0].get('message', {}).get('content', str(result))
+        content = (
+            result.get('choices', [{}])[0]
+            .get('message', {})
+            .get('content', str(result))
+        )
 
-        # ---------- Deduct credits only for summary ----------
+        # ---------- Deduct only for summary ----------
         if prompt_type == 'summary':
             new_count = analyses_used + credit_cost
             supabase.table("user_usage").update({
@@ -545,18 +581,24 @@ def analyze():
         else:
             new_count = analyses_used
 
+        remaining = max(0, limit - new_count)
+
         return jsonify({
             "result": content,
             "tier": tier,
             "analyses_used": new_count,
-            "limit": limit
+            "limit": limit,
+            "remaining": remaining,
+            "truncated": truncated,
+            "char_limit": char_limit,
+            "model": model
         })
 
     except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route('/my_usage', methods=['GET'])
 @login_required
 def my_usage():
