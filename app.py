@@ -516,7 +516,24 @@ def analyze():
         char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
         model = TIER_MODELS.get(tier, "grok-4.3")
 
-        if analyses_used >= limit:
+        # ---------- Apply character cap ----------
+        truncated = len(raw_text) > char_limit
+        text = raw_text[:char_limit]
+
+        # ---------- Build prompt + credit cost FIRST ----------
+        if prompt_type == 'question':
+            q = data.get('question', '')
+            user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
+            credit_cost = 0  # questions don't consume analyses
+        elif prompt_type == 'risks':
+            user_prompt = f"Extract key privacy, data selling, sharing, and legal risks in bullet points:\n\n{text}"
+            credit_cost = 0  # paired with summary; only summary deducts
+        else:  # summary
+            user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
+            credit_cost = 1
+
+        # ---------- Tier limit: only for requests that spend a credit ----------
+        if credit_cost > 0 and analyses_used >= limit:
             return jsonify({
                 "error": f"You have used all your free analyses ({analyses_used}/{limit}). Please upgrade your plan.",
                 "limit_reached": True,
@@ -526,23 +543,7 @@ def analyze():
                 "tier": tier
             }), 403
 
-        # ---------- Apply character cap ----------
-        truncated = len(raw_text) > char_limit
-        text = raw_text[:char_limit]
-
-        # ---------- Build prompt ----------
-        if prompt_type == 'question':
-            q = data.get('question', '')
-            user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
-            credit_cost = 0  # questions don't consume free analyses
-        elif prompt_type == 'risks':
-            user_prompt = f"Extract key privacy, data selling, sharing, and legal risks in bullet points:\n\n{text}"
-            credit_cost = 0  # risks paired with summary; only summary deducts
-        else:  # summary
-            user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
-            credit_cost = 1
-
-        if prompt_type == 'summary' and analyses_used + credit_cost > limit:
+        if credit_cost > 0 and analyses_used + credit_cost > limit:
             return jsonify({
                 "error": f"Not enough analyses remaining. You need {credit_cost}.",
                 "limit_reached": True,
