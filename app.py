@@ -501,8 +501,8 @@ def analyze():
         # Character caps: free = demo slice; paid = longer single pass
         TIER_CHAR_LIMITS = {
             "free": 5000,
-            "credits": 12000,
-            "pro": 12000
+            "credits": 50000,
+            "pro": 50000
         }
 
         # Models: free = lighter; paid = full
