@@ -134,10 +134,10 @@
                    class="px-8 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg hover:bg-gray-100 inline-block text-center">
                     See plans & try free
                 </a>
-                <button onclick="alert('Demo coming soon!')" 
-                        class="px-8 py-4 border border-white/50 rounded-2xl font-semibold text-lg hover:bg-white/10">
-                    Watch Demo
-                </button>
+                <button type="button" onclick="openDemoModal()"
+						class="px-8 py-4 border border-white/50 rounded-2xl font-semibold text-lg hover:bg-white/10">
+					Watch Demo
+				</button>
             </div>
         </div>
     </section>
@@ -207,5 +207,45 @@
         </p>
     </div>
 </footer>
+    <footer>
+        ...
+    </footer>
+
+    <!-- Demo modal -->
+    <div id="demoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-4 relative shadow-xl">
+            <button type="button" onclick="closeDemoModal()"
+                    class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl leading-none"
+                    aria-label="Close">&times;</button>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3 pr-8">TermsGuard demo</h3>
+            <video id="demoVideo" controls playsinline class="w-full rounded-xl bg-black">
+                <source src="/static/videos/termsguard-demo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+    function openDemoModal() {
+        const modal = document.getElementById('demoModal');
+        const video = document.getElementById('demoVideo');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        video.currentTime = 0;
+        video.play().catch(function () {});
+    }
+    function closeDemoModal() {
+        const modal = document.getElementById('demoModal');
+        const video = document.getElementById('demoVideo');
+        video.pause();
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    document.getElementById('demoModal').addEventListener('click', function (e) {
+        if (e.target === this) closeDemoModal();
+    });
+    </script>
+</body>
+</html>
 </body>
 </html>
