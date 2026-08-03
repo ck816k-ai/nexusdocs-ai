@@ -261,7 +261,7 @@
         }
 
         async function processWithGrok(text) {
-            const shortText = text.substring(0, 12000);
+            const shortText = text.substring(0, 50000);
             try {
                 // Summary
                 const summaryRes = await fetch('/analyze', {
@@ -319,7 +319,7 @@
                 }
 
                 // Highlighted text — free = 5k; paid (credits/pro) = 12k
-                const highlightLimit = (currentTier === 'credits' || currentTier === 'pro') ? 12000 : 5000;
+                const highlightLimit = (currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000;
                 const textForHighlight = shortText.substring(0, highlightLimit);
                 let highlighted = textForHighlight.replace(
                     /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
@@ -347,7 +347,7 @@
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include',
                     body: JSON.stringify({
-                        text: documentText.substring(0, 12000),
+                        text: documentText.substring(0, (currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000),
                         type: 'question',
                         question: q
                     })
