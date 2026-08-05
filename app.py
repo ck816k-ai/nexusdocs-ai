@@ -170,6 +170,10 @@ def robots():
 def sitemap():
     return send_from_directory(app.root_path, 'sitemap.xml')
 
+@app.route('/llms.txt')
+def llms_txt():
+    return send_from_directory('.', 'llms.txt', mimetype='text/plain')
+
 @app.route('/tg_app')
 @app.route('/tg_app.html')
 @app.route('/app')
