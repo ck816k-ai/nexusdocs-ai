@@ -554,32 +554,46 @@ def analyze():
             }), 403
 
         # ---------- Call Grok ----------
-        response = requests.post(
-            "https://api.x.ai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {GROK_API_KEY}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": model,
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are a clear legal explainer. Use simple language."
-                    },
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": 0.7
-            }
-        )
+        try:
+            response = requests.post(
+                "https://api.x.ai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {GROK_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are a clear legal explainer. Use simple language."
+                        },
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.7
+                },
+                timeout=90
+            )
+            response.raise_for_status()  # raises an error for 4xx/5xx responses
 
+        except requests.exceptions.Timeout:
+            return jsonify({
+                "error": "Analysis took too long. Please try a shorter document or try again."
+            }), 504
+
+        except requests.exceptions.RequestException as e:
+            return jsonify({
+                "error": "Failed to reach AI service. Please try again."
+            }), 502
+
+        # If we get here, the call succeeded
         result = response.json()
         content = (
             result.get('choices', [{}])[0]
             .get('message', {})
             .get('content', str(result))
         )
-
+        
         # ---------- Deduct only for summary ----------
         if prompt_type == 'summary':
             new_count = analyses_used + credit_cost
