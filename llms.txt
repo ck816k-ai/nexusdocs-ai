@@ -5,7 +5,11 @@
 - [Home](https://nexusdocs.ai/): Product overview and main landing page
 - [TermsGuard](https://nexusdocs.ai/termguard.html): Feature details and how it works
 - [Pricing](https://nexusdocs.ai/pricing.html): Free and paid plans
+- [Insights](https://nexusdocs.ai/insights): Practical guides on contracts and privacy policies
 - [App](https://nexusdocs.ai/tg_app): The analysis tool (login required)
+
+## Insights articles
+- [5 Scary Clauses Hiding in Free App Privacy Policies](https://nexusdocs.ai/insights/scary-clauses)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy
