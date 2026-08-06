@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, redirect, url_for, session, render_template
 from flask import send_from_directory
+from flask import render_template
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask import request
@@ -193,6 +194,17 @@ def redirect_after_login():
     if next_action == "billing":
         return redirect("/billing-portal")
     return redirect("/")
+
+# ---------- Insights ----------
+@app.route('/insights')
+@app.route('/insights/')
+def insights_index():
+    return render_template('insights/index.html')
+
+@app.route('/insights/scary-clauses')
+@app.route('/insights/scary-clauses/')
+def insights_scary_clauses():
+    return render_template('insights/scary-clauses.html')
 
 # ====================== AUTH ROUTES ======================
 @app.route('/auth/google')
