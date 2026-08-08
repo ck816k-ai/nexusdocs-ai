@@ -202,6 +202,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/how-companies-make-money-from-your-data')
+@app.route('/insights/how-companies-make-money-from-your-data/')
+def insights_data_monetization():
+    return render_template('insights/data-monetization.html')
+
 @app.route('/insights/scary-clauses')
 @app.route('/insights/scary-clauses/')
 def insights_scary_clauses():
