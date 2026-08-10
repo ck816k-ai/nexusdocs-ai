@@ -202,6 +202,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/cancellation-auto-renewal-traps')
+@app.route('/insights/cancellation-auto-renewal-traps/')
+def insights_cancellation_traps():
+    return render_template('insights/cancellation-auto-renewal-traps.html')
+
 @app.route('/insights/how-companies-make-money-from-your-data')
 @app.route('/insights/how-companies-make-money-from-your-data/')
 def insights_data_monetization():
