@@ -21,6 +21,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://nexusdocs.ai/insights/data-when-company-sold-or-shuts-down</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://nexusdocs.ai/insights/cancellation-auto-renewal-traps</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

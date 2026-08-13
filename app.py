@@ -202,6 +202,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/data-when-company-sold-or-shuts-down')
+@app.route('/insights/data-when-company-sold-or-shuts-down/')
+def insights_data_company_sold():
+    return render_template('insights/data-when-company-sold-or-shuts-down.html')
+
 @app.route('/insights/cancellation-auto-renewal-traps')
 @app.route('/insights/cancellation-auto-renewal-traps/')
 def insights_cancellation_traps():
