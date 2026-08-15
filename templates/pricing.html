@@ -180,7 +180,7 @@
   <div class="max-w-6xl mx-auto px-6">
     <div class="grid md:grid-cols-3 gap-8">
 
-      <!-- Free Tier -->
+      <!-- Free -->
       <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-8 flex flex-col">
         <h3 class="text-2xl font-semibold mb-2">Free</h3>
         <p class="text-gray-500 mb-6">Best for trying TermsGuard on a real document</p>
@@ -200,7 +200,7 @@
         </button>
       </div>
 
-      <!-- Pay-as-you-go -->
+      <!-- Pay as You Go -->
       <div class="pricing-card bg-white border-2 border-blue-600 rounded-3xl p-8 relative flex flex-col shadow-md">
         <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-sm font-bold px-6 py-1 rounded-full">
           RECOMMENDED
@@ -224,7 +224,7 @@
         </button>
       </div>
 
-      <!-- Pro Subscription -->
+      <!-- Pro -->
       <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-8 flex flex-col">
         <h3 class="text-2xl font-semibold mb-2">Pro</h3>
         <p class="text-gray-500 mb-6">Best for frequent document reviews</p>
@@ -252,125 +252,148 @@
   </div>
 </section>
 
-<p class="text-center text-xs text-gray-500 mb-3 sm:hidden">
-  Swipe sideways to compare all plans →
-</p>
-<!-- Plan comparison -->
+<!-- Compare plans: desktop table + mobile cards -->
 <section class="py-12 bg-gray-50">
   <div class="max-w-4xl mx-auto px-6">
     <h2 class="text-2xl sm:text-3xl font-semibold text-center text-gray-900 mb-8">
       Compare plans
     </h2>
 
-    <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <table class="w-full text-left text-sm sm:text-base">
+    <!-- Mobile cards -->
+    <div class="md:hidden space-y-4">
+      <div class="bg-white border-2 border-blue-600 rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-bold text-blue-600 mb-1">RECOMMENDED</p>
+        <h3 class="font-semibold text-lg text-gray-900 mb-1">Pay as You Go</h3>
+        <p class="text-gray-600 text-sm mb-4">$6.99 once · 45 credits · never expire</p>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Up to ~50,000 characters</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Summary + risk flags</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Unlimited Q&amp;A + PDF export</li>
+        </ul>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-5">
+        <h3 class="font-semibold text-lg text-gray-900 mb-1">Free</h3>
+        <p class="text-gray-600 text-sm mb-4">$0/mo · 3 analyses · ~5,000 characters</p>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Summary + risk flags</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Q&amp;A + PDF export</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> No card required</li>
+        </ul>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-5">
+        <h3 class="font-semibold text-lg text-gray-900 mb-1">Pro</h3>
+        <p class="text-gray-600 text-sm mb-4">$19/mo · unlimited analyses · ~50,000 characters</p>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Summary + risk flags</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Unlimited Q&amp;A + PDF export</li>
+          <li class="flex gap-2"><i class="fas fa-check text-green-500 mt-0.5"></i> Priority support</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <table class="w-full text-left text-sm lg:text-base min-w-[640px]">
         <thead>
           <tr class="border-b border-gray-200 bg-gray-50">
-            <th class="px-4 sm:px-6 py-4 font-semibold text-gray-900">Feature</th>
-            <th class="px-4 sm:px-6 py-4 font-semibold text-gray-900 text-center">Free</th>
-            <th class="px-4 sm:px-6 py-4 font-semibold text-blue-700 text-center">Pay as You Go</th>
-            <th class="px-4 sm:px-6 py-4 font-semibold text-gray-900 text-center">Pro</th>
+            <th class="px-4 lg:px-6 py-4 font-semibold text-gray-900">Feature</th>
+            <th class="px-4 lg:px-6 py-4 font-semibold text-gray-900 text-center">Free</th>
+            <th class="px-4 lg:px-6 py-4 font-semibold text-blue-700 text-center">Pay as You Go</th>
+            <th class="px-4 lg:px-6 py-4 font-semibold text-gray-900 text-center">Pro</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-gray-700">
           <tr>
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-tag text-blue-600 w-5 text-center"></i>
-                Price
+                <i class="fas fa-tag text-blue-600 w-5 text-center"></i> Price
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">$0/mo</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center font-medium text-blue-700">$6.99 once</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">$19/mo</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">$0/mo</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center font-medium text-blue-700">$6.99 once</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">$19/mo</td>
           </tr>
           <tr class="bg-gray-50/50">
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-file-alt text-blue-600 w-5 text-center"></i>
-                Analyses
+                <i class="fas fa-file-alt text-blue-600 w-5 text-center"></i> Analyses
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">3 / month</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center font-medium text-blue-700">45 credits</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">Unlimited</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">3 / month</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center font-medium text-blue-700">45 credits</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">Unlimited</td>
           </tr>
           <tr>
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-ruler-horizontal text-blue-600 w-5 text-center"></i>
-                Document length
+                <i class="fas fa-ruler-horizontal text-blue-600 w-5 text-center"></i> Document length
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">~5,000 chars</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center font-medium text-blue-700">~50,000 chars</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">~50,000 chars</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">~5,000 chars</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center font-medium text-blue-700">~50,000 chars</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">~50,000 chars</td>
           </tr>
           <tr class="bg-gray-50/50">
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-align-left text-blue-600 w-5 text-center"></i>
-                Plain-English summary
+                <i class="fas fa-align-left text-blue-600 w-5 text-center"></i> Plain-English summary
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
           </tr>
           <tr>
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-shield-alt text-blue-600 w-5 text-center"></i>
-                Privacy &amp; legal risk flags
+                <i class="fas fa-shield-alt text-blue-600 w-5 text-center"></i> Privacy &amp; legal risk flags
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
           </tr>
           <tr class="bg-gray-50/50">
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-comments text-blue-600 w-5 text-center"></i>
-                Q&amp;A on document
+                <i class="fas fa-comments text-blue-600 w-5 text-center"></i> Q&amp;A on document
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">Yes</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center font-medium text-blue-700">Unlimited</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">Unlimited</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">Yes</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center font-medium text-blue-700">Unlimited</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">Unlimited</td>
           </tr>
           <tr>
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-file-pdf text-blue-600 w-5 text-center"></i>
-                PDF export
+                <i class="fas fa-file-pdf text-blue-600 w-5 text-center"></i> PDF export
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
           </tr>
           <tr class="bg-gray-50/50">
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-clock text-blue-600 w-5 text-center"></i>
-                Credits expire?
+                <i class="fas fa-clock text-blue-600 w-5 text-center"></i> Credits expire?
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">Resets monthly</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center font-medium text-blue-700">Never</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center">Monthly plan</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">Resets monthly</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center font-medium text-blue-700">Never</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center">Monthly plan</td>
           </tr>
           <tr>
-            <td class="px-4 sm:px-6 py-3.5">
+            <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-headset text-blue-600 w-5 text-center"></i>
-                Priority support
+                <i class="fas fa-headset text-blue-600 w-5 text-center"></i> Priority support
               </span>
             </td>
-            <td class="px-4 sm:px-6 py-3.5 text-center text-gray-400">—</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center text-gray-400">—</td>
-            <td class="px-4 sm:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center text-gray-400">—</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center text-gray-400">—</td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
           </tr>
         </tbody>
       </table>
@@ -378,7 +401,7 @@
   </div>
 </section>
 
-<!-- FAQ Section -->
+<!-- FAQ -->
 <section class="py-20 bg-white">
   <div class="max-w-4xl mx-auto px-6">
     <h2 class="text-4xl font-semibold text-center mb-12">Frequently Asked Questions</h2>
@@ -424,18 +447,10 @@
       <a href="/terms.html" target="_blank" class="hover:text-white">Terms of Service</a>
     </p>
     <div class="mt-5 flex items-center justify-center gap-5">
-      <a href="https://x.com/nexusdocsai"
-         target="_blank"
-         rel="noopener noreferrer"
-         aria-label="NexusDocs on X"
-         class="text-gray-400 hover:text-white text-xl transition-colors">
+      <a href="https://x.com/nexusdocsai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on X" class="text-gray-400 hover:text-white text-xl transition-colors">
         <i class="fab fa-x-twitter"></i>
       </a>
-      <a href="https://www.linkedin.com/company/nexusdocs-ai"
-         target="_blank"
-         rel="noopener noreferrer"
-         aria-label="NexusDocs on LinkedIn"
-         class="text-gray-400 hover:text-white text-xl transition-colors">
+      <a href="https://www.linkedin.com/company/nexusdocs-ai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on LinkedIn" class="text-gray-400 hover:text-white text-xl transition-colors">
         <i class="fab fa-linkedin-in"></i>
       </a>
     </div>
@@ -447,9 +462,7 @@
     try {
       const response = await fetch('/create-checkout-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ price_id: priceId })
       });
       const data = await response.json();
