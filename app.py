@@ -176,6 +176,10 @@ def sitemap():
 def llms_txt():
     return send_from_directory('.', 'llms.txt', mimetype='text/plain')
 
+@app.route('/d50792e898e5425db44c3fe3babe6f31.txt')
+def indexnow_key_file():
+    return send_from_directory('.', 'd50792e898e5425db44c3fe3babe6f31.txt', mimetype='text/plain')
+
 @app.route('/tg_app')
 @app.route('/tg_app.html')
 @app.route('/app')
