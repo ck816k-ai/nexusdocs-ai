@@ -202,6 +202,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/chat-vs-termsguard')
+@app.route('/insights/chat-vs-termsguard/')
+def insights_chat_vs_termsguard():
+    return render_template('insights/chat-vs-termsguard.html')
+
 @app.route('/insights/data-when-company-sold-or-shuts-down')
 @app.route('/insights/data-when-company-sold-or-shuts-down/')
 def insights_data_company_sold():

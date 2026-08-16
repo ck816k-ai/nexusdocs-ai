@@ -9,6 +9,7 @@
 - [App](https://nexusdocs.ai/tg_app): The analysis tool (login required)
 
 ## Insights articles
+- [Why Pasting a Contract into Chat Isn’t the Same as Using TermsGuard](https://nexusdocs.ai/insights/chat-vs-termsguard)
 - [What Happens to Your Data When a Company Is Sold or Shuts Down](https://nexusdocs.ai/insights/data-when-company-sold-or-shuts-down)
 - [Cancellation and Auto-Renewal Traps in Terms of Service](https://nexusdocs.ai/insights/cancellation-auto-renewal-traps)
 - [How Most Terms of Service Let Companies Make Money From Your Data](https://nexusdocs.ai/insights/how-companies-make-money-from-your-data)
