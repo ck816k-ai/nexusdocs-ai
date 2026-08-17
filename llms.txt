@@ -7,6 +7,7 @@
 - [Pricing](https://nexusdocs.ai/pricing.html): Free and paid plans
 - [Insights](https://nexusdocs.ai/insights): Practical guides on contracts and privacy policies
 - [App](https://nexusdocs.ai/tg_app): The analysis tool (login required)
+- [CoverClear](https://nexusdocs.ai/coverclear.html): Insurance policy analysis in plain English
 
 ## Insights articles
 - [Why Pasting a Contract into Chat Isn’t the Same as Using TermsGuard](https://nexusdocs.ai/insights/chat-vs-termsguard)
