@@ -125,11 +125,20 @@ def index():
 
 
 @app.route('/termguard.html')   # or whatever the path is
+@app.route('/termguard.html')
 def termguard():
     email = session.get('email')
     if not email and current_user.is_authenticated:
         email = getattr(current_user, 'email', None)
     return render_template('termguard.html', email=email)
+
+@app.route('/coverclear')
+@app.route('/coverclear.html')
+def coverclear():
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('coverclear.html', email=email)
 
 @app.route('/pricing.html')
 def pricing():
@@ -185,13 +194,27 @@ def indexnow_key_file():
 @app.route('/app')
 @login_required
 def tg_app():
-    return render_template('tg_app.html')
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('tg_app.html', email=email)
+
+@app.route('/cc_app')
+@app.route('/cc_app.html')
+@login_required
+def cc_app():
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('cc_app.html', email=email)
 
 def redirect_after_login():
     next_action = session.pop("login_next", None) or "home"
 
     if next_action == "app":
         return redirect("/tg_app")
+    if next_action == "coverclear":
+        return redirect("/cc_app")
     if next_action == "credits":
         return redirect("/create-checkout?plan=credits")
     if next_action == "pro":

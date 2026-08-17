@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5D49483KHV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5D49483KHV');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoverClear – Plain-English Insurance Policy Analysis | NexusDocs</title>
+<meta name="description" content="Upload an insurance policy and get a plain-English summary, coverage gaps, exclusion flags, and Q&amp;A. CoverClear by NexusDocs.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://nexusdocs.ai/coverclear.html">
+<link rel="icon" type="image/png" href="/static/images/logo-icon.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NexusDocs">
+<meta property="og:title" content="CoverClear – Understand Insurance Policies in Plain English">
+<meta property="og:description" content="Summaries, coverage gaps, exclusion flags, and Q&amp;A for insurance policies. Try free.">
+<meta property="og:url" content="https://nexusdocs.ai/coverclear.html">
+<meta property="og:image" content="https://nexusdocs.ai/static/images/logo-icon.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CoverClear – Understand Insurance Policies in Plain English">
+<meta name="twitter:description" content="Summaries, coverage gaps, exclusion flags, and Q&amp;A for insurance policies.">
+<meta name="twitter:image" content="https://nexusdocs.ai/static/images/logo-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CoverClear",
+  "url": "https://nexusdocs.ai/coverclear.html",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "AI tool that turns insurance policies into plain-English summaries, coverage flags, and Q&A.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "NexusDocs",
+    "url": "https://nexusdocs.ai/"
+  }
+}
+</script>
+</head>
+<body class="bg-white">
+
+<!-- Navigation -->
+<nav class="bg-white border-b sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-y-3">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/static/images/logo-icon.png"
+           alt="NexusDocs.ai"
+           class="h-9 w-9 sm:h-10 sm:w-10 rounded-full">
+      <span class="text-xl sm:text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+    </a>
+
+    <div class="flex flex-wrap items-center justify-end gap-x-5 gap-y-2">
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm sm:text-base">
+        <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Home</a>
+
+        <div class="relative group">
+          <a href="#" class="text-gray-600 hover:text-gray-900 flex items-center gap-1">
+            Products
+            <i class="fas fa-chevron-down text-xs"></i>
+          </a>
+          <div class="absolute hidden group-hover:block pt-2 left-0 z-50">
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-3 w-64">
+              <a href="/termguard.html" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl">
+                <img src="/static/images/coverclear-logo.png" alt="CoverClear" class="w-10 h-10 object-contain">
+                <div>
+                  <div class="font-semibold text-sm">TermsGuard</div>
+                  <div class="text-xs text-gray-500">Contract &amp; Terms Analysis</div>
+                </div>
+              </a>
+              <a href="/coverclear.html" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl">
+                <img src="/static/images/coverclear-logo.png" alt="CoverClear" class="mx-auto h-24 mb-8">
+                     onerror="this.style.display='none'">
+                <div>
+                  <div class="font-semibold text-sm">CoverClear</div>
+                  <div class="text-xs text-gray-500">Insurance Policy Analysis</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <a href="/pricing.html" class="text-gray-600 hover:text-gray-900 font-medium">Pricing</a>
+        <a href="/insights" class="text-gray-600 hover:text-gray-900 font-medium">Insights</a>
+        <a href="/about.html" class="text-gray-600 hover:text-gray-900 font-medium">About</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        {% if email %}
+          <span class="text-sm text-gray-600 hidden sm:inline">Logged in as {{ email }}</span>
+          <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">Open App</a>
+          <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">Log out</a>
+        {% else %}
+          <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">Log in</a>
+          <a href="/login?next=coverclear" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
+            Get Started Free
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-20">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <img src="/static/images/coverclear-logo.png"
+         alt="CoverClear – AI insurance policy analysis by NexusDocs"
+         class="mx-auto h-24 mb-8"
+         width="240"
+         height="96">
+    <p class="text-sm font-medium text-blue-100 tracking-wide uppercase mb-3">
+      CoverClear by NexusDocs
+    </p>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-6">
+      Understand Insurance Policies in Plain English
+    </h1>
+    <p class="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto mb-4">
+      AI-powered summaries, coverage gaps, and exclusion flags — before you buy, renew, or file a claim.
+    </p>
+    <p class="text-base text-blue-100/90 max-w-xl mx-auto mb-10">
+      Upload a homeowners, renters, auto, or small-business policy and get a clear breakdown in minutes.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      {% if email %}
+      <a href="/cc_app"
+         class="px-8 py-3.5 bg-white text-blue-700 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+        Open CoverClear
+      </a>
+      {% else %}
+      <a href="/login?next=coverclear"
+         class="px-8 py-3.5 bg-white text-blue-700 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+        Try CoverClear Free
+      </a>
+      {% endif %}
+      <a href="/pricing.html"
+         class="px-8 py-3.5 border-2 border-white text-white rounded-full font-semibold hover:bg-white/10 transition-colors">
+        See Pricing
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-14">
+      Powerful Policy Features
+    </h2>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">📄</div>
+        <h3 class="text-xl font-semibold mb-2">PDF &amp; Text Upload</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Upload a policy PDF or paste policy text. Works with homeowners, renters, auto, and more.
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">📝</div>
+        <h3 class="text-xl font-semibold mb-2">Plain-English Summary</h3>
+        <p class="text-gray-600 leading-relaxed">
+          See what you’re actually covered for — without reading dozens of pages of legal language.
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">⚠️</div>
+        <h3 class="text-xl font-semibold mb-2">Exclusion &amp; Gap Flags</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Spot exclusions, limits, waiting periods, and duties after loss that often surprise people.
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">💬</div>
+        <h3 class="text-xl font-semibold mb-2">Ask About Your Policy</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Ask questions like “Am I covered if…?” and get answers grounded in your document.
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">📋</div>
+        <h3 class="text-xl font-semibold mb-2">PDF Report</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Export a clean summary you can save or share when comparing policies or talking to an agent.
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="text-4xl mb-4">🔒</div>
+        <h3 class="text-xl font-semibold mb-2">Privacy-First</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Documents are processed for analysis and not kept as a permanent archive of your policies.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-4xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-12">
+      How CoverClear Works
+    </h2>
+    <div class="space-y-8">
+      <div class="flex gap-5 items-start">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+        <div>
+          <h3 class="text-xl font-semibold mb-1">Upload your policy</h3>
+          <p class="text-gray-600">PDF or pasted text from homeowners, renters, auto, life, or small-business coverage.</p>
+        </div>
+      </div>
+      <div class="flex gap-5 items-start">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">2</div>
+        <div>
+          <h3 class="text-xl font-semibold mb-1">Get a clear summary</h3>
+          <p class="text-gray-600">CoverClear explains coverage, limits, and key conditions in plain English.</p>
+        </div>
+      </div>
+      <div class="flex gap-5 items-start">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">3</div>
+        <div>
+          <h3 class="text-xl font-semibold mb-1">Review flags and ask questions</h3>
+          <p class="text-gray-600">See exclusion and gap highlights, then ask follow-ups before you buy, renew, or claim.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who it's for -->
+<section class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-12">
+      Who CoverClear Helps
+    </h2>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="border border-gray-200 rounded-2xl p-6">
+        <h3 class="font-semibold text-lg mb-2">Homeowners &amp; renters</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Understand what’s covered before renewal — and what isn’t.
+        </p>
+      </div>
+      <div class="border border-gray-200 rounded-2xl p-6">
+        <h3 class="font-semibold text-lg mb-2">Drivers &amp; families</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Make sense of auto and personal policies without legal jargon.
+        </p>
+      </div>
+      <div class="border border-gray-200 rounded-2xl p-6">
+        <h3 class="font-semibold text-lg mb-2">Small businesses</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Get a clearer read on commercial or package policies before you sign.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Plans at a glance -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl font-semibold text-center mb-3">Plans at a glance</h2>
+    <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+      Same simple pricing as TermsGuard. Start free, then upgrade when you need more analyses.
+    </p>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-gray-900 mb-1">Free</h3>
+        <p class="text-sm text-gray-500 mb-4">Try the experience</p>
+        <ul class="space-y-2 text-gray-700 text-sm">
+          <li><span class="font-medium">Analyses:</span> 3 per month</li>
+          <li><span class="font-medium">Document size:</span> Short (~5,000 characters)</li>
+          <li><span class="font-medium">Best for:</span> Trying CoverClear</li>
+        </ul>
+      </div>
+      <div class="bg-white border-2 border-blue-600 rounded-2xl p-6 shadow-sm">
+        <p class="text-xs font-bold text-blue-600 uppercase tracking-wide mb-2">Recommended</p>
+        <h3 class="text-xl font-semibold text-gray-900 mb-1">Pay as You Go</h3>
+        <p class="text-sm text-gray-500 mb-4">$6.99 · 45 analyses</p>
+        <ul class="space-y-2 text-gray-700 text-sm">
+          <li><span class="font-medium">Analyses:</span> 45 credits (never expire)</li>
+          <li><span class="font-medium">Document size:</span> Longer policies</li>
+          <li><span class="font-medium">Best for:</span> Occasional reviews</li>
+        </ul>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-gray-900 mb-1">Pro</h3>
+        <p class="text-sm text-gray-500 mb-4">$19 / month</p>
+        <ul class="space-y-2 text-gray-700 text-sm">
+          <li><span class="font-medium">Analyses:</span> Unlimited</li>
+          <li><span class="font-medium">Document size:</span> Longer policies</li>
+          <li><span class="font-medium">Best for:</span> Frequent use</li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center mt-10">
+      <a href="/pricing.html" class="inline-flex items-center gap-2 text-blue-600 font-medium hover:underline">
+        View full pricing <i class="fas fa-arrow-right text-sm"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="py-12 bg-white">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <p class="text-sm text-gray-500 leading-relaxed">
+      CoverClear helps you understand insurance documents in plain English. It is not an insurance company,
+      broker, or law firm, and does not provide insurance or legal advice. Always confirm coverage details
+      with your insurer or a licensed professional.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-gradient-to-r from-blue-700 to-blue-600 text-white">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-4">Know what you’re covered for</h2>
+    <p class="text-blue-100 mb-8 text-lg">
+      Start with a free analysis — no card required.
+    </p>
+    <a href="/login?next=coverclear"
+       class="inline-block px-8 py-3.5 bg-white text-blue-700 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+      Try CoverClear Free
+    </a>
+  </div>
+</section>
+
+<footer class="bg-gray-900 text-gray-400 py-12">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+    <p class="mt-3 text-sm">
+      <a href="/privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a>
+      <span class="mx-2">|</span>
+      <a href="/terms.html" target="_blank" class="hover:text-white">Terms of Service</a>
+    </p>
+    <div class="mt-5 flex items-center justify-center gap-5">
+      <a href="https://x.com/nexusdocsai" target="_blank" rel="noopener noreferrer"
+         aria-label="NexusDocs on X" class="text-gray-400 hover:text-white text-xl transition-colors">
+        <i class="fab fa-x-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/company/nexusdocs-ai" target="_blank" rel="noopener noreferrer"
+         aria-label="NexusDocs on LinkedIn" class="text-gray-400 hover:text-white text-xl transition-colors">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

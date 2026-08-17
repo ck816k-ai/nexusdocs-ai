@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>CoverClear – Policy workspace | NexusDocs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .cc-bg { background: linear-gradient(160deg, #0f766e 0%, #134e4a 45%, #0f172a 100%); }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<!-- Top bar – different from TermsGuard -->
+<header class="cc-bg text-white">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-white/80 hover:text-white text-sm">NexusDocs</a>
+      <span class="text-white/40">/</span>
+      <div class="flex items-center gap-2">
+        <img src="/static/images/coverclear-logo.png" alt="CoverClear" class="h-8 w-auto bg-white rounded-lg p-1">
+        <div>
+          <div class="font-semibold leading-tight">CoverClear</div>
+          <div class="text-xs text-teal-100/80">Policy workspace</div>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <a href="/coverclear.html" class="text-teal-100 hover:text-white">Product</a>
+      <a href="/tg_app" class="text-teal-100 hover:text-white">TermsGuard</a>
+      <a href="/pricing.html" class="text-teal-100 hover:text-white">Credits</a>
+      <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Log out</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Understand your coverage</h1>
+    <p class="text-slate-600 mt-1">Upload a policy. Get plain-English coverage, exclusions, and limits — not a legal memo.</p>
+  </div>
+
+  <!-- Policy type chips (CoverClear-specific) -->
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button type="button" class="policy-type px-3 py-1.5 rounded-full text-sm border border-teal-600 bg-teal-50 text-teal-800 font-medium" data-type="homeowners">Homeowners</button>
+    <button type="button" class="policy-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-teal-500" data-type="renters">Renters</button>
+    <button type="button" class="policy-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-teal-500" data-type="auto">Auto</button>
+    <button type="button" class="policy-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-teal-500" data-type="business">Small business</button>
+    <button type="button" class="policy-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-teal-500" data-type="other">Other</button>
+  </div>
+
+  <!-- Two-column workspace -->
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- LEFT: input -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+      <h2 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+        <i class="fas fa-file-contract text-teal-600"></i> Your policy
+      </h2>
+
+      <label class="block border-2 border-dashed border-slate-200 hover:border-teal-400 rounded-xl p-6 text-center cursor-pointer transition-colors mb-4">
+        <input type="file" id="policyFile" accept=".pdf,.txt" class="hidden">
+        <i class="fas fa-cloud-upload-alt text-2xl text-teal-600 mb-2"></i>
+        <p class="text-sm font-medium text-slate-700">Drop PDF or click to upload</p>
+        <p class="text-xs text-slate-500 mt-1">PDF or paste text below</p>
+      </label>
+
+      <textarea id="policyText" rows="12"
+        class="w-full rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-100 p-3 text-sm text-slate-800"
+        placeholder="Or paste policy text here…"></textarea>
+
+      <button id="analyzeBtn" type="button"
+        class="mt-4 w-full py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-colors">
+        Analyze coverage
+      </button>
+      <p class="text-xs text-slate-500 mt-3 text-center">
+        Not insurance advice. Confirm details with your insurer or a licensed professional.
+      </p>
+    </section>
+
+    <!-- RIGHT: results -->
+    <section class="space-y-4">
+      <div id="emptyState" class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500">
+        <i class="fas fa-shield-alt text-3xl text-teal-600/40 mb-3"></i>
+        <p class="font-medium text-slate-700">Coverage breakdown appears here</p>
+        <p class="text-sm mt-1">Summary, exclusions, and limits after you analyze a policy.</p>
+      </div>
+
+      <div id="results" class="hidden space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+          <h3 class="text-sm font-semibold text-teal-700 uppercase tracking-wide mb-2">Coverage summary</h3>
+          <div id="summaryOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+          <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2">Exclusions &amp; gaps</h3>
+          <div id="flagsOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+          <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Ask about this policy</h3>
+          <div class="flex gap-2">
+            <input id="qaInput" type="text" placeholder="e.g. Am I covered for water damage?"
+              class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-100">
+            <button id="qaBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium hover:bg-slate-900">Ask</button>
+          </div>
+          <div id="qaOut" class="mt-3 text-sm text-slate-700 whitespace-pre-wrap"></div>
+        </div>
+      </div>
+
+      <div id="loading" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center">
+        <i class="fas fa-circle-notch fa-spin text-teal-600 text-2xl mb-2"></i>
+        <p class="text-slate-600 text-sm">Reading your policy…</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+  // Policy type toggle (UI only for now)
+  let policyType = 'homeowners';
+  document.querySelectorAll('.policy-type').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.policy-type').forEach(b => {
+        b.className = 'policy-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-teal-500';
+      });
+      btn.className = 'policy-type px-3 py-1.5 rounded-full text-sm border border-teal-600 bg-teal-50 text-teal-800 font-medium';
+      policyType = btn.dataset.type;
+    });
+  });
+
+  // Wire analyze to your backend when ready, e.g. POST /analyze_coverclear
+  document.getElementById('analyzeBtn').addEventListener('click', async () => {
+    const text = document.getElementById('policyText').value.trim();
+    if (!text) { alert('Paste policy text or upload a file first.'); return; }
+
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('loading').classList.remove('hidden');
+
+    try {
+      const res = await fetch('/analyze_coverclear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, policy_type: policyType })
+      });
+      const data = await res.json();
+      document.getElementById('loading').classList.add('hidden');
+
+      if (!res.ok) {
+        alert(data.error || 'Analysis failed');
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('summaryOut').textContent = data.summary || '';
+      document.getElementById('flagsOut').textContent = data.flags || '';
+      document.getElementById('results').classList.remove('hidden');
+    } catch (e) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
+      alert('Could not reach server. Try again.');
+    }
+  });
+</script>
+</body>
+</html>
