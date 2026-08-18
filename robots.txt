@@ -1,48 +1,150 @@
 User-agent: *
 Allow: /
-
 # Public marketing pages are allowed by default
 # Do not crawl the app or auth flows
+Disallow: /tg_app
 Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
 Disallow: /app
 Disallow: /login
 Disallow: /auth/
 Disallow: /analyze
+Disallow: /analyze_coverclear
 Disallow: /set_tier
 Disallow: /debug_tier
 
 # Allow major AI search & citation crawlers
 User-agent: GPTBot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Claude-User
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Bingbot
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /tg_app
+Disallow: /tg_app.html
+Disallow: /cc_app
+Disallow: /cc_app.html
+Disallow: /app
+Disallow: /login
+Disallow: /auth/
+Disallow: /analyze
+Disallow: /analyze_coverclear
 
 Sitemap: https://nexusdocs.ai/sitemap.xml
