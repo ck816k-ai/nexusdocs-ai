@@ -28,6 +28,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+    <url>
+    <loc>https://nexusdocs.ai/insights/nda-clauses-to-watch</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://nexusdocs.ai/insights/chat-vs-termsguard</loc>
     <lastmod>2026-08-16</lastmod>

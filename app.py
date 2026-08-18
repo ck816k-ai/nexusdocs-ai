@@ -229,6 +229,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/nda-clauses-to-watch')
+@app.route('/insights/nda-clauses-to-watch/')
+def insights_nda_clauses():
+    return render_template('insights/nda-clauses-to-watch.html')
+
 @app.route('/insights/chat-vs-termsguard')
 @app.route('/insights/chat-vs-termsguard/')
 def insights_chat_vs_termsguard():
