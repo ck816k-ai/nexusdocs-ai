@@ -154,6 +154,10 @@
       return;
     }
 
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = 'Analyzing…';
+
     document.getElementById('emptyState').classList.add('hidden');
     document.getElementById('results').classList.add('hidden');
     document.getElementById('qaOut').textContent = '';
@@ -182,10 +186,16 @@
       document.getElementById('flagsOut').textContent = flagsData.result || '';
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('results').classList.remove('hidden');
+
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Analyze again';
     } catch (e) {
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('emptyState').classList.remove('hidden');
       alert(e.message || 'Could not reach server. Try again.');
+
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Analyze coverage';
     }
   });
 
