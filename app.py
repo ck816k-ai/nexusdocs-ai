@@ -691,6 +691,175 @@ def analyze():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+# ====================== COVERCLEAR ======================
+@app.route('/analyze_coverclear', methods=['POST'])
+@login_required
+def analyze_coverclear():
+    try:
+        data = request.json or {}
+        user_id = current_user.id
+        prompt_type = data.get('type', 'summary')
+        raw_text = data.get('text', '') or ''
+        policy_type = (data.get('policy_type') or 'other').strip().lower()
+
+        allowed_types = {'homeowners', 'renters', 'auto', 'business', 'other'}
+        if policy_type not in allowed_types:
+            policy_type = 'other'
+
+        user = get_user_data(user_id)
+        tier = user.get("tier", "free")
+        analyses_used = user.get("analyses_used", 0)
+
+        print(f"DEBUG: CoverClear {current_user.email} | Tier: {tier} | Credits used: {analyses_used} | Policy: {policy_type}")
+
+        TIER_LIMITS = {
+            "free": 3,
+            "credits": 45,
+            "pro": 99999
+        }
+        TIER_CHAR_LIMITS = {
+            "free": 5000,
+            "credits": 50000,
+            "pro": 50000
+        }
+        TIER_MODELS = {
+            "free": "grok-4.3",
+            "credits": "grok-4.5",
+            "pro": "grok-4.5"
+        }
+
+        limit = TIER_LIMITS.get(tier, 3)
+        char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
+        model = TIER_MODELS.get(tier, "grok-4.3")
+
+        truncated = len(raw_text) > char_limit
+        text = raw_text[:char_limit]
+
+        policy_hint = f"The user selected policy type: {policy_type}."
+        system_prompt = (
+            "You are a clear insurance explainer for regular people and small businesses. "
+            "Use simple language. Explain only what is in the policy text. "
+            "If something is unclear or missing, say so. "
+            "This is not insurance advice and not a substitute for the insurer or a licensed professional. "
+            "Prefer the document text over the selected policy type if they conflict, and mention the mismatch."
+        )
+
+        if prompt_type == 'question':
+            q = data.get('question', '')
+            user_prompt = (
+                f"{policy_hint}\n"
+                f"Answer this question in plain English using only the policy text: {q}\n\n"
+                f"Policy:\n{text}"
+            )
+            credit_cost = 0
+        elif prompt_type == 'risks':
+            user_prompt = (
+                f"{policy_hint}\n"
+                "Extract exclusions, coverage gaps, limits, waiting periods, deductibles, "
+                "and duties after a loss. Use short bullet points. "
+                "Say what is typically NOT covered if the policy states it.\n\n"
+                f"Policy:\n{text}"
+            )
+            credit_cost = 0
+        else:
+            user_prompt = (
+                f"{policy_hint}\n"
+                "Summarize this insurance policy in plain English. Cover:\n"
+                "- What is insured\n"
+                "- Main coverages\n"
+                "- Important limits / deductibles\n"
+                "- Key exclusions\n"
+                "- What the policyholder must do after a loss\n\n"
+                f"Policy:\n{text}"
+            )
+            credit_cost = 1
+
+        if credit_cost > 0 and analyses_used >= limit:
+            return jsonify({
+                "error": f"You have used all your analyses ({analyses_used}/{limit}). Please upgrade your plan.",
+                "limit_reached": True,
+                "analyses_used": analyses_used,
+                "limit": limit,
+                "remaining": 0,
+                "tier": tier
+            }), 403
+
+        if credit_cost > 0 and analyses_used + credit_cost > limit:
+            return jsonify({
+                "error": f"Not enough analyses remaining. You need {credit_cost}.",
+                "limit_reached": True,
+                "analyses_used": analyses_used,
+                "limit": limit,
+                "remaining": max(0, limit - analyses_used),
+                "tier": tier
+            }), 403
+
+        try:
+            response = requests.post(
+                "https://api.x.ai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {GROK_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.4
+                },
+                timeout=90
+            )
+            response.raise_for_status()
+
+        except requests.exceptions.Timeout:
+            return jsonify({
+                "error": "Analysis took too long. Please try a shorter document or try again."
+            }), 504
+
+        except requests.exceptions.RequestException:
+            return jsonify({
+                "error": "Failed to reach AI service. Please try again."
+            }), 502
+
+        result = response.json()
+        content = (
+            result.get('choices', [{}])[0]
+            .get('message', {})
+            .get('content', str(result))
+        )
+
+        if prompt_type == 'summary':
+            new_count = analyses_used + credit_cost
+            supabase.table("user_usage").update({
+                "analyses_used": new_count,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("user_id", user_id).execute()
+        else:
+            new_count = analyses_used
+
+        remaining = max(0, limit - new_count)
+
+        return jsonify({
+            "result": content,
+            "summary": content if prompt_type == 'summary' else None,
+            "flags": content if prompt_type == 'risks' else None,
+            "tier": tier,
+            "analyses_used": new_count,
+            "limit": limit,
+            "remaining": remaining,
+            "truncated": truncated,
+            "char_limit": char_limit,
+            "model": model,
+            "policy_type": policy_type
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/my_usage', methods=['GET'])
 @login_required
 def my_usage():

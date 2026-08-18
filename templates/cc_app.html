@@ -120,8 +120,8 @@
 </main>
 
 <script>
-  // Policy type toggle (UI only for now)
   let policyType = 'homeowners';
+
   document.querySelectorAll('.policy-type').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.policy-type').forEach(b => {
@@ -132,39 +132,93 @@
     });
   });
 
-  // Wire analyze to your backend when ready, e.g. POST /analyze_coverclear
+  document.getElementById('policyFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      alert('PDF text extraction is coming next. For now, paste the policy text or upload a .txt file.');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      document.getElementById('policyText').value = reader.result || '';
+    };
+    reader.readAsText(file);
+  });
+
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const text = document.getElementById('policyText').value.trim();
-    if (!text) { alert('Paste policy text or upload a file first.'); return; }
+    if (!text) {
+      alert('Paste policy text or upload a .txt file first.');
+      return;
+    }
 
     document.getElementById('emptyState').classList.add('hidden');
     document.getElementById('results').classList.add('hidden');
+    document.getElementById('qaOut').textContent = '';
     document.getElementById('loading').classList.remove('hidden');
+
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+
+      const summaryRes = await fetch('/analyze_coverclear', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ text, policy_type: policyType, type: 'summary' })
+      });
+      const summaryData = await summaryRes.json();
+      if (!summaryRes.ok) throw new Error(summaryData.error || 'Summary failed');
+
+      const flagsRes = await fetch('/analyze_coverclear', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ text, policy_type: policyType, type: 'risks' })
+      });
+      const flagsData = await flagsRes.json();
+      if (!flagsRes.ok) throw new Error(flagsData.error || 'Flags failed');
+
+      document.getElementById('summaryOut').textContent = summaryData.result || '';
+      document.getElementById('flagsOut').textContent = flagsData.result || '';
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+    } catch (e) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
+      alert(e.message || 'Could not reach server. Try again.');
+    }
+  });
+
+  document.getElementById('qaBtn').addEventListener('click', async () => {
+    const text = document.getElementById('policyText').value.trim();
+    const question = document.getElementById('qaInput').value.trim();
+    if (!text) {
+      alert('Analyze or paste a policy first.');
+      return;
+    }
+    if (!question) return;
+
+    document.getElementById('qaOut').textContent = 'Thinking…';
 
     try {
       const res = await fetch('/analyze_coverclear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, policy_type: policyType })
+        body: JSON.stringify({
+          text,
+          policy_type: policyType,
+          type: 'question',
+          question
+        })
       });
       const data = await res.json();
-      document.getElementById('loading').classList.add('hidden');
-
-      if (!res.ok) {
-        alert(data.error || 'Analysis failed');
-        document.getElementById('emptyState').classList.remove('hidden');
-        return;
-      }
-
-      document.getElementById('summaryOut').textContent = data.summary || '';
-      document.getElementById('flagsOut').textContent = data.flags || '';
-      document.getElementById('results').classList.remove('hidden');
+      if (!res.ok) throw new Error(data.error || 'Question failed');
+      document.getElementById('qaOut').textContent = data.result || '';
     } catch (e) {
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('emptyState').classList.remove('hidden');
-      alert('Could not reach server. Try again.');
+      document.getElementById('qaOut').textContent = e.message || 'Could not answer that question.';
     }
   });
 </script>
+
 </body>
 </html>
