@@ -117,24 +117,27 @@
             <!-- Login buttons -->
             <!-- Auth buttons -->
 <div class="flex items-center gap-2">
-    {% if email %}
-        <span class="text-sm text-gray-600 hidden sm:inline">
-            Logged in as {{ email }}
-        </span>
-        <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-            Open TermsGuard
-        </a>
-        <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
-            Log out
-        </a>
-    {% else %}
-        <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-            Log in
-        </a>
-        <a href="/pricing.html" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
-            Get Started Free
-        </a>
-    {% endif %}
+  {% if email %}
+    <span class="text-sm text-gray-600 hidden sm:inline">
+      Logged in as {{ email }}
+    </span>
+    <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm whitespace-nowrap">
+      Open TermsGuard
+    </a>
+    <a href="/cc_app" class="px-3 py-1.5 text-teal-700 hover:bg-teal-50 rounded-lg font-medium text-sm whitespace-nowrap">
+      Open CoverClear
+    </a>
+    <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
+      Log out
+    </a>
+  {% else %}
+    <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
+      Log in
+    </a>
+    <a href="/login?next=app" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
+      Get Started Free
+    </a>
+  {% endif %}
 </div>
         </div>
     </div>
@@ -187,11 +190,8 @@
         </a>
       </div>
 
-      <!-- CoverClear – prelaunch -->
-      <div class="border border-gray-200 rounded-3xl p-8 sm:p-10 hover:shadow-2xl transition-all text-center bg-slate-50 relative">
-        <span class="absolute top-4 right-4 text-xs font-semibold uppercase tracking-wide bg-teal-100 text-teal-800 px-3 py-1 rounded-full">
-          Coming soon
-        </span>
+      <!-- CoverClear -->
+      <div class="border border-gray-200 rounded-3xl p-8 sm:p-10 hover:shadow-2xl transition-all text-center">
         <img src="/static/images/coverclear-logo.png"
              alt="CoverClear"
              class="mx-auto h-28 w-auto object-contain mb-6">
@@ -200,8 +200,8 @@
           Understand insurance policies in plain English — coverage, exclusions, and limits before you buy, renew, or file a claim.
         </p>
         <a href="/coverclear.html"
-           class="w-full py-4 bg-white border border-gray-300 text-gray-800 rounded-2xl font-medium hover:bg-gray-50 block">
-          Learn more
+           class="w-full py-4 bg-teal-600 text-white rounded-2xl font-medium hover:bg-teal-700 block">
+          Learn More
         </a>
       </div>
     </div>
