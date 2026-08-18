@@ -76,6 +76,10 @@
         class="mt-4 w-full py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-colors">
         Analyze coverage
       </button>
+	  <button id="newAnalysisBtn" type="button"
+		class="mt-2 w-full py-3 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition-colors">
+		New analysis
+	  </button>
       <p class="text-xs text-slate-500 mt-3 text-center">
         Not insurance advice. Confirm details with your insurer or a licensed professional.
       </p>
@@ -228,6 +232,23 @@
       document.getElementById('qaOut').textContent = e.message || 'Could not answer that question.';
     }
   });
+    document.getElementById('newAnalysisBtn').addEventListener('click', () => {
+    document.getElementById('policyFile').value = '';
+    document.getElementById('policyText').value = '';
+    document.getElementById('qaInput').value = '';
+    document.getElementById('qaOut').textContent = '';
+    document.getElementById('summaryOut').textContent = '';
+    document.getElementById('flagsOut').textContent = '';
+
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('emptyState').classList.remove('hidden');
+
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = 'Analyze coverage';
+  });
+</script>
 </script>
 
 </body>
