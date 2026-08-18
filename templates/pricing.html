@@ -120,25 +120,28 @@
       </div>
 
       <div class="flex items-center gap-2">
-        {% if email %}
-          <span class="text-sm text-gray-600 hidden sm:inline">
-            Logged in as {{ email }}
-          </span>
-          <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-            Open TermsGuard
-          </a>
-          <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
-            Log out
-          </a>
-        {% else %}
-          <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-            Log in
-          </a>
-          <a href="/login?next=app" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
-            Get Started Free
-          </a>
-        {% endif %}
-      </div>
+  {% if email %}
+    <span class="text-sm text-gray-600 hidden sm:inline">
+      Logged in as {{ email }}
+    </span>
+    <a href="/tg_app" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm whitespace-nowrap">
+      Open TermsGuard
+    </a>
+    <a href="/cc_app" class="px-3 py-1.5 text-teal-700 hover:bg-teal-50 rounded-lg font-medium text-sm whitespace-nowrap">
+      Open CoverClear
+    </a>
+    <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
+      Log out
+    </a>
+  {% else %}
+    <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
+      Log in
+    </a>
+    <a href="/login?next=app" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
+      Get Started Free
+    </a>
+  {% endif %}
+</div>
     </div>
   </div>
 </nav>
@@ -146,14 +149,14 @@
 <!-- Hero + what you get -->
 <section class="pt-14 pb-6 bg-gray-50">
   <div class="max-w-4xl mx-auto px-6 text-center">
-    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-      Simple pricing for clear contracts
-    </h1>
-    <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
-      TermsGuard turns terms of service, privacy policies, and contracts into
-      plain-English summaries, risk flags, and Q&amp;A — so you know what you’re
-      agreeing to before you sign.
-    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold text-center mb-4">
+  One plan. Two apps.
+</h1>
+<p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+  Your Free, Pay as You Go, or Pro credits work in
+  <strong>TermsGuard</strong> and <strong>CoverClear</strong>.
+  Analyze contracts or insurance policies — same account, same credits.
+</p>
 
     <div class="grid sm:grid-cols-3 gap-4 text-left max-w-3xl mx-auto">
       <div class="p-5 rounded-2xl bg-white border border-blue-100 shadow-sm">
@@ -182,6 +185,14 @@
 </section>
 
 <!-- Pricing Cards -->
+<div class="max-w-3xl mx-auto mb-10 p-4 sm:p-5 rounded-2xl bg-teal-50 border border-teal-100 text-center">
+  <p class="text-sm sm:text-base text-slate-800">
+    <strong>Credits are shared.</strong>
+    One analysis in TermsGuard or CoverClear uses one credit.
+    Q&amp;A on a document you’ve already analyzed does not use another credit.
+  </p>
+</div>
+
 <section class="py-12 bg-gray-50">
   <div class="max-w-6xl mx-auto px-6">
     <div class="grid md:grid-cols-3 gap-8">
@@ -253,7 +264,7 @@
     </div>
 
     <p class="text-center text-sm text-gray-500 mt-10 max-w-2xl mx-auto">
-      TermsGuard helps you understand legal and privacy documents. It is not a law firm and does not provide legal advice.
+      NexusDocs helps you understand contracts and insurance policies in plain English. It is not a law firm or an insurance company and does not provide legal or insurance advice.
     </p>
   </div>
 </section>
@@ -299,7 +310,7 @@
       </div>
     </div>
 
-    <!-- Desktop table -->
+<!-- Desktop table -->
     <div class="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
       <table class="w-full text-left text-sm lg:text-base min-w-[640px]">
         <thead>
@@ -334,6 +345,26 @@
           <tr>
             <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
+                <i class="fas fa-file-contract text-blue-600 w-5 text-center"></i> Works in TermsGuard
+              </span>
+            </td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+          </tr>
+          <tr class="bg-gray-50/50">
+            <td class="px-4 lg:px-6 py-3.5">
+              <span class="inline-flex items-center gap-2">
+                <i class="fas fa-shield-alt text-teal-600 w-5 text-center"></i> Works in CoverClear
+              </span>
+            </td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+            <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
+          </tr>
+          <tr>
+            <td class="px-4 lg:px-6 py-3.5">
+              <span class="inline-flex items-center gap-2">
                 <i class="fas fa-ruler-horizontal text-blue-600 w-5 text-center"></i> Document length
               </span>
             </td>
@@ -354,7 +385,7 @@
           <tr>
             <td class="px-4 lg:px-6 py-3.5">
               <span class="inline-flex items-center gap-2">
-                <i class="fas fa-shield-alt text-blue-600 w-5 text-center"></i> Privacy &amp; legal risk flags
+                <i class="fas fa-exclamation-triangle text-blue-600 w-5 text-center"></i> Privacy &amp; legal / coverage flags
               </span>
             </td>
             <td class="px-4 lg:px-6 py-3.5 text-center"><i class="fas fa-check text-green-500"></i></td>
@@ -412,36 +443,63 @@
   <div class="max-w-4xl mx-auto px-6">
     <h2 class="text-4xl font-semibold text-center mb-12">Frequently Asked Questions</h2>
     <div class="space-y-8">
-      <div>
-        <h3 class="font-semibold text-xl mb-3">How does the Free tier work?</h3>
-        <p class="text-gray-600">You get 3 document analyses per month. Each analysis includes a plain-English summary and privacy &amp; legal risk highlights, with a limit of 5,000 characters per document. You can ask unlimited follow-up questions on any document you’ve analyzed.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">What’s the difference between Pay as You Go and Pro?</h3>
-        <p class="text-gray-600">Pay as You Go is a one-time credit pack (45 analyses) that never expires — ideal if you only need TermsGuard occasionally. Pro is $19/month with unlimited analyses for people who review documents regularly.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">Can I upgrade or downgrade anytime?</h3>
-        <p class="text-gray-600">Yes. You can change your plan or switch to pay-as-you-go at any time.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">Is my data private?</h3>
-        <p class="text-gray-600">Absolutely. We do not store your documents. Everything is processed temporarily and deleted after analysis.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">Is there a limit on document size?</h3>
-        <p class="text-gray-600">Yes. The Free tier supports documents up to 5,000 characters. Paid plans support up to 50,000 characters per document—roughly 15–25 pages of typical contract text, and enough for most consumer contracts, leases, and privacy policies. Larger documents may be truncated to the plan limit; contact us if you regularly need more.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">What if my document is larger than the limit?</h3>
-        <p class="text-gray-600">We’ll analyze up to your plan’s character limit. If you regularly work with longer policies or multi-part agreements, contact us—we’re expanding support for larger documents.</p>
-      </div>
-      <div>
-        <h3 class="font-semibold text-xl mb-3">What payment methods do you accept?</h3>
-        <p class="text-gray-600">We accept all major credit cards via Stripe. No long-term contracts required.</p>
-      </div>
-    </div>
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Do credits work in both TermsGuard and CoverClear?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      Yes. NexusDocs uses one credit pool. A summary analysis in either app uses one credit.
+      Follow-up questions on that document are included. You don’t buy a separate plan for CoverClear.
+    </p>
   </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">How does the Free tier work?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      You get 3 document analyses per month. Each analysis includes a plain-English summary and risk or coverage highlights, with a limit of 5,000 characters per document. You can ask follow-up questions on any document you’ve analyzed. Credits work in TermsGuard and CoverClear.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">What’s the difference between Pay as You Go and Pro?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      Pay as You Go is a one-time credit pack (45 analyses) that never expires — ideal if you only need occasional document reviews. Pro is $19/month with unlimited analyses for people who review contracts or policies regularly. Both plans work in TermsGuard and CoverClear.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I upgrade or downgrade anytime?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      Yes. You can change your plan or switch to pay-as-you-go at any time.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Is my data private?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      We do not keep your documents as a permanent archive. They are processed for analysis. Do not upload information you would not send to a document tool.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Is there a limit on document size?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      Yes. The Free tier supports documents up to 5,000 characters. Paid plans support up to 50,000 characters per document—enough for most contracts, leases, privacy policies, and insurance policies. Larger documents may be truncated to the plan limit.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">What if my document is larger than the limit?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      We’ll analyze up to your plan’s character limit. If you regularly work with longer policies or multi-part agreements, contact us—we’re expanding support for larger documents.
+    </p>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">What payment methods do you accept?</h3>
+    <p class="text-gray-600 leading-relaxed">
+      We accept all major credit cards via Stripe. No long-term contracts required.
+    </p>
+  </div>
+</div>
 </section>
 
 <footer class="bg-gray-900 text-gray-400 py-12">
