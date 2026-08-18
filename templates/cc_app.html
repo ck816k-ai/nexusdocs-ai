@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
   <title>CoverClear – Policy workspace | NexusDocs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -135,25 +140,57 @@
     });
   });
 
-  document.getElementById('policyFile').addEventListener('change', (e) => {
+  document.getElementById('policyFile').addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-      alert('PDF text extraction is coming next. For now, paste the policy text or upload a .txt file.');
-      e.target.value = '';
-      return;
+
+    const name = file.name.toLowerCase();
+    const isPdf = file.type === 'application/pdf' || name.endsWith('.pdf');
+    const isTxt = file.type === 'text/plain' || name.endsWith('.txt');
+
+    try {
+      if (isTxt) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          document.getElementById('policyText').value = reader.result || '';
+        };
+        reader.readAsText(file);
+        return;
+      }
+
+      if (isPdf) {
+        if (typeof pdfjsLib === 'undefined') {
+          alert('PDF reader failed to load. Refresh the page and try again, or paste the text.');
+          return;
+        }
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        text = text.replace(/\s+\n/g, '\n').trim();
+        if (!text) {
+          alert('This PDF has little or no selectable text (it may be a scan). Please paste the text instead.');
+          return;
+        }
+        document.getElementById('policyText').value = text;
+        return;
+      }
+
+      alert('Please upload a PDF or .txt file.');
+    } catch (err) {
+      console.error(err);
+      alert('Could not read that file. Try another PDF or paste the text.');
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      document.getElementById('policyText').value = reader.result || '';
-    };
-    reader.readAsText(file);
   });
 
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const text = document.getElementById('policyText').value.trim();
     if (!text) {
-      alert('Paste policy text or upload a .txt file first.');
+      alert('Paste policy text or upload a PDF / .txt file first.');
       return;
     }
 
@@ -196,7 +233,6 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('emptyState').classList.remove('hidden');
       alert(e.message || 'Could not reach server. Try again.');
-
       analyzeBtn.disabled = false;
       analyzeBtn.textContent = 'Analyze coverage';
     }
@@ -231,24 +267,23 @@
       document.getElementById('qaOut').textContent = e.message || 'Could not answer that question.';
     }
   });
-    document.getElementById('newAnalysisBtn').addEventListener('click', () => {
+
+  document.getElementById('newAnalysisBtn').addEventListener('click', () => {
     document.getElementById('policyFile').value = '';
     document.getElementById('policyText').value = '';
     document.getElementById('qaInput').value = '';
     document.getElementById('qaOut').textContent = '';
     document.getElementById('summaryOut').textContent = '';
     document.getElementById('flagsOut').textContent = '';
-
     document.getElementById('results').classList.add('hidden');
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('emptyState').classList.remove('hidden');
-
     const analyzeBtn = document.getElementById('analyzeBtn');
     analyzeBtn.disabled = false;
     analyzeBtn.textContent = 'Analyze coverage';
   });
 </script>
-</script>
+
 
 </body>
 </html>
