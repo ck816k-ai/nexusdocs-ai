@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -108,7 +109,7 @@
           <div id="flagsOut"
                class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-slate-50"></div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5">
           <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Ask about this policy</h3>
           <div class="flex gap-2">
             <input id="qaInput" type="text" placeholder="e.g. Am I covered for water damage?"
@@ -118,7 +119,13 @@
           <div id="qaOut"
                class="mt-3 text-sm text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
         </div>
+
+        <button id="exportPdfBtn" type="button"
+          class="w-full py-3 rounded-xl border border-teal-600 text-teal-800 font-semibold hover:bg-teal-50 transition-colors">
+          Export PDF
+        </button>
       </div>
+	  
       <div id="loading" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center">
         <i class="fas fa-circle-notch fa-spin text-teal-600 text-2xl mb-2"></i>
         <p class="text-slate-600 text-sm">Reading your policy…</p>
@@ -281,6 +288,85 @@
     const analyzeBtn = document.getElementById('analyzeBtn');
     analyzeBtn.disabled = false;
     analyzeBtn.textContent = 'Analyze coverage';
+  });
+  
+    function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight) {
+    const lines = doc.splitTextToSize(text || '', maxWidth);
+    lines.forEach((line) => {
+      if (y > pageHeight - 20) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+    return y;
+  }
+
+  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    const summary = document.getElementById('summaryOut').textContent.trim();
+    const flags = document.getElementById('flagsOut').textContent.trim();
+    const qa = document.getElementById('qaOut').textContent.trim();
+
+    if (!summary && !flags) {
+      alert('Analyze a policy first.');
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let y = 20;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('CoverClear policy report', 15, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('NexusDocs  ·  Not insurance advice', 15, y);
+    y += 8;
+    doc.text('Policy type: ' + policyType, 15, y);
+    y += 12;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Coverage summary', 15, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    y = addWrappedText(doc, summary, 15, y, 180, 5, pageHeight);
+    y += 10;
+
+    if (y > pageHeight - 30) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Exclusions & gaps', 15, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    y = addWrappedText(doc, flags, 15, y, 180, 5, pageHeight);
+    y += 10;
+
+    if (qa) {
+      if (y > pageHeight - 30) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('Q&A', 15, y);
+      y += 8;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      y = addWrappedText(doc, qa, 15, y, 180, 5, pageHeight);
+    }
+
+    doc.save('coverclear-report.pdf');
   });
 </script>
 
