@@ -399,10 +399,17 @@ def billing_portal():
                 404,
             )
 
+        next_dest = request.args.get("next", "app")
+        if next_dest == "coverclear":
+            return_url = "https://nexusdocs.ai/cc_app"
+        else:
+            return_url = "https://nexusdocs.ai/tg_app"
+
         portal_session = stripe.billing_portal.Session.create(
             customer=customers.data[0].id,
-            return_url='https://nexusdocs.ai/tg_app',
+            return_url=return_url,
         )
+
         return redirect(portal_session.url)
     except Exception as e:
         return f"Billing portal error: {str(e)}", 500
