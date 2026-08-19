@@ -36,15 +36,15 @@
       </div>
     </div>
         <div class="flex items-center gap-3 text-sm">
-      <span id="creditStatus" class="text-xs sm:text-sm text-teal-100/90 whitespace-nowrap">
-        {% if tier == 'pro' %}
-          Pro
-        {% elif tier == 'credits' %}
-          {{ remaining }} / {{ limit }} credits
-        {% else %}
-          Free · {{ remaining }} / {{ limit }} left
-        {% endif %}
-      </span>
+      <span id="creditStatus" class="text-xs sm:text-sm font-semibold text-white bg-white/15 px-2.5 py-1 rounded-full whitespace-nowrap">
+  {% if tier == 'pro' %}
+    Current plan: Pro
+  {% elif tier == 'credits' %}
+    Pay as you go · {{ remaining }} / {{ limit }} left
+  {% else %}
+    Free · {{ remaining }} / {{ limit }} left
+  {% endif %}
+</span>
       <a href="/coverclear.html" class="text-teal-100 hover:text-white">Product</a>
       <a href="/tg_app" class="text-teal-100 hover:text-white">TermsGuard</a>
       <a href="/pricing.html" class="text-teal-100 hover:text-white">Credits</a>
@@ -155,10 +155,10 @@
     const limit = data.limit;
     const remaining = data.remaining;
 
-    if (tier === 'pro') {
-      el.textContent = 'Pro';
+        if (tier === 'pro') {
+      el.textContent = 'Current plan: Pro';
     } else if (tier === 'credits') {
-      el.textContent = remaining + ' / ' + limit + ' credits';
+      el.textContent = 'Pay as you go · ' + remaining + ' / ' + limit + ' left';
     } else {
       el.textContent = 'Free · ' + remaining + ' / ' + limit + ' left';
     }
