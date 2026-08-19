@@ -16,6 +16,7 @@
 - [How Most Terms of Service Let Companies Make Money From Your Data](https://nexusdocs.ai/insights/how-companies-make-money-from-your-data)
 - [5 Scary Clauses Hiding in Free App Privacy Policies](https://nexusdocs.ai/insights/scary-clauses)
 - [NDAs in Plain English: 5 Clauses to Watch Before You Sign](https://nexusdocs.ai/insights/nda-clauses-to-watch)
+- [The Two Documents That Cost You Money Before You Notice](https://nexusdocs.ai/insights/two-documents-that-cost-you)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy

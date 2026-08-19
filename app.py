@@ -249,6 +249,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/two-documents-that-cost-you')
+@app.route('/insights/two-documents-that-cost-you/')
+def insights_two_documents():
+    return render_template('insights/two-documents-that-cost-you.html')
+
 @app.route('/insights/nda-clauses-to-watch')
 @app.route('/insights/nda-clauses-to-watch/')
 def insights_nda_clauses():
