@@ -35,11 +35,20 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center gap-3 text-sm">
+        <div class="flex items-center gap-3 text-sm">
+      <span id="creditStatus" class="text-xs sm:text-sm text-teal-100/90 whitespace-nowrap">
+        {% if tier == 'pro' %}
+          Pro
+        {% elif tier == 'credits' %}
+          {{ remaining }} / {{ limit }} credits
+        {% else %}
+          Free · {{ remaining }} / {{ limit }} left
+        {% endif %}
+      </span>
       <a href="/coverclear.html" class="text-teal-100 hover:text-white">Product</a>
       <a href="/tg_app" class="text-teal-100 hover:text-white">TermsGuard</a>
       <a href="/pricing.html" class="text-teal-100 hover:text-white">Credits</a>
-	  <a href="/billing-portal?next=coverclear" class="text-teal-100 hover:text-white">Manage subscription</a>
+      <a href="/billing-portal?next=coverclear" class="text-teal-100 hover:text-white">Manage subscription</a>
       <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Log out</a>
     </div>
   </div>
@@ -137,6 +146,23 @@
 
 <script>
   let policyType = 'homeowners';
+  
+    function updateCreditStatus(data) {
+    const el = document.getElementById('creditStatus');
+    if (!el || !data) return;
+
+    const tier = data.tier || 'free';
+    const limit = data.limit;
+    const remaining = data.remaining;
+
+    if (tier === 'pro') {
+      el.textContent = 'Pro';
+    } else if (tier === 'credits') {
+      el.textContent = remaining + ' / ' + limit + ' credits';
+    } else {
+      el.textContent = 'Free · ' + remaining + ' / ' + limit + ' left';
+    }
+  }
 
   document.querySelectorAll('.policy-type').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -221,6 +247,8 @@
       });
       const summaryData = await summaryRes.json();
       if (!summaryRes.ok) throw new Error(summaryData.error || 'Summary failed');
+	  
+	  updateCreditStatus(summaryData);
 
       const flagsRes = await fetch('/analyze_coverclear', {
         method: 'POST',

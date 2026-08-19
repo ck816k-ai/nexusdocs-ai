@@ -206,7 +206,27 @@ def cc_app():
     email = session.get('email')
     if not email and current_user.is_authenticated:
         email = getattr(current_user, 'email', None)
-    return render_template('cc_app.html', email=email)
+
+    user = get_user_data(current_user.id)
+    tier = user.get("tier", "free")
+    analyses_used = user.get("analyses_used", 0)
+
+    TIER_LIMITS = {
+        "free": 3,
+        "credits": 45,
+        "pro": 99999
+    }
+    limit = TIER_LIMITS.get(tier, 3)
+    remaining = max(0, limit - analyses_used)
+
+    return render_template(
+        'cc_app.html',
+        email=email,
+        tier=tier,
+        analyses_used=analyses_used,
+        limit=limit,
+        remaining=remaining
+    )
 
 def redirect_after_login():
     next_action = session.pop("login_next", None) or "home"
