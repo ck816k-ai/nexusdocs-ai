@@ -236,6 +236,30 @@ def cc_app():
         remaining=remaining
     )
 
+@app.route('/bc_app')
+@app.route('/bc_app.html')
+@login_required
+def bc_app():
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+
+    user = get_user_data(current_user.id)
+    tier = user.get("tier", "free")
+    analyses_used = user.get("analyses_used", 0)
+    TIER_LIMITS = {"free": 3, "credits": 45, "pro": 99999}
+    limit = TIER_LIMITS.get(tier, 3)
+    remaining = max(0, limit - analyses_used)
+
+    return render_template(
+        'bc_app.html',
+        email=email,
+        tier=tier,
+        analyses_used=analyses_used,
+        limit=limit,
+        remaining=remaining
+    )
+
 def redirect_after_login():
     next_action = session.pop("login_next", None) or "home"
 
@@ -243,6 +267,8 @@ def redirect_after_login():
         return redirect("/tg_app")
     if next_action == "coverclear":
         return redirect("/cc_app")
+    if next_action == "billclear":
+        return redirect("/bc_app")
     if next_action == "credits":
         return redirect("/create-checkout?plan=credits")
     if next_action == "pro":

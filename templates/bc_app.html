@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>BillClear – Bill workspace | NexusDocs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .bc-bg { background: linear-gradient(160deg, #b91c1c 0%, #7f1d1d 55%, #111827 100%); }
+  </style>
+</head>
+<body class="bg-rose-50 min-h-screen">
+<header class="bc-bg text-white">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-white/80 hover:text-white text-sm">NexusDocs</a>
+      <span class="text-white/40">/</span>
+      <div>
+        <div class="font-semibold leading-tight">BillClear</div>
+        <div class="text-xs text-red-100/80">Bill workspace</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <span id="creditStatus" class="text-xs sm:text-sm font-semibold text-white bg-white/15 px-2.5 py-1 rounded-full whitespace-nowrap">
+        {% if tier == 'pro' %}
+          Current plan: Pro
+        {% elif tier == 'credits' %}
+          Pay as you go · {{ remaining }} / {{ limit }} left
+        {% else %}
+          Free · {{ remaining }} / {{ limit }} left
+        {% endif %}
+      </span>
+      <a href="/billclear.html" class="text-red-100 hover:text-white">Product</a>
+      <a href="/cc_app" class="text-red-100 hover:text-white">CoverClear</a>
+      <a href="/tg_app" class="text-red-100 hover:text-white">TermsGuard</a>
+      <a href="/pricing.html" class="text-red-100 hover:text-white">Credits</a>
+      <a href="/billing-portal?next=billclear" class="text-red-100 hover:text-white">Manage subscription</a>
+      <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Log out</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Understand this bill</h1>
+    <p class="text-slate-600 mt-1">Plain-English summary, line-item flags, and questions to ask — not a demand letter.</p>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button type="button" class="bill-type px-3 py-1.5 rounded-full text-sm border border-red-700 bg-red-50 text-red-800 font-medium" data-type="hospital">Hospital</button>
+    <button type="button" class="bill-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-red-500" data-type="clinic">Clinic / doctor</button>
+    <button type="button" class="bill-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-red-500" data-type="eob">Insurance EOB</button>
+    <button type="button" class="bill-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-red-500" data-type="other">Other</button>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 items-start">
+    <section class="bg-white rounded-2xl border border-red-100 shadow-sm p-5 sm:p-6">
+      <h2 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+        <i class="fas fa-file-invoice-dollar text-red-600"></i> Your bill
+      </h2>
+      <label class="block border-2 border-dashed border-red-100 hover:border-red-400 rounded-xl p-6 text-center cursor-pointer transition-colors mb-4">
+        <input type="file" id="billFile" accept=".pdf,.txt" class="hidden">
+        <i class="fas fa-file-upload text-2xl text-red-600 mb-2"></i>
+        <p class="text-sm font-medium text-slate-700">Click to upload a PDF or .txt</p>
+        <p class="text-xs text-slate-500 mt-1">Or paste the bill text below</p>
+      </label>
+      <textarea id="billText" rows="12"
+        class="w-full rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-100 p-3 text-sm text-slate-800"
+        placeholder="Paste bill or EOB text here…"></textarea>
+      <button id="analyzeBtn" type="button"
+        class="mt-4 w-full py-3 rounded-xl bg-red-700 hover:bg-red-800 text-white font-semibold">
+        Explain this bill
+      </button>
+      <button id="newAnalysisBtn" type="button"
+        class="mt-2 w-full py-3 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-white">
+        New analysis
+      </button>
+      <p class="text-xs text-slate-500 mt-3 text-center">
+        Not medical, billing, or legal advice. Confirm with the provider and your insurer.
+      </p>
+    </section>
+
+    <section class="space-y-4">
+      <div id="emptyState" class="bg-white rounded-2xl border border-red-100 p-8 text-center text-slate-500">
+        <i class="fas fa-notes-medical text-3xl text-red-600/40 mb-3"></i>
+        <p class="font-medium text-slate-700">Bill breakdown appears here</p>
+        <p class="text-sm mt-1">Summary, flags, and questions after you analyze a statement.</p>
+      </div>
+      <div id="results" class="hidden space-y-4">
+        <div class="bg-white rounded-2xl border border-red-100 p-5">
+          <h3 class="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">Bill summary</h3>
+          <div id="summaryOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-red-100 p-5">
+          <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2">Flags &amp; questions to ask</h3>
+          <div id="flagsOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-red-100 p-5">
+          <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Ask about this bill</h3>
+          <div class="flex gap-2">
+            <input id="qaInput" type="text" placeholder="e.g. Why was I billed twice for the same lab?"
+              class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <button id="qaBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium">Ask</button>
+          </div>
+          <div id="qaOut" class="mt-3 text-sm text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
+        </div>
+        <button id="exportPdfBtn" type="button"
+          class="w-full py-3 rounded-xl border border-red-700 text-red-800 font-semibold hover:bg-red-50">
+          Export PDF
+        </button>
+      </div>
+      <div id="loading" class="hidden bg-white rounded-2xl border border-red-100 p-8 text-center">
+        <i class="fas fa-circle-notch fa-spin text-red-600 text-2xl mb-2"></i>
+        <p class="text-slate-600 text-sm">Reading your bill…</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+  let billType = 'hospital';
+
+  function updateCreditStatus(data) {
+    const el = document.getElementById('creditStatus');
+    if (!el || !data) return;
+    if (data.tier === 'pro') el.textContent = 'Current plan: Pro';
+    else if (data.tier === 'credits') el.textContent = 'Pay as you go · ' + data.remaining + ' / ' + data.limit + ' left';
+    else el.textContent = 'Free · ' + data.remaining + ' / ' + data.limit + ' left';
+  }
+
+  document.querySelectorAll('.bill-type').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.bill-type').forEach(b => {
+        b.className = 'bill-type px-3 py-1.5 rounded-full text-sm border border-slate-200 bg-white text-slate-600 hover:border-red-500';
+      });
+      btn.className = 'bill-type px-3 py-1.5 rounded-full text-sm border border-red-700 bg-red-50 text-red-800 font-medium';
+      billType = btn.dataset.type;
+    });
+  });
+
+  document.getElementById('billFile').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const name = file.name.toLowerCase();
+    try {
+      if (name.endsWith('.txt') || file.type === 'text/plain') {
+        const reader = new FileReader();
+        reader.onload = () => { document.getElementById('billText').value = reader.result || ''; };
+        reader.readAsText(file);
+        return;
+      }
+      if (name.endsWith('.pdf') || file.type === 'application/pdf') {
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        text = text.trim();
+        if (!text) { alert('This PDF has little selectable text. Please paste the bill instead.'); return; }
+        document.getElementById('billText').value = text;
+        return;
+      }
+      alert('Please upload a PDF or .txt file.');
+    } catch (err) {
+      alert('Could not read that file. Try paste instead.');
+    }
+  });
+
+  document.getElementById('analyzeBtn').addEventListener('click', async () => {
+    const text = document.getElementById('billText').value.trim();
+    if (!text) { alert('Paste a bill or upload a file first.'); return; }
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = 'Reading…';
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('loading').classList.remove('hidden');
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      const summaryRes = await fetch('/analyze_billclear', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ text, bill_type: billType, type: 'summary' })
+      });
+      const summaryData = await summaryRes.json();
+      if (!summaryRes.ok) throw new Error(summaryData.error || 'Summary failed');
+      updateCreditStatus(summaryData);
+      const flagsRes = await fetch('/analyze_billclear', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ text, bill_type: billType, type: 'risks' })
+      });
+      const flagsData = await flagsRes.json();
+      if (!flagsRes.ok) throw new Error(flagsData.error || 'Flags failed');
+      document.getElementById('summaryOut').textContent = summaryData.result || '';
+      document.getElementById('flagsOut').textContent = flagsData.result || '';
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Analyze again';
+    } catch (e) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Explain this bill';
+      alert(e.message || 'Could not reach server.');
+    }
+  });
+
+  document.getElementById('qaBtn').addEventListener('click', async () => {
+    const text = document.getElementById('billText').value.trim();
+    const question = document.getElementById('qaInput').value.trim();
+    if (!text || !question) return;
+    document.getElementById('qaOut').textContent = 'Thinking…';
+    const res = await fetch('/analyze_billclear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, bill_type: billType, type: 'question', question })
+    });
+    const data = await res.json();
+    document.getElementById('qaOut').textContent = data.result || data.error || '';
+  });
+
+  document.getElementById('newAnalysisBtn').addEventListener('click', () => {
+    document.getElementById('billFile').value = '';
+    document.getElementById('billText').value = '';
+    document.getElementById('qaInput').value = '';
+    document.getElementById('qaOut').textContent = '';
+    document.getElementById('summaryOut').textContent = '';
+    document.getElementById('flagsOut').textContent = '';
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('analyzeBtn').textContent = 'Explain this bill';
+  });
+</script>
+</body>
+</html>
