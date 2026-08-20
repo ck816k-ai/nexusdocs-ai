@@ -80,21 +80,42 @@
 			<!-- Login buttons -->
             <!-- Auth buttons -->
 <div class="flex items-center gap-2">
-    {% if email %}
-        <span class="text-sm text-gray-600 hidden sm:inline">
-            Logged in as {{ email }}
-        </span>
-        <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
-            Log out
-        </a>
-    {% else %}
-        <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
-            Log in
-        </a>
-        <a href="/pricing.html" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
-            Get Started Free
-        </a>
-    {% endif %}
+  {% if email %}
+    <span class="text-sm text-gray-600 hidden sm:inline">
+      Logged in as {{ email }}
+    </span>
+
+    <div class="relative group">
+      <button type="button"
+        class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm whitespace-nowrap">
+        Open apps <i class="fas fa-chevron-down text-xs ml-1"></i>
+      </button>
+      <div class="absolute hidden group-hover:block pt-2 right-0 z-50">
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-2 w-52">
+          <a href="/tg_app" class="block px-3 py-2 rounded-xl text-sm font-medium text-blue-700 hover:bg-blue-50">
+            TermsGuard
+          </a>
+          <a href="/cc_app" class="block px-3 py-2 rounded-xl text-sm font-medium text-teal-700 hover:bg-teal-50">
+            CoverClear
+          </a>
+          <a href="/bc_app" class="block px-3 py-2 rounded-xl text-sm font-medium text-red-700 hover:bg-red-50">
+            BillClear
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">
+      Log out
+    </a>
+  {% else %}
+    <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">
+      Log in
+    </a>
+    <a href="/login?next=app" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 whitespace-nowrap">
+      Get Started Free
+    </a>
+  {% endif %}
 </div>
         </div>
     </div>
