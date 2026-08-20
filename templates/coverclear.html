@@ -48,16 +48,38 @@
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "description": "AI tool that turns insurance policies into plain-English summaries, coverage flags, and Q&A.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
+  "image": "https://nexusdocs.ai/static/images/coverclear-logo.png",
   "provider": {
     "@type": "Organization",
     "name": "NexusDocs",
     "url": "https://nexusdocs.ai/"
-  }
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Free",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pay as You Go",
+      "price": "6.99",
+      "priceCurrency": "USD"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "19",
+      "priceCurrency": "USD",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "19",
+        "priceCurrency": "USD",
+        "billingDuration": "P1M"
+      }
+    }
+  ]
 }
 </script>
 </head>
