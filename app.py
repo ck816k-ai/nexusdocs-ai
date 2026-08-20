@@ -140,6 +140,14 @@ def coverclear():
         email = getattr(current_user, 'email', None)
     return render_template('coverclear.html', email=email)
 
+@app.route('/billclear')
+@app.route('/billclear.html')
+def billclear():
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('billclear.html', email=email)
+
 @app.route('/pricing.html')
 def pricing():
     email = session.get('email')
