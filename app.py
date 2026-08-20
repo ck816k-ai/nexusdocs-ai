@@ -461,6 +461,8 @@ def billing_portal():
         next_dest = request.args.get("next", "app")
         if next_dest == "coverclear":
             return_url = "https://nexusdocs.ai/cc_app"
+        elif next_dest == "billclear":
+            return_url = "https://nexusdocs.ai/bc_app"
         else:
             return_url = "https://nexusdocs.ai/tg_app"
 
