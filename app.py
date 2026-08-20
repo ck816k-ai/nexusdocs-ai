@@ -935,6 +935,180 @@ def my_usage():
         "analyses_used": user.get("analyses_used", 0)
     })
 
+# ====================== BILLCLEAR ======================
+@app.route('/analyze_billclear', methods=['POST'])
+@login_required
+def analyze_billclear():
+    try:
+        data = request.json or {}
+        user_id = current_user.id
+        prompt_type = data.get('type', 'summary')
+        raw_text = data.get('text', '') or ''
+        bill_type = (data.get('bill_type') or 'other').strip().lower()
+
+        allowed_types = {'hospital', 'clinic', 'eob', 'other'}
+        if bill_type not in allowed_types:
+            bill_type = 'other'
+
+        user = get_user_data(user_id)
+        tier = user.get("tier", "free")
+        analyses_used = user.get("analyses_used", 0)
+
+        print(f"DEBUG: BillClear {current_user.email} | Tier: {tier} | Credits used: {analyses_used} | Bill: {bill_type}")
+
+        TIER_LIMITS = {
+            "free": 3,
+            "credits": 45,
+            "pro": 99999
+        }
+        TIER_CHAR_LIMITS = {
+            "free": 5000,
+            "credits": 50000,
+            "pro": 50000
+        }
+        TIER_MODELS = {
+            "free": "grok-4.3",
+            "credits": "grok-4.5",
+            "pro": "grok-4.5"
+        }
+
+        limit = TIER_LIMITS.get(tier, 3)
+        char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
+        model = TIER_MODELS.get(tier, "grok-4.3")
+
+        truncated = len(raw_text) > char_limit
+        text = raw_text[:char_limit]
+
+        bill_hint = f"The user selected document type: {bill_type}."
+        system_prompt = (
+            "You are a clear medical-billing explainer for patients in the United States. "
+            "Use simple language. Explain only what appears in the provided document. "
+            "If something is unclear or missing, say so. "
+            "Do not give medical advice. Do not say a charge is fraud or illegal. "
+            "Do not promise a dispute will succeed. "
+            "This is not a substitute for the billing office, insurer, or a patient advocate. "
+            "Prefer the document text over the selected document type if they conflict, and mention the mismatch."
+        )
+
+        if prompt_type == 'question':
+            q = data.get('question', '')
+            user_prompt = (
+                f"{bill_hint}\n"
+                f"Answer this question in plain English using only the bill or EOB text: {q}\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 0
+        elif prompt_type == 'risks':
+            user_prompt = (
+                f"{bill_hint}\n"
+                "Extract practical flags and questions to ask — not accusations. Look for:\n"
+                "- Possible duplicate charges\n"
+                "- Vague lines (miscellaneous, supplies) with no detail\n"
+                "- Large patient-responsibility amounts\n"
+                "- Missing itemization\n"
+                "- Gaps between billed, allowed, and patient amounts if shown\n"
+                "- Payment deadlines or collections notes\n"
+                "Use short bullet points. For each flag, say what you see and one question to ask billing or the insurer.\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 0
+        else:
+            user_prompt = (
+                f"{bill_hint}\n"
+                "Summarize this medical bill or EOB in plain English. Cover:\n"
+                "- Who billed and for what period (if shown)\n"
+                "- Totals: charges, insurance amounts, patient balance (if shown)\n"
+                "- Main services in everyday language\n"
+                "- Anything incomplete or hard to understand\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 1
+
+        if credit_cost > 0 and analyses_used >= limit:
+            return jsonify({
+                "error": f"You have used all your analyses ({analyses_used}/{limit}). Please upgrade your plan.",
+                "limit_reached": True,
+                "analyses_used": analyses_used,
+                "limit": limit,
+                "remaining": 0,
+                "tier": tier
+            }), 403
+
+        if credit_cost > 0 and analyses_used + credit_cost > limit:
+            return jsonify({
+                "error": f"Not enough analyses remaining. You need {credit_cost}.",
+                "limit_reached": True,
+                "analyses_used": analyses_used,
+                "limit": limit,
+                "remaining": max(0, limit - analyses_used),
+                "tier": tier
+            }), 403
+
+        try:
+            response = requests.post(
+                "https://api.x.ai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {GROK_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.4
+                },
+                timeout=90
+            )
+            response.raise_for_status()
+
+        except requests.exceptions.Timeout:
+            return jsonify({
+                "error": "Analysis took too long. Please try a shorter document or try again."
+            }), 504
+
+        except requests.exceptions.RequestException:
+            return jsonify({
+                "error": "Failed to reach AI service. Please try again."
+            }), 502
+
+        result = response.json()
+        content = (
+            result.get('choices', [{}])[0]
+            .get('message', {})
+            .get('content', str(result))
+        )
+
+        if prompt_type == 'summary':
+            new_count = analyses_used + credit_cost
+            supabase.table("user_usage").update({
+                "analyses_used": new_count,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("user_id", user_id).execute()
+        else:
+            new_count = analyses_used
+
+        remaining = max(0, limit - new_count)
+
+        return jsonify({
+            "result": content,
+            "summary": content if prompt_type == 'summary' else None,
+            "flags": content if prompt_type == 'risks' else None,
+            "tier": tier,
+            "analyses_used": new_count,
+            "limit": limit,
+            "remaining": remaining,
+            "truncated": truncated,
+            "char_limit": char_limit,
+            "model": model,
+            "bill_type": bill_type
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 # ====================== HIDDEN ADMIN RESET ======================
 @app.route('/admin/reset_usage/<user_id>')
