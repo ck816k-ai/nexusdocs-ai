@@ -18,6 +18,7 @@
 - [5 Scary Clauses Hiding in Free App Privacy Policies](https://nexusdocs.ai/insights/scary-clauses)
 - [NDAs in Plain English: 5 Clauses to Watch Before You Sign](https://nexusdocs.ai/insights/nda-clauses-to-watch)
 - [The Two Documents That Cost You Money Before You Notice](https://nexusdocs.ai/insights/two-documents-that-cost-you)
+- [Why Your Medical Bill Feels Impossible — and What to Check Before You Pay](https://nexusdocs.ai/insights/why-medical-bills-feel-impossible)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy

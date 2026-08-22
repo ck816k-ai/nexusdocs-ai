@@ -283,6 +283,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/why-medical-bills-feel-impossible')
+@app.route('/insights/why-medical-bills-feel-impossible/')
+def insights_medical_bills():
+    return render_template('insights/why-medical-bills-feel-impossible.html')
+
 @app.route('/insights/two-documents-that-cost-you')
 @app.route('/insights/two-documents-that-cost-you/')
 def insights_two_documents():
