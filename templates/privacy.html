@@ -46,49 +46,76 @@
     <section class="bg-gradient-to-r from-blue-700 to-blue-600 text-white py-20">
         <div class="max-w-5xl mx-auto px-6 text-center">
             <h1 class="text-5xl font-bold mb-6">Privacy Policy</h1>
-            <p class="text-blue-100">Last Updated: July 13, 2026</p>
+            <p class="text-blue-100">Last Updated: August 22, 2026</p>
         </div>
     </section>
 
     <!-- Content -->
+        <!-- Content -->
     <section class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-6 prose text-lg leading-relaxed">
-            <h2 class="text-3xl font-semibold mt-12 mb-6">What We Do Not Do</h2>
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Document analysis</h2>
             <ul class="list-disc pl-6 space-y-3">
-                <li>We do not store, save, or keep copies of any documents, contracts, or text you upload or paste.</li>
-                <li>Your input is processed temporarily to generate the analysis and then discarded.</li>
-                <li>We do not use your data for training AI models or any other purpose.</li>
+                <li>You paste text or extract text from a PDF in your browser. For PDFs, extraction happens on your device; the PDF file itself is not uploaded to our servers.</li>
+                <li>That text is sent over HTTPS to our servers, then over HTTPS to the AI service (Grok / xAI) so we can generate a summary, flags, and answers.</li>
+                <li>Results are returned to you over HTTPS. Traffic is encrypted in transit. This is not end-to-end encryption — the systems that analyze the document must read the text to produce a result.</li>
             </ul>
 
-            <h2 class="text-3xl font-semibold mt-12 mb-6">How It Works</h2>
+            <h2 class="text-3xl font-semibold mt-12 mb-6">How we use document text</h2>
             <ul class="list-disc pl-6 space-y-3">
-                <li>Your documents are sent to the Grok API (xAI) for analysis.</li>
-                <li>xAI processes the request in memory and does not store your content.</li>
-                <li>The results are returned to you and not retained on our servers.</li>
+                <li>Document text is used to fulfill your analysis request (summary, flags, follow-up questions, and optional reports you export).</li>
+                <li>NexusDocs is built for analysis, not as a long-term document archive or encrypted vault. We do not operate a permanent library of customer documents.</li>
+                <li>Use of the AI provider is also subject to xAI’s terms and privacy policy.</li>
             </ul>
 
-            <h2 class="text-3xl font-semibold mt-12 mb-6">Data Security</h2>
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Account and service data</h2>
             <ul class="list-disc pl-6 space-y-3">
-                <li>All communication is encrypted.</li>
-                <li>We only collect the minimum data necessary to provide the service (no accounts required for basic use).</li>
+                <li>If you sign in, we process information needed to run the service (such as email, login, usage/credits, and plan status).</li>
+                <li>Payments are handled by our payment provider (Stripe). We do not store full payment card numbers on our servers.</li>
             </ul>
 
-            <h2 class="text-3xl font-semibold mt-12 mb-6">Your Rights</h2>
-            <p>You control your data. Nothing is stored after your session ends.</p>
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Data security</h2>
+            <ul class="list-disc pl-6 space-y-3">
+                <li>Connections between your browser, our servers, and the AI service use HTTPS encryption in transit.</li>
+                <li>We aim to collect only what is needed to provide and improve the service (for example, account and usage information).</li>
+            </ul>
 
-            <h2 class="text-3xl font-semibold mt-12 mb-6">Legal Disclaimer</h2>
-            <p>NexusDocs.ai and TermsGuard are provided "as is" without warranty of any kind. The analysis and summaries are AI-generated and should not be considered legal advice. Always consult with a qualified attorney for legal matters. We are not responsible for any decisions made based on the output of this tool.</p>
+            <h2 class="text-3xl font-semibold mt-12 mb-6">What these tools are not</h2>
+            <p>
+                TermsGuard, CoverClear, and BillClear explain documents. They are not a law firm, insurance company,
+                medical provider, or billing department. Output is AI-generated and for informational purposes only.
+                It is not legal, insurance, medical, or billing advice. Always confirm important decisions with a
+                qualified professional and with the provider or insurer when relevant.
+            </p>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Legal disclaimer</h2>
+            <p>
+                NexusDocs.ai and its tools are provided “as is” without warranty of any kind. We are not responsible
+                for decisions made based on the output of these tools.
+            </p>
 
             <p class="mt-8">By using NexusDocs.ai, you agree to this privacy approach and legal disclaimer.</p>
-
-            <p class="mt-8">For questions, contact us at <a href="mailto:ck816k.ai@proton.me" class="text-blue-600 hover:underline">ck816k.ai@proton.me</a>.</p>
+            <p class="mt-8">For questions, contact us at
+                <a href="mailto:nexusdocs@proton.me" class="text-blue-600 hover:underline">nexusdocs@proton.me</a>.
+            </p>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 py-12">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
-        </div>
-    </footer>
+    <footer class="border-t border-gray-200 bg-gray-900 text-gray-400">
+  <div class="max-w-5xl mx-auto px-4 py-8 text-center text-sm">
+    <p>
+      <a href="/" class="hover:text-white">Home</a> ·
+      <a href="/termguard.html" class="hover:text-white">TermsGuard</a> ·
+      <a href="/coverclear.html" class="hover:text-white">CoverClear</a> ·
+      <a href="/billclear.html" class="hover:text-white">BillClear</a> ·
+      <a href="/pricing.html" class="hover:text-white">Pricing</a> ·
+      <a href="/insights" class="hover:text-white">Insights</a>
+    </p>
+    <div class="mt-5 flex items-center justify-center gap-5">
+      <a href="https://x.com/nexusdocsai" target="_blank" rel="noopener noreferrer" class="hover:text-white text-xl"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/company/nexusdocs-ai" target="_blank" rel="noopener noreferrer" class="hover:text-white text-xl"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
