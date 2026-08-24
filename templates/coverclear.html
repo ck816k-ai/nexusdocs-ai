@@ -167,11 +167,14 @@
     <h1 class="text-4xl sm:text-5xl font-bold mb-6">
       Understand Insurance Policies in Plain English
     </h1>
-    <p class="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto mb-4">
+        <p class="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto mb-4">
       AI-powered summaries, coverage gaps, and exclusion flags — before you buy, renew, or file a claim.
     </p>
-    <p class="text-base text-blue-100/90 max-w-xl mx-auto mb-10">
+    <p class="text-base text-blue-100/90 max-w-xl mx-auto mb-3">
       Upload a homeowners, renters, auto, or small-business policy and get a clear breakdown in minutes.
+    </p>
+    <p class="text-base text-blue-100/90 max-w-xl mx-auto mb-10">
+      Long policies are sectioned so coverage and exclusions aren’t missed just because they appear later in the document.
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       {% if email %}
@@ -199,7 +202,6 @@
     <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-14">
       Powerful Policy Features
     </h2>
-
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
       <div class="text-center p-6">
         <div class="text-4xl mb-4">📄</div>
@@ -212,7 +214,7 @@
         <div class="text-4xl mb-4">📝</div>
         <h3 class="text-xl font-semibold mb-2">Plain-English Summary</h3>
         <p class="text-gray-600 leading-relaxed">
-          See what you’re actually covered for — without reading dozens of pages of legal language.
+          See what’s covered, key limits, and important exclusions drawn from the relevant parts of your policy, not only the first page.
         </p>
       </div>
       <div class="text-center p-6">
@@ -238,42 +240,52 @@
       </div>
       <div class="text-center p-6">
         <div class="text-4xl mb-4">🔒</div>
-        <h3 class="text-xl font-semibold mb-2">Privacy-First</h3>
+        <h3 class="text-xl font-semibold mb-2">Privacy-conscious analysis</h3>
         <p class="text-gray-600 leading-relaxed">
-          Documents are processed for analysis and not kept as a permanent archive of your policies.
+          Common sensitive patterns (SSN, email, phone, DOB, labeled policy IDs) are redacted before the model runs. Documents are processed for analysis not kept as a permanent archive of your policies.
         </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How it works -->
-<section class="py-20 bg-gray-50">
-  <div class="max-w-4xl mx-auto px-6">
-    <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-12">
+<!-- How CoverClear Works -->
+<section class="py-16 bg-slate-50">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-semibold text-center text-gray-900 mb-4">
       How CoverClear Works
     </h2>
-    <div class="space-y-8">
-      <div class="flex gap-5 items-start">
-        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
-        <div>
-          <h3 class="text-xl font-semibold mb-1">Upload your policy</h3>
-          <p class="text-gray-600">PDF or pasted text from homeowners, renters, auto, life, or small-business coverage.</p>
-        </div>
+    <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">
+      Built for long policies—not only the first page. We focus on coverage, limits, and exclusions, then explain them in plain English.
+    </p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="w-10 h-10 mx-auto mb-4 rounded-full bg-teal-600 text-white flex items-center justify-center font-semibold">1</div>
+        <h3 class="font-semibold text-gray-900 mb-2">Upload your policy</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          PDF or pasted text—homeowners, renters, auto, or small-business coverage.
+        </p>
       </div>
-      <div class="flex gap-5 items-start">
-        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">2</div>
-        <div>
-          <h3 class="text-xl font-semibold mb-1">Get a clear summary</h3>
-          <p class="text-gray-600">CoverClear explains coverage, limits, and key conditions in plain English.</p>
-        </div>
+      <div class="text-center">
+        <div class="w-10 h-10 mx-auto mb-4 rounded-full bg-teal-600 text-white flex items-center justify-center font-semibold">2</div>
+        <h3 class="font-semibold text-gray-900 mb-2">We focus on what matters</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          The policy is split into sections. CoverClear pulls the parts about coverage, limits, exclusions, and your question—so long documents aren’t judged only by the opening pages.
+        </p>
       </div>
-      <div class="flex gap-5 items-start">
-        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">3</div>
-        <div>
-          <h3 class="text-xl font-semibold mb-1">Review flags and ask questions</h3>
-          <p class="text-gray-600">See exclusion and gap highlights, then ask follow-ups before you buy, renew, or claim.</p>
-        </div>
+      <div class="text-center">
+        <div class="w-10 h-10 mx-auto mb-4 rounded-full bg-teal-600 text-white flex items-center justify-center font-semibold">3</div>
+        <h3 class="font-semibold text-gray-900 mb-2">Sensitive details are stripped</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Common PII patterns (SSN, email, phone, date of birth, labeled IDs) are redacted before analysis.
+        </p>
+      </div>
+      <div class="text-center">
+        <div class="w-10 h-10 mx-auto mb-4 rounded-full bg-teal-600 text-white flex items-center justify-center font-semibold">4</div>
+        <h3 class="font-semibold text-gray-900 mb-2">Summary, flags &amp; Q&amp;A</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Get a plain-English breakdown, exclusion highlights, ask follow-ups, and export a PDF. If something isn’t in the document, we say so.
+        </p>
       </div>
     </div>
   </div>
