@@ -10,7 +10,9 @@ CHUNK_MAX = 1200
 CHUNK_OVERLAP = 180
 
 _EMAIL_RE = re.compile(r"\b[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}\b", re.I)
-_SSN_RE = re.compile(r"\b\d{3}[-\s]\d{2}[-\s]\d{4}\b")
+_SSN_RE = re.compile(
+    r"\b\d{3}[\s\-]*\d{2}[\s\-]*\d{4}\b"
+)
 _PHONE_RE = re.compile(
     r"(?<!\d)(?:\+?1[\s.\-]?)?(?:\(?\d{3}\)?[\s.\-]?)\d{3}[\s.\-]?\d{4}(?!\d)"
 )
