@@ -11,6 +11,7 @@ from supabase import create_client, Client
 import os
 import requests
 import stripe
+from coverclear_rag import redact_pii, chunk_policy, retrieve_chunks, build_context
 
 load_dotenv()
 
@@ -775,6 +776,9 @@ def analyze_coverclear():
         raw_text = data.get('text', '') or ''
         policy_type = (data.get('policy_type') or 'other').strip().lower()
 
+        if not raw_text.strip():
+            return jsonify({"error": "Paste or upload a policy first."}), 400
+
         allowed_types = {'homeowners', 'renters', 'auto', 'business', 'other'}
         if policy_type not in allowed_types:
             policy_type = 'other'
@@ -806,23 +810,28 @@ def analyze_coverclear():
         model = TIER_MODELS.get(tier, "grok-4.3")
 
         truncated = len(raw_text) > char_limit
-        text = raw_text[:char_limit]
+        question = (data.get('question') or '').strip()
+        redacted = redact_pii(raw_text)
+        chunks = chunk_policy(redacted)
+        selected = retrieve_chunks(chunks, prompt_type, question=question or None)
+        text = build_context(selected, char_limit)
 
         policy_hint = f"The user selected policy type: {policy_type}."
         system_prompt = (
             "You are a clear insurance explainer for regular people and small businesses. "
-            "Use simple language. Explain only what is in the policy text. "
-            "If something is unclear or missing, say so. "
+            "Use simple language. Use only the provided policy excerpts. "
+            "If the excerpts do not contain the information needed, or something is unclear or missing, say so. "
+            "Do not invent coverage, limits, exclusions, or duties. "
             "This is not insurance advice and not a substitute for the insurer or a licensed professional. "
-            "Prefer the document text over the selected policy type if they conflict, and mention the mismatch."
+            "Prefer the document excerpts over the selected policy type if they conflict, and mention the mismatch."
         )
 
         if prompt_type == 'question':
-            q = data.get('question', '')
             user_prompt = (
                 f"{policy_hint}\n"
-                f"Answer this question in plain English using only the policy text: {q}\n\n"
-                f"Policy:\n{text}"
+                f"Answer this question in plain English using only the provided policy excerpts: {question}\n"
+                "If the excerpts do not contain the answer, say so.\n\n"
+                f"Policy excerpts:\n{text}"
             )
             credit_cost = 0
         elif prompt_type == 'risks':
@@ -830,20 +839,22 @@ def analyze_coverclear():
                 f"{policy_hint}\n"
                 "Extract exclusions, coverage gaps, limits, waiting periods, deductibles, "
                 "and duties after a loss. Use short bullet points. "
-                "Say what is typically NOT covered if the policy states it.\n\n"
-                f"Policy:\n{text}"
+                "Say what is typically NOT covered if the policy excerpts state it. "
+                "Use only the provided excerpts; if something is missing, say so.\n\n"
+                f"Policy excerpts:\n{text}"
             )
             credit_cost = 0
         else:
             user_prompt = (
                 f"{policy_hint}\n"
-                "Summarize this insurance policy in plain English. Cover:\n"
+                "Summarize this insurance policy in plain English using only the provided excerpts. Cover:\n"
                 "- What is insured\n"
                 "- Main coverages\n"
                 "- Important limits / deductibles\n"
                 "- Key exclusions\n"
-                "- What the policyholder must do after a loss\n\n"
-                f"Policy:\n{text}"
+                "- What the policyholder must do after a loss\n"
+                "If an item is not in the excerpts, say it is missing.\n\n"
+                f"Policy excerpts:\n{text}"
             )
             credit_cost = 1
 
