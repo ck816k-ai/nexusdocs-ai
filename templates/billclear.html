@@ -162,9 +162,12 @@
     <p class="text-xl sm:text-2xl text-red-100 max-w-2xl mx-auto mb-4">
       AI-powered summaries and line-item flags — so you know what to question before you pay.
     </p>
-    <p class="text-base text-red-100/90 max-w-xl mx-auto mb-10">
+    <p class="text-base text-red-100/90 max-w-xl mx-auto mb-5">
       Upload a hospital bill, clinic statement, or insurance EOB and get a clear breakdown in minutes.
     </p>
+	<p class="text-base text-red-100/90 max-w-xl mx-auto mb-10">
+	  Long bills are sectioned so totals, adjustments, and vague line items aren’t missed just because they appear later in the document.
+	</p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <a href="/login?next=billclear"
          class="px-8 py-3.5 bg-white text-red-800 rounded-full font-semibold hover:bg-red-50 transition-colors">
@@ -222,9 +225,13 @@
         <div class="w-10 h-10 rounded-xl bg-red-50 text-red-700 flex items-center justify-center mb-4">
           <i class="fas fa-shield-alt"></i>
         </div>
-        <h3 class="font-semibold text-lg mb-2">Privacy-First</h3>
-        <p class="text-gray-600 text-sm leading-relaxed">Bills are processed for analysis and not kept as a permanent archive of your health documents.</p>
-      </div>
+        <h3 class="font-semibold text-lg mb-2">Privacy-conscious analysis</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+		Common sensitive patterns (SSN, email, phone, DOB, labeled account and member IDs)
+		are redacted before the model runs. Bills are processed for analysis — not kept as a
+		permanent archive of your health documents.
+		</p>
+	</div>
     </div>
   </div>
 </section>
@@ -232,8 +239,12 @@
 <!-- How it works -->
 <section class="py-16 bg-rose-50">
   <div class="max-w-5xl mx-auto px-6">
-    <h2 class="text-3xl font-semibold text-center mb-12">How BillClear Works</h2>
-    <div class="grid md:grid-cols-3 gap-8">
+    <h2 class="text-3xl font-semibold text-center mb-4">How BillClear Works</h2>
+    <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">
+      Built for long statements not only the first page. We focus on charges, insurance amounts,
+      and patient responsibility, then explain them in plain English.
+    </p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
       <div class="text-center">
         <div class="w-12 h-12 rounded-full bg-red-700 text-white font-bold flex items-center justify-center mx-auto mb-4">1</div>
         <h3 class="font-semibold mb-2">Upload your bill</h3>
@@ -241,11 +252,16 @@
       </div>
       <div class="text-center">
         <div class="w-12 h-12 rounded-full bg-red-700 text-white font-bold flex items-center justify-center mx-auto mb-4">2</div>
-        <h3 class="font-semibold mb-2">Get a clear summary</h3>
-        <p class="text-gray-600 text-sm">BillClear explains charges and totals in plain English.</p>
+        <h3 class="font-semibold mb-2">Sensitive details are stripped</h3>
+        <p class="text-gray-600 text-sm">Common PII patterns (SSN, email, phone, date of birth, labeled IDs) are redacted before analysis.</p>
       </div>
       <div class="text-center">
         <div class="w-12 h-12 rounded-full bg-red-700 text-white font-bold flex items-center justify-center mx-auto mb-4">3</div>
+        <h3 class="font-semibold mb-2">Get a clear summary</h3>
+        <p class="text-gray-600 text-sm">Charges and totals in plain English. Long bills are sectioned so later pages still count.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full bg-red-700 text-white font-bold flex items-center justify-center mx-auto mb-4">4</div>
         <h3 class="font-semibold mb-2">Review flags &amp; ask</h3>
         <p class="text-gray-600 text-sm">See line-item highlights, then ask follow-ups before you pay.</p>
       </div>
