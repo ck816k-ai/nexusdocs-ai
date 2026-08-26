@@ -284,6 +284,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/arbitration-clauses')
+@app.route('/insights/arbitration-clauses/')
+def insights_arbitration_clauses():
+    return render_template('insights/arbitration-clauses.html')
+
 @app.route('/insights/why-medical-bills-feel-impossible')
 @app.route('/insights/why-medical-bills-feel-impossible/')
 def insights_medical_bills():
