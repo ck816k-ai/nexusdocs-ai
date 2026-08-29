@@ -624,36 +624,41 @@ def stripe_webhook():
     return jsonify({"status": "success"}), 200
 
 # ====================== API ROUTES ======================
+
 @app.route('/analyze', methods=['POST'])
 @login_required
 def analyze():
     try:
-        data = request.json
+        data = request.json or {}
         user_id = current_user.id
         prompt_type = data.get('type', 'summary')
         raw_text = data.get('text', '') or ''
+        question = (data.get('question') or '').strip()
+        doc_type = (data.get('doc_type') or 'other').strip().lower()
+
+        allowed_docs = {'tos', 'privacy', 'nda', 'msa', 'lease', 'other'}
+        if doc_type not in allowed_docs:
+            doc_type = 'other'
 
         user = get_user_data(user_id)
         tier = user.get("tier", "free")
         analyses_used = user.get("analyses_used", 0)
 
-        print(f"DEBUG: User {current_user.email} | Tier: {tier} | Credits used: {analyses_used}")
+        print(
+            f"DEBUG: TermsGuard {current_user.email} | Tier: {tier} | "
+            f"Credits used: {analyses_used} | Doc: {doc_type} | Type: {prompt_type}"
+        )
 
-        # ---------- Tier limits ----------
         TIER_LIMITS = {
             "free": 3,
             "credits": 45,
             "pro": 99999
         }
-
-        # Character caps: free = demo slice; paid = longer single pass
         TIER_CHAR_LIMITS = {
             "free": 5000,
             "credits": 50000,
             "pro": 50000
         }
-
-        # Models: free = lighter; paid = full
         TIER_MODELS = {
             "free": "grok-4.3",
             "credits": "grok-4.5",
@@ -664,23 +669,73 @@ def analyze():
         char_limit = TIER_CHAR_LIMITS.get(tier, 5000)
         model = TIER_MODELS.get(tier, "grok-4.3")
 
-        # ---------- Apply character cap ----------
         truncated = len(raw_text) > char_limit
         text = raw_text[:char_limit]
 
-        # ---------- Build prompt + credit cost FIRST ----------
+        doc_label = {
+            "tos": "terms of service / terms of use",
+            "privacy": "privacy policy",
+            "nda": "non-disclosure agreement (NDA)",
+            "msa": "master service / freelance / vendor agreement",
+            "lease": "lease or rental agreement",
+            "other": "legal document",
+        }[doc_type]
+
+        system_prompt = (
+            "You are TermsGuard, a plain-English document explainer for NexusDocs. "
+            "You are not a lawyer and you do not give legal advice.\n\n"
+            "LEVEL-A RULES:\n"
+            "- Use ONLY the document text the user provides. Do not browse the web. "
+            "Do not invent clauses, section numbers, parties, dates, or exhibits.\n"
+            "- If something is missing, undefined, or depends on another document or governing law, say so.\n"
+            "- Separate three things when relevant:\n"
+            "  1) What the text says\n"
+            "  2) What you cannot know from this text alone\n"
+            "  3) One practical question the user could ask the other party\n"
+            "- Use simple language. Quote short phrases from the document when you flag a risk.\n"
+            "- If asked a question the document does not answer, say it is not in the provided text."
+        )
+
+        focus = {
+            "tos": "cancellation, auto-renewal, liability, arbitration, and what the user gives up by clicking I Agree",
+            "privacy": "collection, sharing, selling, processors, retention, and user rights",
+            "nda": "definition of confidential information, term, ownership/assignment, residuals/unaided memory, mutual vs one-sided duties, and remedies",
+            "msa": "payment, IP ownership, termination, liability, indemnities, and non-solicit",
+            "lease": "term, rent, deposits, repairs, termination, and fees",
+            "other": "user rights, obligations, money, privacy, and lock-in",
+        }[doc_type]
+
         if prompt_type == 'question':
-            q = data.get('question', '')
-            user_prompt = f"Answer this question in plain English about the document: {q}\n\nDocument: {text}"
-            credit_cost = 0  # questions don't consume analyses
+            user_prompt = (
+                f"The user selected document type: {doc_label}.\n"
+                f"Answer this question using only the document below.\n"
+                f"If the answer is not in the text, say so.\n\n"
+                f"Question: {question}\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 0
         elif prompt_type == 'risks':
-            user_prompt = f"Extract key privacy, data selling, sharing, and legal risks in bullet points:\n\n{text}"
-            credit_cost = 0  # paired with summary; only summary deducts
-        else:  # summary
-            user_prompt = f"Summarize the document in plain English focusing on user rights:\n\n{text}"
+            user_prompt = (
+                f"The user selected document type: {doc_label}.\n"
+                f"Extract privacy, data, billing, liability, and lock-in risks as bullet points.\n"
+                f"Focus on: {focus}.\n"
+                f"For each flag include: the issue, a short quote or paraphrase from the text, "
+                f"why it matters, and what is missing if the text is incomplete.\n"
+                f"Do not invent risks that are not supported by the text.\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 0
+        else:
+            user_prompt = (
+                f"The user selected document type: {doc_label}.\n"
+                f"Summarize this document in plain English.\n"
+                f"Focus on: {focus}.\n"
+                f"Cover what the user is agreeing to, key obligations, and important limits.\n"
+                f"End with 2-4 things that are unclear or not in this text.\n\n"
+                f"Document:\n{text}"
+            )
             credit_cost = 1
 
-        # ---------- Tier limit: only for requests that spend a credit ----------
         if credit_cost > 0 and analyses_used >= limit:
             return jsonify({
                 "error": f"You have used all your free analyses ({analyses_used}/{limit}). Please upgrade your plan.",
@@ -701,7 +756,6 @@ def analyze():
                 "tier": tier
             }), 403
 
-        # ---------- Call Grok ----------
         try:
             response = requests.post(
                 "https://api.x.ai/v1/chat/completions",
@@ -712,37 +766,32 @@ def analyze():
                 json={
                     "model": model,
                     "messages": [
-                        {
-                            "role": "system",
-                            "content": "You are a clear legal explainer. Use simple language."
-                        },
+                        {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
                     ],
-                    "temperature": 0.7
+                    "temperature": 0.3
                 },
                 timeout=90
             )
-            response.raise_for_status()  # raises an error for 4xx/5xx responses
+            response.raise_for_status()
 
         except requests.exceptions.Timeout:
             return jsonify({
                 "error": "Analysis took too long. Please try a shorter document or try again."
             }), 504
 
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             return jsonify({
                 "error": "Failed to reach AI service. Please try again."
             }), 502
 
-        # If we get here, the call succeeded
         result = response.json()
         content = (
             result.get('choices', [{}])[0]
             .get('message', {})
             .get('content', str(result))
         )
-        
-        # ---------- Deduct only for summary ----------
+
         if prompt_type == 'summary':
             new_count = analyses_used + credit_cost
             supabase.table("user_usage").update({
@@ -762,7 +811,8 @@ def analyze():
             "remaining": remaining,
             "truncated": truncated,
             "char_limit": char_limit,
-            "model": model
+            "model": model,
+            "doc_type": doc_type
         })
 
     except Exception as e:
