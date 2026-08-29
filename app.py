@@ -11,7 +11,30 @@ from supabase import create_client, Client
 import os
 import requests
 import stripe
-from coverclear_rag import redact_pii, chunk_policy, retrieve_chunks, build_context
+import re
+from coverclear_rag import chunk_policy, retrieve_chunks, build_context
+
+_PII_PATTERNS = [
+    (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[REDACTED-SSN]"),
+    (re.compile(r"\b\d{3}\s\d{2}\s\d{4}\b"), "[REDACTED-SSN]"),
+    (re.compile(r"\b\d{9}\b"), "[REDACTED-ID]"),
+    (re.compile(
+        r"\b(?:\+?1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)\d{3}[-.\s]?\d{4}\b"
+    ), "[REDACTED-PHONE]"),
+    (re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"), "[REDACTED-EMAIL]"),
+    (re.compile(
+        r"(?i)\b(?:dob|date of birth)\s*[:\-]\s*\d{1,2}[/-]\d{1,2}[/-]\d{2,4}"
+    ), "Date of Birth: [REDACTED-DOB]"),
+    (re.compile(r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b"), "[REDACTED-DATE]"),
+]
+
+def redact_pii(text: str):
+    cleaned = text or ""
+    count = 0
+    for pattern, repl in _PII_PATTERNS:
+        cleaned, n = pattern.subn(repl, cleaned)
+        count += n
+    return cleaned, count
 
 load_dotenv()
 
@@ -670,7 +693,7 @@ def analyze():
         model = TIER_MODELS.get(tier, "grok-4.3")
 
         truncated = len(raw_text) > char_limit
-        text = raw_text[:char_limit]
+        text, pii_redacted = redact_pii(raw_text[:char_limit])
 
         doc_label = {
             "tos": "terms of service / terms of use",
