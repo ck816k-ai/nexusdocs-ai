@@ -293,15 +293,6 @@
                     }
                 }
                 const summaryData = await summaryRes.json();
-				document.getElementById('summary').innerHTML = summaryData.result ?
-					summaryData.result.replace(/\n/g, '<br>') : "No summary received";
-
-				if (summaryData.truncated) {
-				  document.getElementById('summary').insertAdjacentHTML(
-					'afterbegin',
-					'<p style="color:#b45309;font-size:0.9rem;margin-bottom:0.75rem;"><strong>Note:</strong> This document was trimmed to 50,000 characters. The very end may not be in the analysis.</p>'
-				  );
-				}
 
                 // Tier from server (this is what drives highlight length)
                 if (summaryData.tier) {
@@ -322,6 +313,8 @@
                 }
                 // ==================================
 
+                document.getElementById('summary').innerHTML = summaryData.result ?
+                    summaryData.result.replace(/\n/g, '<br>') : "No summary received";
 
                 // Risks (only if summary succeeded)
                 const risksRes = await fetch('/analyze', {
