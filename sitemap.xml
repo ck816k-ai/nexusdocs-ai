@@ -35,6 +35,12 @@
     <priority>0.8</priority>
   </url>
     <url>
+    <loc>https://nexusdocs.ai/insights/nda-residual-unaided-memory</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+    <url>
     <loc>https://nexusdocs.ai/insights/how-we-read-long-documents</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>

@@ -307,6 +307,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/nda-residual-unaided-memory')
+@app.route('/insights/nda-residual-unaided-memory/')
+def insights_nda_residual_unaided_memory():
+    return render_template('insights/nda-residual-unaided-memory.html')
+
 @app.route('/insights/how-we-read-long-documents')
 @app.route('/insights/how-we-read-long-documents/')
 def insights_how_we_read_long_documents():
