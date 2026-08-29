@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5D49483KHV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5D49483KHV');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How TermsGuard, CoverClear, and BillClear Now Read Long Documents – NexusDocs Insights</title>
+<meta name="description" content="Long contracts, insurance policies, and medical bills hide important language after page one. Here’s how NexusDocs now sections those documents and redacts common personal details before analysis.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://nexusdocs.ai/insights/how-we-read-long-documents">
+<link rel="icon" type="image/png" href="/static/images/logo-icon.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .prose h2 { margin-top: 2rem; margin-bottom: 0.75rem; }
+  .prose p { margin-bottom: 1rem; line-height: 1.7; }
+</style>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NexusDocs">
+<meta property="og:title" content="How TermsGuard, CoverClear, and BillClear Now Read Long Documents">
+<meta property="og:description" content="The risky clause is often not on page one. Here’s what changed across the three NexusDocs tools.">
+<meta property="og:url" content="https://nexusdocs.ai/insights/how-we-read-long-documents">
+<meta property="og:image" content="https://nexusdocs.ai/static/images/logo-icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How TermsGuard, CoverClear, and BillClear Now Read Long Documents">
+<meta name="twitter:description" content="Later pages, exclusions, and bill line items still count. Common IDs are stripped first.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How TermsGuard, CoverClear, and BillClear Now Read Long Documents",
+  "description": "Long contracts, insurance policies, and medical bills hide important language after page one. Here’s how NexusDocs now sections those documents and redacts common personal details before analysis.",
+  "datePublished": "2026-08-29",
+  "author": { "@type": "Organization", "name": "NexusDocs" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NexusDocs",
+    "logo": { "@type": "ImageObject", "url": "https://nexusdocs.ai/static/images/logo-icon.png" }
+  },
+  "mainEntityOfPage": "https://nexusdocs.ai/insights/how-we-read-long-documents"
+}
+</script>
+</head>
+<body class="bg-white text-gray-900">
+<nav class="bg-white border-b sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-y-3">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/static/images/logo-icon.png" alt="NexusDocs.ai" class="h-9 w-9 sm:h-10 sm:w-10 rounded-full">
+      <span class="text-xl sm:text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+    </a>
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm sm:text-base">
+      <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Home</a>
+      <a href="/insights" class="text-gray-600 hover:text-gray-900 font-medium">Insights</a>
+      <a href="/pricing.html" class="text-gray-600 hover:text-gray-900 font-medium">Pricing</a>
+      <a href="/termguard.html" class="text-blue-600 font-medium">Try TermsGuard</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-4 py-12 sm:py-16">
+  <p class="text-sm text-blue-600 font-medium mb-3">
+    <a href="/insights" class="hover:underline">Insights</a> · August 2026
+  </p>
+  <h1 class="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
+    How TermsGuard, CoverClear, and BillClear Now Read Long Documents
+  </h1>
+  <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+    Most people stop at page one. The clause that costs money is often on page 18.
+    We changed how the three NexusDocs tools read a file so later sections still count —
+    and so fewer personal details go to the model.
+  </p>
+
+  <article class="prose max-w-none text-gray-800">
+    <p>
+      A 26-page terms of service, a homeowners policy, and a hospital statement look different.
+      They fail in the same way: the beginning is introductory, and the binding language sits later.
+      If a tool only “understands” the first few thousand characters, it can sound confident and still miss the auto-renewal, the water-damage exclusion, or the duplicate lab charge.
+    </p>
+
+    <h2>What was going wrong</h2>
+    <p>
+      Short demos work. Real documents do not. Apple-style terms easily pass 50,000 characters.
+      Insurance policies bury exclusions after the declarations. Medical bills put totals on page one and the line items after that.
+    </p>
+    <p>
+      Two other problems showed up in testing:
+    </p>
+    <ul class="list-disc pl-5 mb-4 space-y-2">
+      <li><strong>PDF upload is not the same as paste.</strong> A text PDF can still lose columns, headers, and some pages when the browser extracts letters. Pasting from the official webpage is often closer to the real contract.</li>
+      <li><strong>Personal details do not help the analysis.</strong> An SSN, email, or member ID does not change whether a clause is one-sided. Sending those strings to a model is extra risk with no extra insight.</li>
+    </ul>
+
+    <h2>What we changed</h2>
+    <p>
+      Across TermsGuard, CoverClear, and BillClear:
+    </p>
+    <ul class="list-disc pl-5 mb-4 space-y-2">
+      <li><strong>Common IDs are redacted first.</strong> Patterns such as Social Security numbers, emails, phone numbers, dates of birth, and labeled account or member IDs are stripped before the model runs.</li>
+      <li><strong>The first summary uses one credit.</strong> Follow-up questions on that document do not burn another credit.</li>
+      <li><strong>One credit pool.</strong> Free, pay-as-you-go, and Pro work in all three apps. You do not buy a separate plan for insurance or medical bills.</li>
+    </ul>
+
+    <h2>TermsGuard</h2>
+    <p>
+      Built for contracts, terms of service, privacy policies, and NDAs.
+      Free stays a short pass (~5,000 characters). Paid plans can send up to ~50,000 characters in one analysis.
+      That is enough for most consumer terms. A very long file can still be trimmed at the end — the last page of a 51,000-character Apple-style ToS is an example.
+    </p>
+    <p>
+      If you have a choice, paste the official webpage text for a long ToS. Use PDF when that is the only copy you have.
+    </p>
+    <p>
+      <a href="/termguard.html" class="text-blue-600 font-medium hover:underline">TermsGuard product page →</a>
+    </p>
+
+    <h2>CoverClear</h2>
+    <p>
+      Built for homeowners, renters, auto, and small-business policies.
+      Long policies are split into sections so coverage, limits, exclusions, and duties after a loss are not judged only by the opening pages.
+      The output is a plain-English coverage summary, exclusion and gap flags, Q&amp;A, and a PDF report.
+    </p>
+    <p>
+      CoverClear is not an insurer or a broker. Confirm coverage with your carrier.
+    </p>
+    <p>
+      <a href="/coverclear.html" class="text-blue-600 font-medium hover:underline">CoverClear product page →</a>
+    </p>
+
+    <h2>BillClear</h2>
+    <p>
+      Built for hospital bills, clinic statements, and insurance EOBs.
+      Long statements are sectioned so later line items still show up in the summary and flags.
+      The useful output is not “this bill looks high.” It is: what was billed, what looks duplicate or vague, and what to ask before you pay.
+    </p>
+    <p>
+      BillClear is not a medical provider or billing company. It does not guarantee a dispute will succeed.
+    </p>
+    <p>
+      <a href="/billclear.html" class="text-blue-600 font-medium hover:underline">BillClear product page →</a>
+    </p>
+
+    <h2>What this is not</h2>
+    <p>
+      These tools do not replace a lawyer, an agent, or a patient advocate.
+      They do not store your files as a permanent archive.
+      They do not invent facts that are missing from the document you uploaded.
+      If a number, exclusion, or clause is not in the text we received, the honest answer is that it is not in the text we received.
+    </p>
+
+    <h2>Try it on a document you already have</h2>
+    <p>
+      The test that matters is not a sample paragraph. Use a lease, a freelance agreement, a renewal policy, or last month’s hospital statement.
+      If the summary names a clause you would actually ask about, the tool is doing the job.
+    </p>
+  </article>
+
+  <div class="mt-12 p-6 rounded-2xl bg-blue-50 border border-blue-100">
+    <p class="font-semibold text-gray-900 mb-2">Same account. Three document types.</p>
+    <p class="text-gray-600 mb-4">Start free — 3 analyses, no card required. Credits work across TermsGuard, CoverClear, and BillClear.</p>
+    <a href="/pricing.html" class="inline-block px-5 py-2.5 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700">See pricing</a>
+  </div>
+</main>
+
+<footer class="bg-gray-900 text-gray-400 py-10 mt-16">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <p class="text-sm">© 2026 NexusDocs.ai ·
+      <a href="/privacy.html" class="hover:text-white">Privacy</a> ·
+      <a href="/terms.html" class="hover:text-white">Terms of Service</a>
+    </p>
+    <div class="mt-5 flex items-center justify-center gap-5">
+      <a href="https://x.com/nexusdocsai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on X" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/company/nexusdocs-ai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on LinkedIn" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

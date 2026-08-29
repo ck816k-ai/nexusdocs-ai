@@ -307,6 +307,11 @@ def redirect_after_login():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/how-we-read-long-documents')
+@app.route('/insights/how-we-read-long-documents/')
+def insights_how_we_read_long_documents():
+    return render_template('insights/how-we-read-long-documents.html')
+
 @app.route('/insights/arbitration-clauses')
 @app.route('/insights/arbitration-clauses/')
 def insights_arbitration_clauses():
