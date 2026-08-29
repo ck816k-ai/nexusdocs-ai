@@ -330,7 +330,7 @@
                 }
 
                 // Highlighted text — free = 5k; paid (credits/pro) = 12k
-                const highlightLimit = (currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000;
+                const highlightLimit = summaryData.char_limit || ((currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000);
                 const textForHighlight = redactPiiClient(shortText.substring(0, highlightLimit));
                 let highlighted = textForHighlight.replace(
                     /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
