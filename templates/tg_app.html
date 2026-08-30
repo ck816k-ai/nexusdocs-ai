@@ -24,45 +24,7 @@
         #highlightedText { white-space: pre-wrap; line-height: 1.75; background: white; padding: 25px; border-radius: 12px; max-height: 500px; overflow-y: auto; font-size: 0.95rem; border: 1px solid #e2e8f0; }
         .signout-btn { position: absolute; top: 25px; right: 30px; padding: 8px 20px; background: #ef4444; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 100; }
         .signout-btn:hover { background: #dc2626; }
-        @media (max-width: 768px) {
-    .container { margin: 10px; border-radius: 16px; }
-
-    header {
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-        gap: 12px;
-        min-height: auto;
-    }
-
-    /* Title: stop absolute centering on mobile so it stacks cleanly */
-    header > div:first-child {
-        position: static !important;
-        transform: none !important;
-        width: 100% !important;
-        pointer-events: auto;
-        margin-bottom: 4px;
-    }
-
-    /* Buttons under the title */
-    header > div:last-child {
-        justify-content: center;
-        width: 100%;
-    }
-
-.signout-btn {
-        top: 15px;
-        right: 15px;
-        font-size: 13px;
-        padding: 6px 14px;
-    }
-    .doc-type {
-        font-size: 0.8rem;
-        padding: 7px 12px;
-    }
-}
-        .doc-type {
+        button.doc-type {
             background: #fff;
             color: #1e40af;
             border: 1px solid #93c5fd;
@@ -74,9 +36,40 @@
             margin-top: 0;
             box-shadow: none;
         }
-        .doc-type:hover { background: #eff6ff; transform: none; }
-        .doc-type.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-		
+        button.doc-type:hover { background: #eff6ff; transform: none; color: #1e40af; }
+        button.doc-type.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        @media (max-width: 768px) {
+    .container { margin: 10px; border-radius: 16px; }
+    header {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        gap: 12px;
+        min-height: auto;
+    }
+    header > div:first-child {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        pointer-events: auto;
+        margin-bottom: 4px;
+    }
+    header > div:last-child {
+        justify-content: center;
+        width: 100%;
+    }
+    .signout-btn {
+        top: 15px;
+        right: 15px;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+    button.doc-type {
+        font-size: 0.8rem;
+        padding: 7px 12px;
+    }
+}
     </style>
 </head>
 <body>
@@ -475,11 +468,11 @@ async function processWithGrok(text) {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include',
-                    body: JSON.stringify({
+                                        body: JSON.stringify({
                         text: documentText.substring(0, (currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000),
                         type: 'question',
-                        question: q
-						doc_type: docType
+                        question: q,
+                        doc_type: docType
                     })
                 });
                 const data = await res.json();
