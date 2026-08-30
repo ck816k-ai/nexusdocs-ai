@@ -758,6 +758,24 @@ def analyze():
                 f"Document:\n{text}"
             )
             credit_cost = 0
+        elif prompt_type == 'nda_checklist':
+            user_prompt = (
+                "This is an NDA checklist. Use ONLY the document text.\n"
+                "Return JSON only. No markdown fences. No extra commentary.\n"
+                "{\n"
+                '  "is_nda": true,\n'
+                '  "items": [\n'
+                '    {"key":"residuals","label":"Residuals / unaided memory","status":"has","note":"one sentence"},\n'
+                '    {"key":"residuals_exception","label":"Residuals exception (skills vs secrets)","status":"missing","note":"one sentence"},\n'
+                '    {"key":"term_length","label":"Confidentiality term length","status":"has","note":"one sentence"},\n'
+                '    {"key":"remedies","label":"Remedies (injunction, fees)","status":"unclear","note":"one sentence"}\n'
+                "  ]\n"
+                "}\n"
+                'status must be exactly one of: has, missing, unclear.\n'
+                "If this is not an NDA, set is_nda to false and mark items missing or unclear.\n\n"
+                f"Document:\n{text}"
+            )
+            credit_cost = 0
         else:
             user_prompt = (
                 f"The user selected document type: {doc_label}.\n"

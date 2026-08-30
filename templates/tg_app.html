@@ -51,13 +51,32 @@
         width: 100%;
     }
 
-    .signout-btn {
+.signout-btn {
         top: 15px;
         right: 15px;
         font-size: 13px;
         padding: 6px 14px;
     }
+    .doc-type {
+        font-size: 0.8rem;
+        padding: 7px 12px;
+    }
 }
+        .doc-type {
+            background: #fff;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0;
+            box-shadow: none;
+        }
+        .doc-type:hover { background: #eff6ff; transform: none; }
+        .doc-type.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+		
     </style>
 </head>
 <body>
@@ -140,10 +159,21 @@
 </div>
      
         <div class="main">
-    <div class="section input-area">
+        <div class="section input-area">
         <h2>📄 Upload PDF or Paste Text</h2>
         <input type="file" id="pdfUpload" accept=".pdf" style="margin-bottom: 15px;">
         <textarea id="pasteText" rows="10" placeholder="Or paste your terms and conditions here..."></textarea>
+
+        <p style="margin: 16px 0 8px; font-weight: 600; text-align: left;">Document type</p>
+        <div id="docTypeRow" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 12px;">
+            <button type="button" class="doc-type active" data-type="other">Other / contract</button>
+            <button type="button" class="doc-type" data-type="tos">Terms of service</button>
+            <button type="button" class="doc-type" data-type="privacy">Privacy policy</button>
+            <button type="button" class="doc-type" data-type="nda">NDA</button>
+            <button type="button" class="doc-type" data-type="msa">MSA / freelance</button>
+            <button type="button" class="doc-type" data-type="lease">Lease</button>
+        </div>
+
         <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
             <button onclick="analyzeDocument()">Analyze</button>
             <button type="button" onclick="startNewAnalysis()"
@@ -167,6 +197,19 @@
     Credits remaining: <strong id="creditsText">—</strong>
 </div>
 
+<div id="truncNote" style="
+    display: none;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+">
+    This document was trimmed to the plan limit. Language at the very end may not be in the analysis.
+</div>
+
 <div class="section">
     <h3>📝 Plain English Summary</h3>
     <div id="summary" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
@@ -175,6 +218,14 @@
 <div class="section">
     <h3>⚠️ Privacy & Legal Risks</h3>
     <div id="risks" style="line-height: 1.6; padding: 15px; background: #f8fafc; border-radius: 8px; min-height: 120px;"></div>
+</div>
+
+<div id="ndaChecklist" class="section" style="display: none;">
+    <h3>📋 NDA checklist</h3>
+    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0;">
+        Present / missing in this draft only. Not legal advice.
+    </p>
+    <div id="ndaChecklistOut"></div>
 </div>
 
 <div class="section">
@@ -221,8 +272,9 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         let documentText = "";
         let currentTier = "free";
+		let docType = "other";
 		
-		function redactPiiClient(text) {
+function redactPiiClient(text) {
 		  return (text || '')
 			.replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[REDACTED-SSN]')
 			.replace(/\b\d{3}\s\d{2}\s\d{4}\b/g, '[REDACTED-SSN]')
@@ -232,6 +284,54 @@
 			.replace(/\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g, '[REDACTED-DATE]');
 		}
 
+        document.querySelectorAll(".doc-type").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".doc-type").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                docType = btn.dataset.type || "other";
+            });
+        });
+
+        function renderNdaChecklist(raw) {
+            const box = document.getElementById("ndaChecklist");
+            const out = document.getElementById("ndaChecklistOut");
+            if (!box || !out) return;
+            let parsed = null;
+            try {
+                const cleaned = String(raw || "").replace(/```json|```/g, "").trim();
+                const start = cleaned.indexOf("{");
+                const end = cleaned.lastIndexOf("}");
+                parsed = JSON.parse(cleaned.slice(start, end + 1));
+            } catch (e) {
+                box.style.display = "none";
+                return;
+            }
+            const items = parsed.items || [];
+            if (!items.length) {
+                box.style.display = "none";
+                return;
+            }
+            const color = { has: "#166534", missing: "#b45309", unclear: "#475569" };
+            const label = { has: "Has it", missing: "Doesn't have it", unclear: "Unclear" };
+            out.innerHTML = items.map((item) => {
+                const status = (item.status || "unclear").toLowerCase();
+                const q = (item.label || item.key || "").replace(/'/g, "");
+                return `<div style="padding:12px 0;border-bottom:1px solid #e2e8f0;">
+                    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                        <strong>${item.label || item.key}</strong>
+                        <span style="color:${color[status] || color.unclear};font-weight:600;">${label[status] || "Unclear"}</span>
+                    </div>
+                    <p style="margin:6px 0 8px;color:#334155;">${item.note || ""}</p>
+                    <button type="button" style="margin-top:0;padding:6px 12px;font-size:0.85rem;"
+                        onclick="document.getElementById('question').value='Show me the language for ${q} and what it allows or forbids.';document.getElementById('question').scrollIntoView({behavior:'smooth'});">
+                        Ask about this
+                    </button>
+                </div>`;
+            }).join("");
+            box.style.display = "block";
+        }
+
+        
         async function analyzeDocument() {
             clearAnalysisResults();
             const paste = document.getElementById('pasteText').value.trim();
@@ -271,77 +371,95 @@
             }
         }
 
-        async function processWithGrok(text) {
+async function processWithGrok(text) {
+            const originalLen = text.length;
             const shortText = text.substring(0, 50000);
+            const truncNote = document.getElementById("truncNote");
+            if (truncNote) truncNote.style.display = "none";
+            const ndaBox = document.getElementById("ndaChecklist");
+            if (ndaBox) ndaBox.style.display = "none";
             try {
-                // Summary
-                const summaryRes = await fetch('/analyze', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include',
-                    body: JSON.stringify({text: shortText, type: 'summary'})
+                const summaryRes = await fetch("/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ text: shortText, type: "summary", doc_type: docType })
                 });
                 if (!summaryRes.ok) {
                     const errorData = await summaryRes.json().catch(() => ({}));
                     if (summaryRes.status === 403) {
-                        document.getElementById('summary').innerHTML =
+                        document.getElementById("summary").innerHTML =
                             `<strong style="color: #ef4444;">${errorData.error || "Free tier limit reached."}</strong>`;
-                        document.getElementById('risks').innerHTML = "";
+                        document.getElementById("risks").innerHTML = "";
                         return;
-                    } else {
-                        throw new Error(errorData.error || "Analysis failed");
                     }
+                    throw new Error(errorData.error || "Analysis failed");
                 }
                 const summaryData = await summaryRes.json();
+                if (summaryData.tier) currentTier = String(summaryData.tier).toLowerCase();
 
-                // Tier from server (this is what drives highlight length)
-                if (summaryData.tier) {
-                    currentTier = String(summaryData.tier).toLowerCase();
-                }
-
-                // ===== UPDATE CREDITS DISPLAY =====
                 if (summaryData.analyses_used !== undefined && summaryData.limit !== undefined) {
                     const remaining = summaryData.limit - summaryData.analyses_used;
-                    const creditsEl = document.getElementById('creditsDisplay');
-                    const creditsText = document.getElementById('creditsText');
-                    if (summaryData.tier === 'pro') {
+                    const creditsEl = document.getElementById("creditsDisplay");
+                    const creditsText = document.getElementById("creditsText");
+                    if (summaryData.tier === "pro") {
                         creditsText.innerHTML = "Unlimited (Pro)";
                     } else {
                         creditsText.innerHTML = `${remaining} / ${summaryData.limit}`;
                     }
-                    creditsEl.style.display = 'block';
+                    creditsEl.style.display = "block";
                 }
-                // ==================================
 
-                document.getElementById('summary').innerHTML = summaryData.result ?
-                    summaryData.result.replace(/\n/g, '<br>') : "No summary received";
+                const usedLimit = summaryData.char_limit || ((currentTier === "credits" || currentTier === "pro") ? 50000 : 5000);
+                if (truncNote && (summaryData.truncated || originalLen > usedLimit)) {
+                    truncNote.style.display = "block";
+                }
 
-                // Risks (only if summary succeeded)
-                const risksRes = await fetch('/analyze', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include',
-                    body: JSON.stringify({text: shortText, type: 'risks'})
+                document.getElementById("summary").innerHTML = summaryData.result
+                    ? summaryData.result.replace(/\n/g, "<br>")
+                    : "No summary received";
+
+                const risksRes = await fetch("/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ text: shortText, type: "risks", doc_type: docType })
                 });
                 if (risksRes.ok) {
                     const risksData = await risksRes.json();
-                    document.getElementById('risks').innerHTML = risksData.result ?
-                        risksData.result.replace(/\n/g, '<br>') : "No risks identified";
+                    document.getElementById("risks").innerHTML = risksData.result
+                        ? risksData.result.replace(/\n/g, "<br>")
+                        : "No risks identified";
                 }
 
-                // Highlighted text — free = 5k; paid (credits/pro) = 12k
-                const highlightLimit = summaryData.char_limit || ((currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000);
+                if (docType === "nda") {
+                    try {
+                        const checkRes = await fetch("/analyze", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            credentials: "include",
+                            body: JSON.stringify({ text: shortText, type: "nda_checklist", doc_type: "nda" })
+                        });
+                        if (checkRes.ok) {
+                            const checkData = await checkRes.json();
+                            renderNdaChecklist(checkData.result);
+                        }
+                    } catch (err) {
+                        console.log("NDA checklist skipped", err);
+                    }
+                }
+
+                const highlightLimit = summaryData.char_limit || ((currentTier === "credits" || currentTier === "pro") ? 50000 : 5000);
                 const textForHighlight = redactPiiClient(shortText.substring(0, highlightLimit));
                 let highlighted = textForHighlight.replace(
-                    /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability)\b/gi,
+                    /\b(privacy|data|sell|share|collect|third party|personal information|rights|consent|obligation|liability|confidential|residual|unaided)\b/gi,
                     match => `<span class="highlight">${match}</span>`
                 );
                 updateHighlightedPagination(highlighted);
-
             } catch (e) {
                 console.error(e);
-                document.getElementById('summary').innerHTML = "Error: " + (e.message || e);
-                document.getElementById('risks').innerHTML = "";
+                document.getElementById("summary").innerHTML = "Error: " + (e.message || e);
+                document.getElementById("risks").innerHTML = "";
             }
         }
 
@@ -361,6 +479,7 @@
                         text: documentText.substring(0, (currentTier === 'credits' || currentTier === 'pro') ? 50000 : 5000),
                         type: 'question',
                         question: q
+						doc_type: docType
                     })
                 });
                 const data = await res.json();
@@ -477,10 +596,17 @@
             y = writeLines(summaryText, y, bodyFontSize);
             y += 12;
             y = writeHeading("Privacy & Legal Risks", y);
-            const risksText =
+			
+const risksText =
                 document.getElementById("risks")?.innerText || "No risks available";
             y = writeLines(risksText, y, bodyFontSize);
             y += 12;
+            const ndaText = document.getElementById("ndaChecklistOut")?.innerText || "";
+            if (ndaText.trim()) {
+                y = writeHeading("NDA checklist", y);
+                y = writeLines(ndaText, y, bodyFontSize);
+                y += 12;
+            }
             if (hasQA) {
                 y = writeHeading("Question Asked", y);
                 y = writeLines(q, y, bodyFontSize);
@@ -551,6 +677,12 @@
             if (question) question.value = "";
             const pageInfo = document.getElementById("pageInfo");
             if (pageInfo) pageInfo.textContent = "";
+			const truncNote = document.getElementById("truncNote");
+            if (truncNote) truncNote.style.display = "none";
+            const ndaBox = document.getElementById("ndaChecklist");
+            const ndaOut = document.getElementById("ndaChecklistOut");
+            if (ndaBox) ndaBox.style.display = "none";
+            if (ndaOut) ndaOut.innerHTML = "";
         }
 
         function startNewAnalysis() {
