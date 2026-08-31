@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5D49483KHV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5D49483KHV');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact – NexusDocs</title>
+  <meta name="description" content="Contact NexusDocs for support, partnerships, or press.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nexusdocs.ai/contact">
+  <link rel="icon" type="image/png" href="/static/images/logo-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-white text-gray-900">
+<nav class="bg-white border-b sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-y-3">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/static/images/logo-icon.png" alt="NexusDocs.ai" class="h-9 w-9 sm:h-10 sm:w-10 rounded-full">
+      <span class="text-xl sm:text-2xl font-semibold text-gray-900">NexusDocs.ai</span>
+    </a>
+    <div class="flex flex-wrap items-center justify-end gap-x-5 gap-y-2">
+      <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Home</a>
+      <a href="/pricing.html" class="text-gray-600 hover:text-gray-900 font-medium">Pricing</a>
+      <a href="/insights" class="text-gray-600 hover:text-gray-900 font-medium">Insights</a>
+      <a href="/about.html" class="text-gray-600 hover:text-gray-900 font-medium">About</a>
+      <a href="/contact" class="text-gray-900 font-medium">Contact</a>
+      {% if email %}
+        <a href="/logout" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm">Log out</a>
+      {% else %}
+        <a href="/login" class="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm">Log in</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-xl mx-auto px-4 py-12 sm:py-16">
+  <h1 class="text-3xl sm:text-4xl font-semibold mb-3">Contact</h1>
+  <p class="text-gray-600 mb-8">Support, partnerships, or press. We read these. We do not sell your note.</p>
+
+  {% if request.args.get('sent') %}
+  <p class="mb-8 rounded-xl bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">Thanks. Your message was sent.</p>
+  {% endif %}
+  {% if error %}
+  <p class="mb-8 rounded-xl bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/contact" class="space-y-4">
+    <div class="hidden" aria-hidden="true">
+      <label>Company website</label>
+      <input type="text" name="company_website" tabindex="-1" autocomplete="off">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="name">Name</label>
+      <input id="name" name="name" required maxlength="120" class="w-full rounded-xl border border-gray-200 px-3 py-2">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email</label>
+      <input id="email" name="email" type="email" required maxlength="200" class="w-full rounded-xl border border-gray-200 px-3 py-2">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="reason">Reason</label>
+      <select id="reason" name="reason" class="w-full rounded-xl border border-gray-200 px-3 py-2">
+        <option value="support">Support</option>
+        <option value="partnerships">Partnerships</option>
+        <option value="press">Press</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="message">Message</label>
+      <textarea id="message" name="message" required rows="6" maxlength="4000" class="w-full rounded-xl border border-gray-200 px-3 py-2"></textarea>
+    </div>
+    <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700">Send</button>
+  </form>
+</main>
+
+<footer class="bg-gray-900 text-gray-400 py-12">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <p class="text-sm">&copy; 2026 NexusDocs.ai. All rights reserved.</p>
+    <p class="mt-3 text-sm">
+      <a href="/privacy.html" target="_blank" class="hover:text-white">Privacy Policy</a>
+      <span class="mx-2">|</span>
+      <a href="/terms.html" target="_blank" class="hover:text-white">Terms of Service</a>
+      <span class="mx-2">|</span>
+      <a href="/contact" class="hover:text-white">Contact</a>
+    </p>
+    <div class="mt-5 flex items-center justify-center gap-5">
+      <a href="https://x.com/nexusdocsai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on X" class="text-gray-400 hover:text-white text-xl transition-colors">
+        <i class="fab fa-x-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/company/nexusdocs-ai" target="_blank" rel="noopener noreferrer" aria-label="NexusDocs on LinkedIn" class="text-gray-400 hover:text-white text-xl transition-colors">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

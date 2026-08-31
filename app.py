@@ -12,7 +12,9 @@ import os
 import requests
 import stripe
 import re
+import smtplib
 from coverclear_rag import chunk_policy, retrieve_chunks, build_context
+from email.message import EmailMessage
 
 _PII_PATTERNS = [
     (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[REDACTED-SSN]"),
@@ -301,6 +303,75 @@ def redirect_after_login():
         return redirect("/billing-portal")
     return redirect("/")
 
+# ---------- Email ContactUs ----
+
+@app.route('/contact')
+@app.route('/contact.html')
+def contact_page():
+    email = session.get('email')
+    if not email and current_user.is_authenticated:
+        email = getattr(current_user, 'email', None)
+    return render_template('contact.html', email=email)
+
+@app.route('/contact', methods=['POST'])
+def contact_submit():
+    # Honeypot — bots fill this, humans never see it
+    if (request.form.get('company_website') or '').strip():
+        return redirect('/contact?sent=1')
+
+    name = (request.form.get('name') or '').strip()[:120]
+    reply_to = (request.form.get('email') or '').strip()[:200]
+    reason = (request.form.get('reason') or 'other').strip()[:40]
+    message = (request.form.get('message') or '').strip()[:4000]
+
+    allowed = {'support', 'partnerships', 'press', 'other'}
+    if reason not in allowed:
+        reason = 'other'
+
+    if not name or not reply_to or '@' not in reply_to or not message:
+        return render_template(
+            'contact.html',
+            email=session.get('email'),
+            error='Please fill in your name, email, and message.'
+        ), 400
+
+    smtp_user = os.environ.get('SMTP_USER')
+    smtp_password = os.environ.get('SMTP_PASSWORD')
+    contact_to = os.environ.get('CONTACT_TO', smtp_user)
+
+    if not smtp_user or not smtp_password:
+        return render_template(
+            'contact.html',
+            email=session.get('email'),
+            error='Mail is not configured yet. Please try again later.'
+        ), 500
+
+    msg = EmailMessage()
+    msg['Subject'] = f'[NexusDocs {reason}] {name}'
+    msg['From'] = smtp_user
+    msg['To'] = contact_to
+    msg['Reply-To'] = reply_to
+    msg.set_content(
+        f'Name: {name}\n'
+        f'Email: {reply_to}\n'
+        f'Reason: {reason}\n\n'
+        f'{message}'
+    )
+
+    try:
+        with smtplib.SMTP(os.environ.get('SMTP_HOST', 'smtp.protonmail.ch'),
+                          int(os.environ.get('SMTP_PORT', 587))) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+    except Exception:
+        return render_template(
+            'contact.html',
+            email=session.get('email'),
+            error='Could not send the message. Please try again.'
+        ), 502
+
+    return redirect('/contact?sent=1')
 
 # ---------- Insights ----------
 @app.route('/insights/')
