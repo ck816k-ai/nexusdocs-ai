@@ -148,7 +148,7 @@ def index():
     return render_template('index.html', email=email)
 
 
-@app.route('/termguard.html')   # or whatever the path is
+@app.route('/termguard')   # or whatever the path is
 @app.route('/termguard.html')
 def termguard():
     email = session.get('email')
