@@ -301,9 +301,13 @@ def redirect_after_login():
         return redirect("/billing-portal")
     return redirect("/")
 
+
 # ---------- Insights ----------
-@app.route('/insights')
 @app.route('/insights/')
+def insights_slash():
+    return redirect('/insights', code=301)
+
+@app.route('/insights')
 def insights_index():
     return render_template('insights/index.html')
 
