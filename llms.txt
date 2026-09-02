@@ -22,6 +22,7 @@
 - [Arbitration Clauses: Why You Often Can’t Sue](https://nexusdocs.ai/insights/arbitration-clauses)
 - [How TermsGuard, CoverClear, and BillClear Now Read Long Documents](https://nexusdocs.ai/insights/how-we-read-long-documents)
 - [Residual and Unaided-Memory Clauses in NDAs](https://nexusdocs.ai/insights/nda-residual-unaided-memory)
+- [A Burst Pipe Is Not Every Wet Floor](https://nexusdocs.ai/insights/burst-pipe-renters-coverage)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy

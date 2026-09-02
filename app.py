@@ -382,6 +382,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/burst-pipe-renters-coverage')
+@app.route('/insights/burst-pipe-renters-coverage/')
+def insights_burst_pipe_renters():
+    return render_template('insights/burst-pipe-renters-coverage.html')
+
 @app.route('/insights/nda-residual-unaided-memory')
 @app.route('/insights/nda-residual-unaided-memory/')
 def insights_nda_residual_unaided_memory():
