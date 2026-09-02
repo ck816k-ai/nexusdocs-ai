@@ -8,6 +8,9 @@ Disallow: /cc_app
 Disallow: /cc_app.html
 Disallow: /bc_app
 Disallow: /bc_app.html
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 Disallow: /app
 Disallow: /login
 Disallow: /login.html
@@ -36,6 +39,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: OAI-SearchBot
 Allow: /
@@ -53,6 +59,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: ChatGPT-User
 Allow: /
@@ -70,6 +79,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: ClaudeBot
 Allow: /
@@ -87,6 +99,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Claude-SearchBot
 Allow: /
@@ -104,6 +119,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Claude-User
 Allow: /
@@ -121,6 +139,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: PerplexityBot
 Allow: /
@@ -138,6 +159,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Perplexity-User
 Allow: /
@@ -155,6 +179,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Google-Extended
 Allow: /
@@ -172,6 +199,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Bingbot
 Allow: /
@@ -189,6 +219,9 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 User-agent: Applebot-Extended
 Allow: /
@@ -206,5 +239,8 @@ Disallow: /auth/
 Disallow: /analyze
 Disallow: /analyze_coverclear
 Disallow: /analyze_billclear
+Disallow: /cl_app
+Disallow: /cl_app.html
+Disallow: /analyze_trials
 
 Sitemap: https://nexusdocs.ai/sitemap.xml
