@@ -1405,7 +1405,13 @@ def _fetch_trials(filters):
             clause = f"({clause})"
         params["filter.advanced"] = clause
     if filters["country"]:
-        params["query.locn"] = filters["country"]
+        loc = filters["country"].strip()
+        aliases = {
+            "US": "United States",
+            "USA": "United States",
+            "UK": "United Kingdom",
+        }
+        params["query.locn"] = aliases.get(loc.upper(), loc)
     r = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params, timeout=30)
     r.raise_for_status()
     rows = []
