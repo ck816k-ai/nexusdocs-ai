@@ -1373,7 +1373,22 @@ def _parse_filters(question):
         if raw.startswith("json"):
             raw = raw[4:]
         raw = raw.strip()
+
     data = _json.loads(raw)
+
+    nct = ""
+    m = re.search(r"\bNCT\d{8}\b", question, flags=re.I)
+    if m:
+        nct = m.group(0).upper()
+
+    acronym = ""
+    am = re.search(r"\b[A-Z]{3,}(?:-[A-Z0-9]+)+\b", question)
+    if am:
+        acronym = am.group(0)
+
+    data["nct_id"] = nct or data.get("nct_id") or ""
+    data["trial_acronym"] = acronym or data.get("trial_acronym") or ""
+
     phases = [p for p in (data.get("phase") or []) if p in ALLOWED_PHASES]
     statuses = [s for s in (data.get("status") or []) if s in ALLOWED_STATUS]
     qtype = data.get("question_type") or "trials"
@@ -1387,50 +1402,60 @@ def _parse_filters(question):
         "country": (data.get("country") or "").strip(),
         "question_type": qtype,
         "brand_or_generic": (data.get("brand_or_generic") or "").strip(),
+        "nct_id": (data.get("nct_id") or "").strip(),
+        "trial_acronym": (data.get("trial_acronym") or "").strip(),
     }
 
 def _fetch_trials(filters):
     params = {"pageSize": 8, "format": "json"}
-    if filters["condition"]:
-        params["query.cond"] = filters["condition"]
-    if filters["intervention"]:
-        params["query.intr"] = filters["intervention"]
-    if not filters["condition"] and not filters["intervention"]:
-        params["query.term"] = "clinical trial"
-    if filters["status"]:
-        params["filter.overallStatus"] = ",".join(filters["status"])
-    if filters["phase"]:
-        clause = " OR ".join(f"AREA[Phase]{p}" for p in filters["phase"])
-        if len(filters["phase"]) > 1:
-            clause = f"({clause})"
-        params["filter.advanced"] = clause
-    if filters["country"]:
-        loc = filters["country"].strip()
-        aliases = {
-            "US": "United States",
-            "USA": "United States",
-            "UK": "United Kingdom",
-        }
-        params["query.locn"] = aliases.get(loc.upper(), loc)
+    nct_id = (filters.get("nct_id") or "").strip().upper()
+    acronym = (filters.get("trial_acronym") or "").strip()
+
+    if nct_id:
+        params["query.id"] = nct_id
+    elif acronym:
+        params["query.term"] = acronym
+    else:
+        if filters.get("condition"):
+            params["query.cond"] = filters["condition"]
+        if filters.get("intervention") or filters.get("brand_or_generic"):
+            params["query.intr"] = filters.get("intervention") or filters.get("brand_or_generic")
+        if filters.get("status"):
+            params["filter.overallStatus"] = ",".join(filters["status"])
+        if filters.get("phase"):
+            clause = " OR ".join(f"AREA[Phase]{p}" for p in filters["phase"])
+            if len(filters["phase"]) > 1:
+                clause = f"({clause})"
+            params["filter.advanced"] = clause
+        if filters.get("country"):
+            loc = filters["country"].strip()
+            aliases = {"US": "United States", "USA": "United States", "UK": "United Kingdom"}
+            params["query.locn"] = aliases.get(loc.upper(), loc)
+
     r = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params, timeout=30)
     r.raise_for_status()
     rows = []
     for s in (r.json().get("studies") or [])[:8]:
-        proto = s.get("protocolSection") or {}
-        ident = proto.get("identificationModule") or {}
-        status = proto.get("statusModule") or {}
-        design = proto.get("designModule") or {}
-        cond = proto.get("conditionsModule") or {}
+        p = s.get("protocolSection") or {}
+        ident = p.get("identificationModule") or {}
+        status = p.get("statusModule") or {}
+        design = p.get("designModule") or {}
+        elig = p.get("eligibilityModule") or {}
+        criteria = (elig.get("eligibilityCriteria") or "")[:2500]
         nct = ident.get("nctId")
         rows.append({
             "nct_id": nct,
             "title": ident.get("briefTitle"),
+            "official_title": ident.get("officialTitle"),
+            "acronym": ident.get("acronym"),
             "status": status.get("overallStatus"),
-            "phases": design.get("phases") or [],
-            "conditions": (cond.get("conditions") or [])[:6],
+            "last_update": status.get("lastUpdatePostDateStruct", {}).get("date"),
+            "phase": (design.get("phases") or [None])[0],
+            "conditions": (p.get("conditionsModule") or {}).get("conditions"),
+            "eligibility": criteria,
             "url": f"https://clinicaltrials.gov/study/{nct}" if nct else None,
         })
-    return rows, params
+    return rows
 
 def _fetch_label(name):
     import os
