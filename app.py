@@ -1450,12 +1450,19 @@ def _fetch_label(name):
     if not results:
         return {"name": name, "found": False}
     openfda = results.get("openfda") or {}
+
+    def _clip(val, n=1800):
+        text = (val or [""])[0] if isinstance(val, list) else (val or "")
+        return text[:n]
+
     return {
         "found": True,
         "brand": (openfda.get("brand_name") or [name])[0],
         "generic": (openfda.get("generic_name") or [""])[0],
-        "boxed_warning": ((results.get("boxed_warning") or [""])[0])[:800],
-        "indications": ((results.get("indications_and_usage") or [""])[0])[:800],
+        "boxed_warning": _clip(results.get("boxed_warning")),
+        "indications": _clip(results.get("indications_and_usage")),
+        "dosage_and_administration": _clip(results.get("dosage_and_administration"), 2500),
+        "warnings": _clip(results.get("warnings_and_cautions") or results.get("warnings_and_precautions"), 1800),
     }
 
 @app.route("/analyze_trials", methods=["POST"])
