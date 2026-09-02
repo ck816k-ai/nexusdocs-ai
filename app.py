@@ -1505,7 +1505,11 @@ def analyze_trials():
         trials, api_params = [], {}
         label = None
         if filters["question_type"] in ("trials", "both"):
-            trials, api_params = _fetch_trials(filters)
+            trials = _fetch_trials(filters)
+            api_params = {
+                "nct_id": filters.get("nct_id") or None,
+                "trial_acronym": filters.get("trial_acronym") or None,
+            }
         if filters["question_type"] in ("label", "both") or filters["brand_or_generic"]:
             label = _fetch_label(filters["brand_or_generic"] or filters["intervention"])
 
