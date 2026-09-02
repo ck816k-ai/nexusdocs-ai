@@ -303,6 +303,12 @@ def redirect_after_login():
         return redirect("/billing-portal")
     return redirect("/")
 
+@app.route('/cl_app')
+@app.route('/cl_app.html')
+@login_required
+def cl_app():
+    return render_template('cl_app.html')
+
 # ---------- Email ContactUs ----
 
 @app.route('/contact')
@@ -1312,6 +1318,189 @@ def analyze_billclear():
             "bill_type": bill_type
         })
 
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+# ===================== Clinical Trials ==========================
+
+ALLOWED_PHASES = {"EARLY_PHASE1", "PHASE1", "PHASE2", "PHASE3", "PHASE4", "NA"}
+ALLOWED_STATUS = {
+    "RECRUITING", "NOT_YET_RECRUITING", "ENROLLING_BY_INVITATION",
+    "ACTIVE_NOT_RECRUITING", "COMPLETED", "TERMINATED", "WITHDRAWN", "SUSPENDED",
+}
+
+def _trials_chat(messages, model="grok-4.5", timeout=90):
+    response = requests.post(
+        "https://api.x.ai/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {GROK_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={"model": model, "messages": messages, "temperature": 0.2},
+        timeout=timeout,
+    )
+    response.raise_for_status()
+    return (
+        response.json().get("choices", [{}])[0]
+        .get("message", {})
+        .get("content", "")
+    )
+
+def _parse_filters(question):
+    import json as _json
+    raw = _trials_chat([
+        {
+            "role": "system",
+            "content": (
+                "Convert a clinician question into JSON filters for ClinicalTrials.gov "
+                "and openFDA. Return ONLY JSON with keys: "
+                "condition, intervention, phase (array of PHASE1|PHASE2|PHASE3|PHASE4|EARLY_PHASE1|NA), "
+                "status (array of RECRUITING|NOT_YET_RECRUITING|ENROLLING_BY_INVITATION|"
+                "ACTIVE_NOT_RECRUITING|COMPLETED|TERMINATED|WITHDRAWN|SUSPENDED), "
+                "country (empty or US or a country name), "
+                "question_type (trials|label|both), "
+                "brand_or_generic (drug name or empty). "
+                "Do not invent extra keys. If phase or status is not stated, use empty arrays."
+            ),
+        },
+        {"role": "user", "content": question},
+    ])
+    raw = raw.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+    data = _json.loads(raw)
+    phases = [p for p in (data.get("phase") or []) if p in ALLOWED_PHASES]
+    statuses = [s for s in (data.get("status") or []) if s in ALLOWED_STATUS]
+    qtype = data.get("question_type") or "trials"
+    if qtype not in ("trials", "label", "both"):
+        qtype = "trials"
+    return {
+        "condition": (data.get("condition") or "").strip(),
+        "intervention": (data.get("intervention") or "").strip(),
+        "phase": phases,
+        "status": statuses,
+        "country": (data.get("country") or "").strip(),
+        "question_type": qtype,
+        "brand_or_generic": (data.get("brand_or_generic") or "").strip(),
+    }
+
+def _fetch_trials(filters):
+    params = {"pageSize": 8, "format": "json"}
+    if filters["condition"]:
+        params["query.cond"] = filters["condition"]
+    if filters["intervention"]:
+        params["query.intr"] = filters["intervention"]
+    if not filters["condition"] and not filters["intervention"]:
+        params["query.term"] = "clinical trial"
+    if filters["status"]:
+        params["filter.overallStatus"] = ",".join(filters["status"])
+    if filters["phase"]:
+        clause = " OR ".join(f"AREA[Phase]{p}" for p in filters["phase"])
+        if len(filters["phase"]) > 1:
+            clause = f"({clause})"
+        params["filter.advanced"] = clause
+    if filters["country"]:
+        params["query.locn"] = filters["country"]
+    r = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params, timeout=30)
+    r.raise_for_status()
+    rows = []
+    for s in (r.json().get("studies") or [])[:8]:
+        proto = s.get("protocolSection") or {}
+        ident = proto.get("identificationModule") or {}
+        status = proto.get("statusModule") or {}
+        design = proto.get("designModule") or {}
+        cond = proto.get("conditionsModule") or {}
+        nct = ident.get("nctId")
+        rows.append({
+            "nct_id": nct,
+            "title": ident.get("briefTitle"),
+            "status": status.get("overallStatus"),
+            "phases": design.get("phases") or [],
+            "conditions": (cond.get("conditions") or [])[:6],
+            "url": f"https://clinicaltrials.gov/study/{nct}" if nct else None,
+        })
+    return rows, params
+
+def _fetch_label(name):
+    import os
+    if not name:
+        return None
+    params = {
+        "search": f'openfda.brand_name:"{name}" OR openfda.generic_name:"{name}"',
+        "limit": 1,
+    }
+    key = os.environ.get("OPENFDA_API_KEY")
+    if key:
+        params["api_key"] = key
+    r = requests.get("https://api.fda.gov/drug/label.json", params=params, timeout=30)
+    if r.status_code != 200:
+        return {"error": f"openFDA {r.status_code}", "name": name}
+    results = (r.json().get("results") or [None])[0]
+    if not results:
+        return {"name": name, "found": False}
+    openfda = results.get("openfda") or {}
+    return {
+        "found": True,
+        "brand": (openfda.get("brand_name") or [name])[0],
+        "generic": (openfda.get("generic_name") or [""])[0],
+        "boxed_warning": ((results.get("boxed_warning") or [""])[0])[:800],
+        "indications": ((results.get("indications_and_usage") or [""])[0])[:800],
+    }
+
+@app.route("/analyze_trials", methods=["POST"])
+@login_required
+def analyze_trials():
+    try:
+        data = request.json or {}
+        question = (data.get("question") or data.get("text") or "").strip()
+        if not question:
+            return jsonify({"error": "Enter a clinical question."}), 400
+        if len(question) > 2000:
+            question = question[:2000]
+
+        filters = _parse_filters(question)
+        trials, api_params = [], {}
+        label = None
+        if filters["question_type"] in ("trials", "both"):
+            trials, api_params = _fetch_trials(filters)
+        if filters["question_type"] in ("label", "both") or filters["brand_or_generic"]:
+            label = _fetch_label(filters["brand_or_generic"] or filters["intervention"])
+
+        brief = _trials_chat([
+            {
+                "role": "system",
+                "content": (
+                    "You are a clear research-lookup explainer for clinicians. "
+                    "Use ONLY the JSON records provided. Do not invent NCT IDs or indications. "
+                    "If results look off-topic, say so. Plain English. Short bullets. "
+                    "End with: This is public registry/label text, not medical advice or a care recommendation."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"Question:\n{question}\n\nFilters used:\n{filters}\n\n"
+                    f"Trials:\n{trials}\n\nLabel slice:\n{label}"
+                ),
+            },
+        ])
+        return jsonify({
+            "result": brief,
+            "filters": filters,
+            "api_params": api_params,
+            "trials": trials,
+            "label": label,
+            "nct_ids": [t.get("nct_id") for t in trials if t.get("nct_id")],
+        })
+    except requests.exceptions.Timeout:
+        return jsonify({"error": "Lookup took too long. Try a narrower question."}), 504
+    except requests.exceptions.RequestException:
+        return jsonify({"error": "Failed to reach a registry API. Try again."}), 502
     except Exception as e:
         import traceback
         traceback.print_exc()

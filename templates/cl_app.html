@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Clinician lookup – NexusDocs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<header class="bg-slate-900 text-white">
+  <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div>
+      <div class="text-xs uppercase tracking-wide text-slate-400">NexusDocs · private demo</div>
+      <div class="font-semibold">Clinician registry lookup</div>
+    </div>
+    <a href="/" class="text-sm text-slate-300 hover:text-white">Home</a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8 grid lg:grid-cols-2 gap-6 items-start">
+  <section class="bg-white rounded-2xl border border-slate-200 p-5">
+    <h1 class="font-semibold text-slate-900 mb-2">Ask in a sentence</h1>
+    <p class="text-sm text-slate-600 mb-4">
+      We turn this into ClinicalTrials.gov / openFDA filters. You will see the filters and NCT IDs.
+    </p>
+    <textarea id="question" rows="6"
+      class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+      placeholder="e.g. Recruiting Phase 3 trials for HER2-low metastatic breast cancer in the US"></textarea>
+    <button id="runBtn" type="button"
+      class="mt-3 w-full py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800">
+      Run lookup
+    </button>
+    <p class="text-xs text-slate-500 mt-3">
+      Public registry and label text only. Not medical advice. Not a care recommendation.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <div id="empty" class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500">
+      Brief, filters, and NCT links appear here.
+    </div>
+    <div id="loading" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center">
+      <i class="fas fa-circle-notch fa-spin text-slate-700 mb-2"></i>
+      <p class="text-sm text-slate-600">Querying registries…</p>
+    </div>
+    <div id="out" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Brief</h2>
+        <pre id="brief" class="whitespace-pre-wrap text-sm text-slate-800"></pre>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Filters we sent</h2>
+        <pre id="filters" class="whitespace-pre-wrap text-xs text-slate-700"></pre>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Records</h2>
+        <ul id="ncts" class="text-sm space-y-1"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.getElementById('runBtn').addEventListener('click', async () => {
+    const question = document.getElementById('question').value.trim();
+    if (!question) { alert('Enter a question first.'); return; }
+    document.getElementById('empty').classList.add('hidden');
+    document.getElementById('out').classList.add('hidden');
+    document.getElementById('loading').classList.remove('hidden');
+    try {
+      const res = await fetch('/analyze_trials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+      const data = await res.json();
+      document.getElementById('loading').classList.add('hidden');
+      if (!res.ok) throw new Error(data.error || 'Lookup failed');
+      document.getElementById('brief').textContent = data.result || '';
+      document.getElementById('filters').textContent = JSON.stringify(data.filters || {}, null, 2);
+      const list = document.getElementById('ncts');
+      list.innerHTML = '';
+      (data.trials || []).forEach(t => {
+        const li = document.createElement('li');
+        if (t.url) {
+          li.innerHTML = '<a class="text-blue-700 hover:underline" href="' + t.url + '" target="_blank" rel="noopener">' + (t.nct_id || '') + '</a> — ' + (t.title || '');
+        } else {
+          li.textContent = (t.nct_id || '') + ' — ' + (t.title || '');
+        }
+        list.appendChild(li);
+      });
+      if (data.label && data.label.brand) {
+        const li = document.createElement('li');
+        li.textContent = 'Label: ' + data.label.brand;
+        list.appendChild(li);
+      }
+      document.getElementById('out').classList.remove('hidden');
+    } catch (e) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('empty').classList.remove('hidden');
+      alert(e.message || 'Could not reach server.');
+    }
+  });
+</script>
+</body>
+</html>
