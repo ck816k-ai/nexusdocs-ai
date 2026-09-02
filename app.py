@@ -1414,7 +1414,7 @@ def _fetch_trials(filters):
     if nct_id:
         params["query.id"] = nct_id
     elif acronym:
-        params["query.term"] = acronym
+        params["query.term"] = f"AREA[Acronym]{acronym}"
     else:
         if filters.get("condition"):
             params["query.cond"] = filters["condition"]
