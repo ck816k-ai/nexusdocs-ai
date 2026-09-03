@@ -1382,7 +1382,7 @@ def _parse_filters(question):
         nct = m.group(0).upper()
 
     acronym = ""
-    am = re.search(r"\b[A-Z]{3,}(?:-[A-Z0-9]+)+\b", question)
+    am = re.search(r"\b[A-Za-z]{3,}(?:-[A-Za-z0-9]+)+\b", question)
     if am:
         acronym = am.group(0)
 
@@ -1434,8 +1434,16 @@ def _fetch_trials(filters):
 
     r = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params, timeout=30)
     r.raise_for_status()
+    studies = r.json().get("studies") or []
+
+    if acronym and not nct_id and not studies:
+        params["query.term"] = acronym
+        r = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params, timeout=30)
+        r.raise_for_status()
+        studies = r.json().get("studies") or []
+
     rows = []
-    for s in (r.json().get("studies") or [])[:8]:
+    for s in studies[:8]:
         p = s.get("protocolSection") or {}
         ident = p.get("identificationModule") or {}
         status = p.get("statusModule") or {}
