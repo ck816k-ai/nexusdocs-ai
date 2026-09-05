@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/hospital-bill-vs-eob')
+@app.route('/insights/hospital-bill-vs-eob/')
+def insights_hospital_bill_vs_eob():
+    return render_template('insights/hospital-bill-vs-eob.html')
+
 @app.route('/insights/burst-pipe-renters-coverage')
 @app.route('/insights/burst-pipe-renters-coverage/')
 def insights_burst_pipe_renters():

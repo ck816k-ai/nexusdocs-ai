@@ -23,6 +23,7 @@
 - [How TermsGuard, CoverClear, and BillClear Now Read Long Documents](https://nexusdocs.ai/insights/how-we-read-long-documents)
 - [Residual and Unaided-Memory Clauses in NDAs](https://nexusdocs.ai/insights/nda-residual-unaided-memory)
 - [A Burst Pipe Is Not Every Wet Floor](https://nexusdocs.ai/insights/burst-pipe-renters-coverage)
+- [Your Hospital Bill and Your EOB Are Not the Same Document](https://nexusdocs.ai/insights/hospital-bill-vs-eob)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy
