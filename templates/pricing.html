@@ -37,32 +37,58 @@
 {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": "TermsGuard",
+  "name": "NexusDocs",
   "url": "https://nexusdocs.ai/pricing.html",
-  "description": "AI-powered plain-English analysis of contracts and terms. Free, pay-as-you-go, and Pro plans.",
+  "description": "One credit pool for three NexusDocs apps: TermsGuard for contracts and terms, CoverClear for insurance policies, and BillClear for medical bills and EOBs. Free, pay-as-you-go, and Pro plans.",
   "image": "https://nexusdocs.ai/static/images/logo-icon.png",
   "brand": {
     "@type": "Brand",
     "name": "NexusDocs"
   },
+  "isRelatedTo": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "TermsGuard",
+      "url": "https://nexusdocs.ai/termguard.html",
+      "applicationCategory": "BusinessApplication",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "CoverClear",
+      "url": "https://nexusdocs.ai/coverclear.html",
+      "applicationCategory": "BusinessApplication",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "BillClear",
+      "url": "https://nexusdocs.ai/billclear.html",
+      "applicationCategory": "BusinessApplication",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  ],
   "offers": [
     {
       "@type": "Offer",
       "name": "Free",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "USD",
+      "description": "Shared credits across TermsGuard, CoverClear, and BillClear"
     },
     {
       "@type": "Offer",
       "name": "Pay as You Go",
       "price": "6.99",
-      "priceCurrency": "USD"
+      "priceCurrency": "USD",
+      "description": "Shared credits across TermsGuard, CoverClear, and BillClear"
     },
     {
       "@type": "Offer",
       "name": "Pro",
       "price": "19",
       "priceCurrency": "USD",
+      "description": "Shared monthly plan across TermsGuard, CoverClear, and BillClear",
       "priceSpecification": {
         "@type": "UnitPriceSpecification",
         "price": "19",
@@ -73,6 +99,7 @@
   ]
 }
 </script>
+
 </head>
 <body class="bg-gray-50">
 
