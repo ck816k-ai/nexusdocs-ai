@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/accountability-when-ai-makes-mistakes')
+@app.route('/insights/accountability-when-ai-makes-mistakes/')
+def insights_ai_accountability():
+    return render_template('insights/accountability-when-ai-makes-mistakes.html')
+
 @app.route('/insights/hospital-bill-vs-eob')
 @app.route('/insights/hospital-bill-vs-eob/')
 def insights_hospital_bill_vs_eob():
