@@ -41,16 +41,47 @@
 <meta name="twitter:image" content="https://nexusdocs.ai/static/images/nexusdocs-social.png">
 <meta name="msvalidate.01" content="FE836C711303660F4F0B89680CDEFED8" />
 <script type="application/ld+json">
+
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://nexusdocs.ai/#organization",
   "name": "NexusDocs",
   "url": "https://nexusdocs.ai/",
-  "logo": "https://nexusdocs.ai/static/images/logo-icon.png",
-  "description": "AI-powered document intelligence. TermsGuard makes contracts and terms easy to understand.",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://nexusdocs.ai/static/images/logo-icon.png"
+  },
+  "description": "AI tools that make contracts, insurance policies, and medical bills easier to understand.",
   "sameAs": [
     "https://x.com/nexusdocsai",
     "https://www.linkedin.com/company/nexusdocs-ai"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "SoftwareApplication",
+        "name": "TermsGuard",
+        "url": "https://nexusdocs.ai/termguard.html"
+      }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "SoftwareApplication",
+        "name": "CoverClear",
+        "url": "https://nexusdocs.ai/coverclear.html"
+      }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "SoftwareApplication",
+        "name": "BillClear",
+        "url": "https://nexusdocs.ai/billclear.html"
+      }
+    }
   ]
 }
 </script>
@@ -60,7 +91,10 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "NexusDocs",
-  "url": "https://nexusdocs.ai/"
+  "url": "https://nexusdocs.ai/",
+  "publisher": {
+    "@id": "https://nexusdocs.ai/#organization"
+  }
 }
 </script>
 
