@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/can-they-change-the-terms-after-you-sign-up')
+@app.route('/insights/can-they-change-the-terms-after-you-sign-up/')
+def insights_change_terms_after_signup():
+    return render_template('insights/can-they-change-the-terms-after-you-sign-up.html')
+
 @app.route('/insights/accountability-when-ai-makes-mistakes')
 @app.route('/insights/accountability-when-ai-makes-mistakes/')
 def insights_ai_accountability():
