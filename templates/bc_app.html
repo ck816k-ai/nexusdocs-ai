@@ -20,6 +20,7 @@
   </style>
 </head>
 <body class="bg-rose-50 min-h-screen">
+
 <header class="bc-bg text-white">
   <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
     <div class="flex items-center gap-3">
@@ -32,23 +33,23 @@
         <div class="text-xs text-red-100/80">Bill workspace</div>
       </div>
     </div>
-    <div class="flex items-center gap-3 text-sm">
-      <span id="creditStatus" class="text-xs sm:text-sm font-semibold text-white bg-white/15 px-2.5 py-1 rounded-full whitespace-nowrap">
-        {% if tier == 'pro' %}
-          Current plan: Pro
-        {% elif tier == 'credits' %}
+    <div class="w-full lg:w-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2 text-sm">
+	  <span id="creditStatus" class="text-xs sm:text-sm font-semibold text-white bg-white/15 px-2.5 py-1 rounded-full whitespace-nowrap">
+		{% if tier == 'pro' %}
+		  Current plan: Pro
+		{% elif tier == 'credits' %}
           Pay as you go · {{ remaining }} / {{ limit }} left
-        {% else %}
-          Free · {{ remaining }} / {{ limit }} left
-        {% endif %}
-      </span>
-      <a href="/billclear.html" class="text-red-100 hover:text-white">Product</a>
-      <a href="/cc_app" class="text-teal-100 hover:text-white">CoverClear</a>
-      <a href="/tg_app" class="text-blue-100 hover:text-white">TermsGuard</a>
-      <a href="/pricing.html" class="text-red-100 hover:text-white">Credits</a>
-      <a href="/billing-portal?next=billclear" class="text-red-100 hover:text-white">Manage subscription</a>
-      <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Log out</a>
-    </div>
+		{% else %}
+		  Free · {{ remaining }} / {{ limit }} left
+		{% endif %}
+	  </span>
+	  <a href="/billclear.html" class="hidden sm:inline text-red-100 hover:text-white whitespace-nowrap">Product</a>
+	  <a href="/cc_app" class="hidden md:inline text-teal-100 hover:text-white whitespace-nowrap">CoverClear</a>
+	  <a href="/tg_app" class="hidden md:inline text-blue-100 hover:text-white whitespace-nowrap">TermsGuard</a>
+	  <a href="/pricing.html" class="text-red-100 hover:text-white whitespace-nowrap">Credits</a>
+	  <a href="/billing-portal?next=billclear" class="hidden sm:inline text-red-100 hover:text-white whitespace-nowrap">Manage subscription</a>
+	  <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 whitespace-nowrap">Log out</a>
+	 </div>
   </div>
 </header>
 
