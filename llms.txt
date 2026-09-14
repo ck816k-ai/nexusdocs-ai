@@ -26,6 +26,7 @@
 - [Your Hospital Bill and Your EOB Are Not the Same Document](https://nexusdocs.ai/insights/hospital-bill-vs-eob)
 - [Accountability When AI Makes Mistakes](https://nexusdocs.ai/insights/accountability-when-ai-makes-mistakes)
 - [Can They Change the Terms After You Sign Up?](https://nexusdocs.ai/insights/can-they-change-the-terms-after-you-sign-up)
+- [What You Give Up When You Click I Agree](https://nexusdocs.ai/insights/content-you-license-when-you-agree)
 
 ## What the product does
 - Paste or upload a contract / terms of service / privacy policy
