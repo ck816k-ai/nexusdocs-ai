@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/insurance-renewal-exclusions')
+@app.route('/insights/insurance-renewal-exclusions/')
+def insights_insurance_renewal_exclusions():
+    return render_template('insights/insurance-renewal-exclusions.html')
+
 @app.route('/insights/content-you-license-when-you-agree')
 @app.route('/insights/content-you-license-when-you-agree/')
 def insights_content_license():
