@@ -169,11 +169,13 @@
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
+      const maxW = 240;
+      const scale = Math.min(1, maxW / img.naturalWidth);
       const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
+      canvas.width = Math.round(img.naturalWidth * scale);
+      canvas.height = Math.round(img.naturalHeight * scale);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       resolve(canvas.toDataURL('image/png'));
     };
     img.onerror = reject;
