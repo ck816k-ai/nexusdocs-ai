@@ -129,6 +129,15 @@
     return parts.join(' · ') || 'No structured filters';
   }
 
+  function cleanForPdf(text) {
+    return (text || '')
+      .replace(/≥/g, '>=')
+      .replace(/≤/g, '<=')
+      .replace(/–/g, '-')
+      .replace(/—/g, '-')
+      .replace(/[^\x00-\x7F]/g, '');
+  }
+
   document.getElementById('runBtn').addEventListener('click', async () => {
     const question = document.getElementById('question').value.trim();
     if (!question) { alert('Enter a question first.'); return; }
@@ -272,7 +281,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, question, 15, y, 180, 5, pageHeight, drawHeader);
+    y = addWrappedText(doc, cleanForPdf(question), 15, y, 180, 5, pageHeight, drawHeader);
     y += 8;
     if (y > pageHeight - 30) { doc.addPage(); y = drawHeader(doc); }
     doc.setFont('helvetica', 'bold');
@@ -283,7 +292,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, brief, 15, y, 180, 5, pageHeight, drawHeader);
+    y = addWrappedText(doc, cleanForPdf(brief), 15, y, 180, 5, pageHeight, drawHeader);
     y += 8;
     if (filters) {
       if (y > pageHeight - 30) { doc.addPage(); y = drawHeader(doc); }
@@ -294,7 +303,7 @@
       y += 8;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
-      y = addWrappedText(doc, filters, 15, y, 180, 4.5, pageHeight, drawHeader);
+      y = addWrappedText(doc, cleanForPdf(filters), 15, y, 180, 4.5, pageHeight, drawHeader);
       y += 8;
     }
     if (records.length) {
@@ -307,7 +316,7 @@
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
       doc.setTextColor(30, 41, 59);
-      y = addWrappedText(doc, records.join('\n'), 15, y, 180, 5, pageHeight, drawHeader);
+      y = addWrappedText(doc, cleanForPdf(records.join('\n')), 15, y, 180, 5, pageHeight, drawHeader);
     }
     if (y > pageHeight - 20) { doc.addPage(); y = drawHeader(doc); }
     doc.setFont('helvetica', 'italic');
