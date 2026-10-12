@@ -74,9 +74,16 @@
         <pre id="brief" class="whitespace-pre-wrap text-sm text-slate-800 leading-relaxed max-h-80 overflow-y-auto"></pre>
       </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Filters we sent</h2>
-        <pre id="filters" class="whitespace-pre-wrap text-xs text-slate-700 max-h-48 overflow-y-auto"></pre>
-      </div>
+		<button id="filtersToggle" type="button"
+		  class="w-full flex items-center justify-between text-left">
+		   <div>
+			 <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Search filters</h2>
+			 <p id="filtersSummary" class="text-sm text-slate-700 mt-1"></p>
+		   </div>
+		   <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+		  </button>
+		  <pre id="filters" class="hidden mt-3 whitespace-pre-wrap text-xs text-slate-600 max-h-48 overflow-y-auto"></pre>
+	  </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Records</h2>
         <ul id="ncts" class="text-sm space-y-1 max-h-64 overflow-y-auto"></ul>
@@ -90,6 +97,17 @@
 </main>
 
 <script>
+  function filterSummary(f) {
+    const parts = [];
+    if (f.status && f.status.length) parts.push(f.status.join(', ').toLowerCase());
+    if (f.phase && f.phase.length) parts.push(f.phase.join(', '));
+    if (f.condition) parts.push(f.condition);
+    if (f.intervention) parts.push(f.intervention);
+    if (f.country) parts.push(f.country);
+    if (f.trial_acronym) parts.push(f.trial_acronym);
+    return parts.join(' · ') || 'No structured filters';
+  }
+
   document.getElementById('runBtn').addEventListener('click', async () => {
     const question = document.getElementById('question').value.trim();
     if (!question) { alert('Enter a question first.'); return; }
@@ -109,7 +127,10 @@
       document.getElementById('loading').classList.add('hidden');
       if (!res.ok) throw new Error(data.error || 'Lookup failed');
       document.getElementById('brief').textContent = data.result || '';
-      document.getElementById('filters').textContent = JSON.stringify(data.filters || {}, null, 2);
+      const f = data.filters || {};
+      document.getElementById('filters').textContent = JSON.stringify(f, null, 2);
+      document.getElementById('filtersSummary').textContent = filterSummary(f);
+      document.getElementById('filters').classList.add('hidden');
       const list = document.getElementById('ncts');
       list.innerHTML = '';
       (data.trials || []).forEach(t => {
@@ -138,10 +159,15 @@
     }
   });
 
+  document.getElementById('filtersToggle').addEventListener('click', () => {
+    document.getElementById('filters').classList.toggle('hidden');
+  });
+
   document.getElementById('newLookupBtn').addEventListener('click', () => {
     document.getElementById('question').value = '';
     document.getElementById('brief').textContent = '';
     document.getElementById('filters').textContent = '';
+    document.getElementById('filtersSummary').textContent = '';
     document.getElementById('ncts').innerHTML = '';
     document.getElementById('out').classList.add('hidden');
     document.getElementById('loading').classList.add('hidden');
@@ -165,23 +191,23 @@
   }
 
   function loadImageAsDataUrl(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const maxW = 240;
-      const scale = Math.min(1, maxW / img.naturalWidth);
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.naturalWidth * scale);
-      canvas.height = Math.round(img.naturalHeight * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/png'));
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-}
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const maxW = 240;
+        const scale = Math.min(1, maxW / img.naturalWidth);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.naturalWidth * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
 
   document.getElementById('exportPdfBtn').addEventListener('click', async () => {
     const brief = document.getElementById('brief').textContent.trim();
