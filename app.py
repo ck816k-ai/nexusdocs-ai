@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/nda-dos-and-donts')
+@app.route('/insights/nda-dos-and-donts/')
+def insights_nda_dos_and_donts():
+    return render_template('insights/nda-dos-and-donts.html')
+
 @app.route('/insights/insurance-renewal-exclusions')
 @app.route('/insights/insurance-renewal-exclusions/')
 def insights_insurance_renewal_exclusions():
