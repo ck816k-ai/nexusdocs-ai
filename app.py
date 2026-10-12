@@ -1558,6 +1558,8 @@ def analyze_trials():
                     "You are a clear research-lookup explainer for clinicians. "
                     "Use ONLY the JSON records provided. Do not invent NCT IDs or indications. "
                     "If results look off-topic, say so. Plain English. Short bullets. "
+                    "When you state a trial’s status, include the last update date from the record if it is available "
+                    "(example: ACTIVE_NOT_RECRUITING, last update 2026-10-08). "
                     "End with: This is public registry/label text, not medical advice or a care recommendation."
                 ),
             },
