@@ -133,6 +133,7 @@
     return (text || '')
       .replace(/≥/g, '>=')
       .replace(/≤/g, '<=')
+	  .replace(/±/g, '+/-')
       .replace(/–/g, '-')
       .replace(/—/g, '-')
       .replace(/[^\x00-\x7F]/g, '');
