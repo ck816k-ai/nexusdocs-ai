@@ -4,64 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Clinician lookup – NexusDocs</title>
+  <title>TrialClear – Research workspace | NexusDocs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', system-ui, sans-serif; }
+    .tc-bg { background: linear-gradient(160deg, #0B1F3A 0%, #123055 55%, #0f172a 100%); }
   </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
-<header class="bg-slate-900 text-white">
-  <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-    <div>
-      <div class="text-xs uppercase tracking-wide text-slate-400">NexusDocs · private demo</div>
-      <div class="font-semibold">Clinician registry lookup</div>
+<header class="tc-bg text-white">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-white/70 hover:text-white text-sm">NexusDocs</a>
+      <span class="text-white/30">/</span>
+      <div class="flex items-center gap-2">
+        <img src="/static/images/trialclear-logo.png" alt="TrialClear" class="h-9 w-auto rounded-lg">
+        <div>
+          <div class="font-semibold leading-tight">TrialClear</div>
+          <div class="text-xs text-cyan-100/80">Research workspace</div>
+        </div>
+      </div>
     </div>
-    <a href="/" class="text-sm text-slate-300 hover:text-white">Home</a>
+    <div class="flex items-center gap-3 text-sm">
+      <a href="/" class="text-cyan-100 hover:text-white">Home</a>
+      <a href="/logout" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Log out</a>
+    </div>
   </div>
 </header>
 
-<main class="max-w-5xl mx-auto px-4 py-8 grid lg:grid-cols-2 gap-6 items-start">
-  <section class="bg-white rounded-2xl border border-slate-200 p-5">
+<main class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-2 gap-6 items-start">
+  <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 lg:sticky lg:top-6">
+    <p class="text-xs font-semibold uppercase tracking-wide text-cyan-700 mb-2">Protocol query</p>
     <h1 class="font-semibold text-slate-900 mb-2">Ask in a sentence</h1>
     <p class="text-sm text-slate-600 mb-4">
-      We turn this into ClinicalTrials.gov / openFDA filters. You will see the filters and NCT IDs.
+      TrialClear turns a research question into ClinicalTrials.gov and openFDA filters, then returns the brief, the filters, and the NCT records.
     </p>
-    <textarea id="question" rows="6"
-      class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+    <textarea id="question" rows="7"
+      class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
       placeholder="e.g. Recruiting Phase 3 trials for HER2-low metastatic breast cancer in the US"></textarea>
     <button id="runBtn" type="button"
-      class="mt-3 w-full py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800">
+      class="mt-3 w-full py-3 rounded-xl bg-[#0B1F3A] text-white font-semibold hover:bg-[#123055]">
       Run lookup
     </button>
-    <p class="text-xs text-slate-500 mt-3">
-      Public registry and label text only. Not medical advice. Not a care recommendation.
+    <button id="newLookupBtn" type="button"
+      class="mt-2 w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50">
+      New lookup
+    </button>
+    <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+      Public registry and label text only. For research reading, not medical advice, not a care recommendation, and not a substitute for the protocol or an investigator.
     </p>
   </section>
 
   <section class="space-y-4">
     <div id="empty" class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500">
-      Brief, filters, and NCT links appear here.
+      <i class="fas fa-file-medical text-3xl text-cyan-700/40 mb-3"></i>
+      <p class="font-medium text-slate-700">Research brief appears here</p>
+      <p class="text-sm mt-1">Filters and NCT links after you run a lookup.</p>
     </div>
     <div id="loading" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center">
-      <i class="fas fa-circle-notch fa-spin text-slate-700 mb-2"></i>
+      <i class="fas fa-circle-notch fa-spin text-cyan-700 text-2xl mb-2"></i>
       <p class="text-sm text-slate-600">Querying registries…</p>
     </div>
     <div id="out" class="hidden space-y-4">
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Brief</h2>
-        <pre id="brief" class="whitespace-pre-wrap text-sm text-slate-800"></pre>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-cyan-800 mb-2">Brief</h2>
+        <pre id="brief" class="whitespace-pre-wrap text-sm text-slate-800 leading-relaxed max-h-80 overflow-y-auto"></pre>
       </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Filters we sent</h2>
-        <pre id="filters" class="whitespace-pre-wrap text-xs text-slate-700"></pre>
+        <pre id="filters" class="whitespace-pre-wrap text-xs text-slate-700 max-h-48 overflow-y-auto"></pre>
       </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Records</h2>
-        <ul id="ncts" class="text-sm space-y-1"></ul>
+        <ul id="ncts" class="text-sm space-y-1 max-h-64 overflow-y-auto"></ul>
       </div>
+      <button id="exportPdfBtn" type="button"
+        class="w-full py-3 rounded-xl border border-cyan-700 text-cyan-900 font-semibold hover:bg-cyan-50 transition-colors">
+        Export PDF
+      </button>
     </div>
   </section>
 </main>
@@ -70,6 +93,9 @@
   document.getElementById('runBtn').addEventListener('click', async () => {
     const question = document.getElementById('question').value.trim();
     if (!question) { alert('Enter a question first.'); return; }
+    const runBtn = document.getElementById('runBtn');
+    runBtn.disabled = true;
+    runBtn.textContent = 'Running…';
     document.getElementById('empty').classList.add('hidden');
     document.getElementById('out').classList.add('hidden');
     document.getElementById('loading').classList.remove('hidden');
@@ -89,7 +115,7 @@
       (data.trials || []).forEach(t => {
         const li = document.createElement('li');
         if (t.url) {
-          li.innerHTML = '<a class="text-blue-700 hover:underline" href="' + t.url + '" target="_blank" rel="noopener">' + (t.nct_id || '') + '</a> — ' + (t.title || '');
+          li.innerHTML = '<a class="text-cyan-800 hover:underline" href="' + t.url + '" target="_blank" rel="noopener">' + (t.nct_id || '') + '</a> — ' + (t.title || '');
         } else {
           li.textContent = (t.nct_id || '') + ' — ' + (t.title || '');
         }
@@ -101,11 +127,150 @@
         list.appendChild(li);
       }
       document.getElementById('out').classList.remove('hidden');
+      runBtn.disabled = false;
+      runBtn.textContent = 'Run lookup again';
     } catch (e) {
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('empty').classList.remove('hidden');
       alert(e.message || 'Could not reach server.');
+      runBtn.disabled = false;
+      runBtn.textContent = 'Run lookup';
     }
+  });
+
+  document.getElementById('newLookupBtn').addEventListener('click', () => {
+    document.getElementById('question').value = '';
+    document.getElementById('brief').textContent = '';
+    document.getElementById('filters').textContent = '';
+    document.getElementById('ncts').innerHTML = '';
+    document.getElementById('out').classList.add('hidden');
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('empty').classList.remove('hidden');
+    const runBtn = document.getElementById('runBtn');
+    runBtn.disabled = false;
+    runBtn.textContent = 'Run lookup';
+  });
+
+  function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight, drawHeader) {
+    const lines = doc.splitTextToSize(text || '', maxWidth);
+    lines.forEach((line) => {
+      if (y > pageHeight - 20) {
+        doc.addPage();
+        y = drawHeader ? drawHeader(doc) : 20;
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+    return y;
+  }
+
+  function loadImageAsDataUrl(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+  document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+    const brief = document.getElementById('brief').textContent.trim();
+    const filters = document.getElementById('filters').textContent.trim();
+    const question = document.getElementById('question').value.trim();
+    const records = Array.from(document.querySelectorAll('#ncts li')).map(li => li.textContent.trim()).filter(Boolean);
+    if (!brief && records.length === 0) {
+      alert('Run a lookup first.');
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const centerX = doc.internal.pageSize.getWidth() / 2;
+    let logoData = null;
+    try {
+      logoData = await loadImageAsDataUrl('/static/images/trialclear-logo.png');
+    } catch (e) {
+      logoData = null;
+    }
+    function drawHeader(pdf) {
+      if (logoData) {
+        pdf.addImage(logoData, 'PNG', 15, 10, 42, 28);
+      }
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor(11, 31, 58);
+      pdf.text('TrialClear Research Brief', centerX, 18, { align: 'center' });
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('NexusDocs  ·  Not medical advice', centerX, 25, { align: 'center' });
+      return 46;
+    }
+    let y = drawHeader(doc);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(11, 31, 58);
+    doc.text('Query', 15, y);
+    y += 7;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    y = addWrappedText(doc, question, 15, y, 180, 5, pageHeight, drawHeader);
+    y += 8;
+    if (y > pageHeight - 30) { doc.addPage(); y = drawHeader(doc); }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(8, 145, 178);
+    doc.text('Brief', centerX, y, { align: 'center' });
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    y = addWrappedText(doc, brief, 15, y, 180, 5, pageHeight, drawHeader);
+    y += 8;
+    if (filters) {
+      if (y > pageHeight - 30) { doc.addPage(); y = drawHeader(doc); }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(51, 65, 85);
+      doc.text('Filters sent', centerX, y, { align: 'center' });
+      y += 8;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      y = addWrappedText(doc, filters, 15, y, 180, 4.5, pageHeight, drawHeader);
+      y += 8;
+    }
+    if (records.length) {
+      if (y > pageHeight - 30) { doc.addPage(); y = drawHeader(doc); }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(51, 65, 85);
+      doc.text('Records', centerX, y, { align: 'center' });
+      y += 8;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(30, 41, 59);
+      y = addWrappedText(doc, records.join('\n'), 15, y, 180, 5, pageHeight, drawHeader);
+    }
+    if (y > pageHeight - 20) { doc.addPage(); y = drawHeader(doc); }
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(
+      'Public registry text only. Not medical advice and not a substitute for the protocol or an investigator.',
+      centerX,
+      pageHeight - 12,
+      { align: 'center' }
+    );
+    doc.save('trialclear-research-brief.pdf');
   });
 </script>
 </body>
