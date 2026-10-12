@@ -42,9 +42,30 @@
     <p class="text-sm text-slate-600 mb-4">
       TrialClear turns a research question into ClinicalTrials.gov and openFDA filters, then returns the brief, the filters, and the NCT records.
     </p>
+
+    <div class="flex flex-wrap gap-2 mb-3">
+      <button type="button" class="example-q text-xs px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-slate-700 hover:border-cyan-600 hover:text-cyan-800"
+        data-q="Phase 3 retatrutide cardiovascular outcomes in obesity">
+        Phase 3 retatrutide CV outcomes
+      </button>
+      <button type="button" class="example-q text-xs px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-slate-700 hover:border-cyan-600 hover:text-cyan-800"
+        data-q="Recruiting Phase 2 or 3 semaglutide obesity trials">
+        Recruiting semaglutide obesity
+      </button>
+      <button type="button" class="example-q text-xs px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-slate-700 hover:border-cyan-600 hover:text-cyan-800"
+        data-q="What does the Ozempic label say about cardiovascular risk reduction">
+        Ozempic label CV risk
+      </button>
+    </div>
+
     <textarea id="question" rows="7"
       class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
-      placeholder="e.g. Recruiting Phase 3 trials for HER2-low metastatic breast cancer in the US"></textarea>
+      placeholder="Example: Phase 3 retatrutide cardiovascular outcomes in obesity"></textarea>
+
+    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+      Name the drug (or the class), the phase, and the condition. Drop “recruiting” if you want trials that already closed enrollment.
+    </p>
+
     <button id="runBtn" type="button"
       class="mt-3 w-full py-3 rounded-xl bg-[#0B1F3A] text-white font-semibold hover:bg-[#123055]">
       Run lookup
@@ -301,5 +322,16 @@
     doc.save('trialclear-research-brief.pdf');
   });
 </script>
+
+<script>
+  document.querySelectorAll('.example-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = document.getElementById('question');
+      q.value = btn.dataset.q;
+      q.focus();
+    });
+  });
+</script>
+
 </body>
 </html>
