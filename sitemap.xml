@@ -56,6 +56,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+	<loc>https://nexusdocs.ai/insights/exclusivity-clauses-creators</loc>
+	<lastmod>2026-10-27</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://nexusdocs.ai/insights/nda-dos-and-donts</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>

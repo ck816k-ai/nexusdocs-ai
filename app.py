@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/exclusivity-clauses-creators')
+@app.route('/insights/exclusivity-clauses-creators/')
+def insights_exclusivity_clauses_creators():
+    return render_template('insights/exclusivity-clauses-creators.html')
+
 @app.route('/insights/nda-dos-and-donts')
 @app.route('/insights/nda-dos-and-donts/')
 def insights_nda_dos_and_donts():

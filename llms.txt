@@ -11,6 +11,7 @@
 - [BillClear](https://nexusdocs.ai/billclear.html): Medical bill analysis in plain English
 
 ## Insights articles
+- [The 6-Month Silence Clause: What Exclusivity Really Costs Creators](https://nexusdocs.ai/insights/exclusivity-clauses-creators)
 - [Do’s and Don’ts Before You Sign an NDA](https://nexusdocs.ai/insights/nda-dos-and-donts)
 - [What Changed on Your Insurance Renewal Before You Pay It](https://nexusdocs.ai/insights/insurance-renewal-exclusions)
 - [Why Pasting a Contract into Chat Isn’t the Same as Using TermsGuard](https://nexusdocs.ai/insights/chat-vs-termsguard)
