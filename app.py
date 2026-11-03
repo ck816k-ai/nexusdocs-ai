@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/patient-responsibility-medical-bill')
+@app.route('/insights/patient-responsibility-medical-bill/')
+def insights_patient_responsibility():
+    return render_template('insights/patient-responsibility-medical-bill.html')
+
 @app.route('/insights/exclusivity-clauses-creators')
 @app.route('/insights/exclusivity-clauses-creators/')
 def insights_exclusivity_clauses_creators():
