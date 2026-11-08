@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/medical-billing-appeals')
+@app.route('/insights/medical-billing-appeals/')
+def insights_medical_billing_appeals():
+    return render_template('insights/medical-billing-appeals.html')
+
 @app.route('/insights/how-to-read-eob-denial-reasons')
 @app.route('/insights/how-to-read-eob-denial-reasons/')
 def insights_how_to_read_eob_denial_reasons():
