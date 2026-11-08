@@ -11,6 +11,7 @@
 - [BillClear](https://nexusdocs.ai/billclear.html): Medical bill analysis in plain English
 
 ## Insights articles
+- [How to Read the Denial Reason on an EOB — and What to Do Next](https://nexusdocs.ai/insights/how-to-read-eob-denial-reasons)
 - [What “Patient Responsibility” Really Means on a Medical Bill](https://nexusdocs.ai/insights/patient-responsibility-medical-bill)
 - [The 6-Month Silence Clause: What Exclusivity Really Costs Creators](https://nexusdocs.ai/insights/exclusivity-clauses-creators)
 - [Do’s and Don’ts Before You Sign an NDA](https://nexusdocs.ai/insights/nda-dos-and-donts)

@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/how-to-read-eob-denial-reasons')
+@app.route('/insights/how-to-read-eob-denial-reasons/')
+def insights_how_to_read_eob_denial_reasons():
+    return render_template('insights/how-to-read-eob-denial-reasons.html')
+
 @app.route('/insights/patient-responsibility-medical-bill')
 @app.route('/insights/patient-responsibility-medical-bill/')
 def insights_patient_responsibility():
