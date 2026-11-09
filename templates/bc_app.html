@@ -261,7 +261,7 @@
     document.getElementById('analyzeBtn').disabled = false;
     document.getElementById('analyzeBtn').textContent = 'Explain this bill';
   });
-    function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight, drawHeader) {
+  function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight, drawHeader) {
     const lines = doc.splitTextToSize(text || '', maxWidth);
     lines.forEach((line) => {
       if (y > pageHeight - 22) {
@@ -273,7 +273,6 @@
     });
     return y;
   }
-
   function loadImageAsDataUrl(url, maxWidth) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -293,8 +292,7 @@
       img.src = url;
     });
   }
-
-    document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+  document.getElementById('exportPdfBtn').addEventListener('click', async () => {
     const summary = document.getElementById('summaryOut').textContent.trim();
     let flags = document.getElementById('flagsOut').textContent.trim();
     const qa = document.getElementById('qaOut').textContent.trim();
@@ -302,38 +300,13 @@
       alert('Analyze a bill first.');
       return;
     }
-
-    // Force each flag section onto its own block
-    flags = flags
-      .replace(/\*\*/g, '')
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      .replace(/[—–]/g, '-')
-      .replace(/!/g, ' / ')
-      .replace(/What you see:/gi, '\n\nWhat you see:')
-      .replace(/Question:/gi, '\nQuestion:')
-      .replace(/Other flags[^\n]*/gi, '\n\nOther flags')
-      .replace(/Denial \/ denial code[^\n]*/gi, '\n\n$&')
-      .replace(/Patient responsibility total[^\n]*/gi, '\n\n$&')
-      .replace(/ER copay[^\n]*/gi, '\n\n$&')
-      .replace(/CT scan[^\n]*/gi, '\n\n$&')
-      .replace(/Billed vs\.[^\n]*/gi, '\n\n$&')
-      .replace(/Appeal deadline[^\n]*/gi, '\n\n$&')
-      .replace(/Itemization[^\n]*/gi, '\n\n$&')
-      .replace(/Not clearly shown[^\n]*/gi, '\n\n$&')
-      .replace(/ - /g, '\n- ')
-      .replace(/\s{2,}/g, ' ')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
-
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const centerX = pageWidth / 2;
     const leftMargin = 18;
-    const wrapWidth = pageWidth - 50; // safer margin
-
+    const wrapWidth = pageWidth - 50;
     let logoData = null;
     try {
       logoData = await loadImageAsDataUrl('/static/images/billclear-logo.png', 140);
@@ -341,7 +314,6 @@
       console.warn('Logo could not be loaded for PDF', e);
     }
     const typeLabel = (typeof billType !== 'undefined') ? billType : 'other';
-
     function drawHeader(docRef) {
       let y = 16;
       if (logoData) {
@@ -367,7 +339,6 @@
       y += 12;
       return y;
     }
-
     let y = drawHeader(doc);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
@@ -379,7 +350,6 @@
     doc.setTextColor(30, 41, 59);
     y = addWrappedText(doc, summary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
     y += 10;
-
     if (y > pageHeight - 30) {
       doc.addPage();
       y = drawHeader(doc);
@@ -392,9 +362,24 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
+
+    // Split flags into separate sections and render each one
+    const flagSections = flags
+      .replace(/\*\*/g, '')
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[—–]/g, '-')
+      .replace(/!/g, ' / ')
+      .split(/\n\s*\n|(?=What you see:)|(?=Question:)|(?=Other flags)|(?=Denial)|(?=Patient responsibility)|(?=ER copay)|(?=Billed vs)|(?=Deadlines)|(?=Itemization)|(?=Prior authorization)/i)
+      .map(s => s.trim())
+      .filter(s => s.length > 10);
+
     doc.setFontSize(9);
-	y = addWrappedText(doc, flags, leftMargin, y, wrapWidth - 4, 4.6, pageHeight, drawHeader);
-	doc.setFontSize(10);
+    flagSections.forEach((section, i) => {
+      if (i > 0) y += 4;
+      y = addWrappedText(doc, section, leftMargin, y, wrapWidth - 4, 4.6, pageHeight, drawHeader);
+    });
+    doc.setFontSize(10);
     y += 10;
 
     if (y > pageHeight - 40) {
@@ -415,7 +400,6 @@
       leftMargin, y, wrapWidth, 5, pageHeight, drawHeader
     );
     y += 10;
-
     if (qa) {
       if (y > pageHeight - 30) {
         doc.addPage();
@@ -431,7 +415,6 @@
       doc.setTextColor(30, 41, 59);
       y = addWrappedText(doc, qa, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
     }
-
     if (y > pageHeight - 20) {
       doc.addPage();
       y = drawHeader(doc);
