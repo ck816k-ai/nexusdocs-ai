@@ -1274,7 +1274,7 @@ def analyze_billclear():
                 f"Document excerpts:\n{text}"
             )
             credit_cost = 0
-        else:
+            else:
             user_prompt = (
                 f"{bill_hint}\n"
                 "Summarize this medical bill or EOB in plain English.\n\n"
@@ -1284,18 +1284,11 @@ def analyze_billclear():
                 "If none is visible, say “No denial reason is shown on this document.”]\n\n"
                 "**Plain-English Summary**\n"
                 "[2–4 short paragraphs covering who billed, the period if shown, totals, main services, and anything incomplete]\n\n"
-                "**Possible Next Steps**\n"
-                "- Confirm the denial reason and the related charge line\n"
-                "- Check the EOB or insurer site for the exact appeal deadline\n"
-                "- Typical evidence that is often useful: itemized bill, medical records reference, prior authorization (if mentioned)\n"
-                "- Questions you can ask:\n"
-                "  - “Can you explain the denial code [code] on this line?”\n"
-                "  - “Is this charge covered under my plan or is it patient responsibility?”\n"
-                "  - “What is the deadline to request a review of this denial?”\n\n"
-                "End with this exact disclaimer:\n"
-                "This is educational information only and is not medical, billing, or legal advice. Review everything before you act.\n\n"
+                "Do not include a “Possible Next Steps” section.\n"
+                "Do not give medical or billing advice.\n\n"
                 f"Document excerpts:\n{text}"
             )
+            credit_cost = 1
             credit_cost = 1
 
         if credit_cost > 0 and analyses_used >= limit:
