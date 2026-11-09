@@ -300,6 +300,13 @@
       alert('Analyze a bill first.');
       return;
     }
+	const cleanFlags = flags
+      .replace(/\*\*/g, '')
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[—–]/g, '-')
+      .replace(/!/g, ' / ')
+      .replace(/"/g, '');
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -346,7 +353,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, summary, 15, y, 180, 5, pageHeight, drawHeader);
+            y = addWrappedText(doc, summary, 15, y, 180, 5, pageHeight, drawHeader);
     y += 10;
     // Flags & questions
     if (y > pageHeight - 30) {
@@ -361,7 +368,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, flags, 15, y, 180, 5, pageHeight, drawHeader);
+    y = addWrappedText(doc, cleanFlags, 15, y, 180, 5, pageHeight, drawHeader);
     y += 10;
     // Optional Q&A
     if (qa) {
