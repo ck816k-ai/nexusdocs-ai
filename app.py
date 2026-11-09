@@ -1274,7 +1274,7 @@ def analyze_billclear():
                 f"Document excerpts:\n{text}"
             )
             credit_cost = 0
-            else:
+        else:
             user_prompt = (
                 f"{bill_hint}\n"
                 "Summarize this medical bill or EOB in plain English.\n\n"
@@ -1349,6 +1349,10 @@ def analyze_billclear():
             .get('message', {})
             .get('content', str(result))
         )
+
+        # Strip any trailing Possible Next Steps the model still adds
+        if prompt_type == 'summary' and '**Possible Next Steps**' in content:
+            content = content.split('**Possible Next Steps**')[0].rstrip()
 
         if prompt_type == 'summary':
             new_count = analyses_used + credit_cost
