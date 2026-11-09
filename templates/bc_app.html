@@ -370,7 +370,7 @@
       .replace(/[‘’]/g, "'")
       .replace(/[—–]/g, '-');
 
-    // Force structure on flags, then strip any repeated summary
+    // Force structure on flags
     flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
@@ -384,16 +384,17 @@
       .replace(/Question:/gi, '\nQuestion:')
       .replace(/(denial code|prior authorization|patient responsibility|ER copay|payment and appeal|billed vs|itemization|no clear|other practical|copay timing)/gi, '\n\n$1');
 
-    // Remove any copy of the summary that the model repeated inside flags
-    if (cleanSummary.length > 40) {
-      flags = flags.replace(cleanSummary, '');
+    // Drop everything before the first real flag heading
+    const firstFlag = flags.search(/denial|prior authorization|patient responsibility|ER copay|billed vs|itemization|copay timing|appeal/i);
+    if (firstFlag > 0) {
+      flags = flags.slice(firstFlag);
     }
 
     const flagSections = flags
-	  .split(/\n\s*\n/)
-	  .map(s => s.trim())
-	  .filter(s => s.length > 12 && s !== '-')
-	  .filter(s => !/plain-english summary|denial reason \(if any\)/i.test(s));
+      .split(/\n\s*\n/)
+      .map(s => s.trim())
+      .filter(s => s.length > 12 && s !== '-')
+      .filter(s => !/plain-english summary|denial reason \(if any\)/i.test(s));
 
     // Draw summary (use cleaned version)
     y = addWrappedText(doc, cleanSummary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
