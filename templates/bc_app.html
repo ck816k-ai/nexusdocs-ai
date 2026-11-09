@@ -363,22 +363,44 @@
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
 
-// Force structure, then split into sections
+    // Clean summary of leftover markdown
+    const cleanSummary = summary
+      .replace(/\*\*/g, '')
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[—–]/g, '-');
+
+    // Force structure on flags, then split
     flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
       .replace(/[‘’]/g, "'")
       .replace(/[—–]/g, '-')
       .replace(/!/g, ' / ')
+      .replace(/\s+-\s+/g, '\n')
       .replace(/What you see:/gi, '\n\nWhat you see:')
       .replace(/Question:/gi, '\nQuestion:')
-      .replace(/ - /g, '\n- ')
-      .replace(/(Denial|Prior authorization|Patient responsibility|ER copay|Payment and appeal|Billed vs|Itemization|No clear duplicates)/gi, '\n\n$1');
+      .replace(/(denial code|prior authorization|patient responsibility|ER copay|payment and appeal|billed vs|itemization|no clear|other practical|copay timing)/gi, '\n\n$1');
 
     const flagSections = flags
       .split(/\n\s*\n/)
       .map(s => s.trim())
-      .filter(s => s.length > 15);
+      .filter(s => s.length > 12 && s !== '-');
+
+    // Draw summary (use cleaned version)
+    y = addWrappedText(doc, cleanSummary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
+    y += 10;
+    if (y > pageHeight - 30) {
+      doc.addPage();
+      y = drawHeader(doc);
+    }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(180, 83, 9);
+    doc.text('Flags & Questions to Ask', centerX, y, { align: 'center' });
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(30, 41, 59);
 
     doc.setFontSize(9);
     flagSections.forEach((section, i) => {
@@ -387,7 +409,6 @@
     });
     doc.setFontSize(10);
     y += 10;
-
     if (y > pageHeight - 40) {
       doc.addPage();
       y = drawHeader(doc);
