@@ -394,8 +394,7 @@
       .split(/\n\s*\n/)
       .map(s => s.trim())
       .filter(s => s.length > 12 && s !== '-')
-	  .filter(s => s.length < 600)   // drop long repeated summary blocks
-      .filter(s => !/plain-english summary|denial reason \(if any\)/i.test(s));
+	  .filter(s => !/plain-english summary|denial reason \(if any\)/i.test(s));
 
     // Draw summary (use cleaned version)
     y = addWrappedText(doc, cleanSummary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
