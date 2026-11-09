@@ -371,17 +371,19 @@
       .replace(/[—–]/g, '-');
 
     // Force structure on flags, then split
-    flags = flags
+        flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
       .replace(/[‘’]/g, "'")
       .replace(/[—–]/g, '-')
       .replace(/!/g, ' / ')
       .replace(/\s+-\s+/g, '\n')
+      .replace(/;/g, ';\n')
+      .replace(/Subtotal/gi, '\nSubtotal')
       .replace(/What you see:/gi, '\n\nWhat you see:')
       .replace(/Question:/gi, '\nQuestion:')
       .replace(/(denial code|prior authorization|patient responsibility|ER copay|payment and appeal|billed vs|itemization|no clear|other practical|copay timing)/gi, '\n\n$1');
-
+	  
     const flagSections = flags
       .split(/\n\s*\n/)
       .map(s => s.trim())
