@@ -303,16 +303,17 @@
       return;
     }
 
-    // Clean markdown and special characters so wrapping works
+    // Force structure so each flag and question wraps cleanly
     flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
       .replace(/[‘’]/g, "'")
       .replace(/[—–]/g, '-')
       .replace(/!/g, ' / ')
-      .replace(/ - /g, '\n- ')
-      .replace(/What you see:/gi, '\nWhat you see:')
+      .replace(/What you see:/gi, '\n\nWhat you see:')
       .replace(/Question:/gi, '\nQuestion:')
+      .replace(/Other flags[^\n]*/gi, '\n\nOther flags')
+      .replace(/ - /g, '\n- ')
       .replace(/\s{2,}/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
@@ -383,7 +384,9 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, flags, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
+    doc.setFontSize(9);
+	y = addWrappedText(doc, flags, leftMargin, y, wrapWidth - 4, 4.6, pageHeight, drawHeader);
+	doc.setFontSize(10);
     y += 10;
 
     if (y > pageHeight - 40) {
