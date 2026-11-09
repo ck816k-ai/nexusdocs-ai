@@ -292,9 +292,9 @@
       img.src = url;
     });
   }
-  document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+    document.getElementById('exportPdfBtn').addEventListener('click', async () => {
     const summary = document.getElementById('summaryOut').textContent.trim();
-    let flags = document.getElementById('flagsOut').textContent.trim();
+    const flags = document.getElementById('flagsOut').textContent.trim();
     const qa = document.getElementById('qaOut').textContent.trim();
     if (!summary && !flags) {
       alert('Analyze a bill first.');
@@ -305,19 +305,16 @@
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const centerX = pageWidth / 2;
-    const leftMargin = 18;
-    const wrapWidth = pageWidth - 50;
     let logoData = null;
     try {
-      logoData = await loadImageAsDataUrl('/static/images/billclear-logo.png', 140);
+      logoData = await loadImageAsDataUrl('/static/images/billclear-logo.png');
     } catch (e) {
       console.warn('Logo could not be loaded for PDF', e);
     }
-    const typeLabel = (typeof billType !== 'undefined') ? billType : 'other';
     function drawHeader(docRef) {
       let y = 16;
       if (logoData) {
-        docRef.addImage(logoData, 'PNG', 12, 8, 32, 16);
+        docRef.addImage(logoData, 'PNG', 12, 8, 28, 14);
       }
       docRef.setFont('helvetica', 'bold');
       docRef.setFontSize(16);
@@ -327,115 +324,46 @@
       docRef.setFont('helvetica', 'normal');
       docRef.setFontSize(9);
       docRef.setTextColor(71, 85, 105);
-      docRef.text('NexusDocs · Not medical or billing advice', centerX, y, { align: 'center' });
+      docRef.text('NexusDocs  ·  Not medical or billing advice', centerX, y, { align: 'center' });
       y += 6;
       docRef.setFontSize(10);
       docRef.setTextColor(15, 23, 42);
-      docRef.text('Document type: ' + typeLabel, centerX, y, { align: 'center' });
+      docRef.text('Document type: ' + billType, centerX, y, { align: 'center' });
       y += 4;
       docRef.setDrawColor(203, 213, 225);
       docRef.setLineWidth(0.3);
-      docRef.line(leftMargin, y + 2, pageWidth - leftMargin, y + 2);
+      docRef.line(15, y + 2, pageWidth - 15, y + 2);
       y += 12;
       return y;
     }
     let y = drawHeader(doc);
+    // Bill summary
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.setTextColor(185, 28, 28);
+    doc.setTextColor(185, 28, 28); // red
     doc.text('Bill Summary', centerX, y, { align: 'center' });
     y += 8;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-    y = addWrappedText(doc, summary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
+    y = addWrappedText(doc, summary, 15, y, 180, 5, pageHeight, drawHeader);
     y += 10;
+    // Flags & questions
     if (y > pageHeight - 30) {
       doc.addPage();
       y = drawHeader(doc);
     }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.setTextColor(180, 83, 9);
+    doc.setTextColor(180, 83, 9); // amber
     doc.text('Flags & Questions to Ask', centerX, y, { align: 'center' });
     y += 8;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
-
-    // Clean summary of leftover markdown
-    const cleanSummary = summary
-      .replace(/\*\*/g, '')
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      .replace(/[—–]/g, '-');
-
-    // Force structure on flags
-    flags = flags
-      .replace(/\*\*/g, '')
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      .replace(/[—–]/g, '-')
-      .replace(/!/g, ' / ')
-      .replace(/\s+-\s+/g, '\n')
-      .replace(/;/g, ';\n')
-      .replace(/Subtotal/gi, '\nSubtotal')
-      .replace(/What you see:/gi, '\n\nWhat you see:')
-      .replace(/Question:/gi, '\nQuestion:')
-      .replace(/(denial code|prior authorization|patient responsibility|ER copay|payment and appeal|billed vs|itemization|no clear|other practical|copay timing)/gi, '\n\n$1');
-
-    // Drop everything before the first real flag heading
-    const firstFlag = flags.search(/denial|prior authorization|patient responsibility|ER copay|billed vs|itemization|copay timing|appeal/i);
-    if (firstFlag > 0) {
-      flags = flags.slice(firstFlag);
-    }
-
-    const flagSections = flags
-      .split(/\n\s*\n/)
-      .map(s => s.trim())
-      .filter(s => s.length > 12 && s !== '-')
-	  .filter(s => !/plain-english summary|denial reason \(if any\)/i.test(s));
-
-    // Draw summary (use cleaned version)
-    y = addWrappedText(doc, cleanSummary, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
+    y = addWrappedText(doc, flags, 15, y, 180, 5, pageHeight, drawHeader);
     y += 10;
-    if (y > pageHeight - 30) {
-      doc.addPage();
-      y = drawHeader(doc);
-    }
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(180, 83, 9);
-    doc.text('Flags & Questions to Ask', centerX, y, { align: 'center' });
-    y += 8;
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(30, 41, 59);
-
-    doc.setFontSize(9);
-    flagSections.forEach((section, i) => {
-      if (i > 0) y += 5;
-      y = addWrappedText(doc, section, leftMargin, y, wrapWidth - 4, 4.6, pageHeight, drawHeader);
-    });
-    doc.setFontSize(10);
-    y += 10;
-    if (y > pageHeight - 40) {
-      doc.addPage();
-      y = drawHeader(doc);
-    }
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(185, 28, 28);
-    doc.text('Possible Next Steps', centerX, y, { align: 'center' });
-    y += 8;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(30, 41, 59);
-    y = addWrappedText(
-      doc,
-      "Confirm the denial reason and related charge line. Check the EOB or insurer site for the exact appeal deadline. Typical evidence that is often useful: itemized bill, medical records reference, prior authorization if mentioned.",
-      leftMargin, y, wrapWidth, 5, pageHeight, drawHeader
-    );
-    y += 10;
+    // Optional Q&A
     if (qa) {
       if (y > pageHeight - 30) {
         doc.addPage();
@@ -449,8 +377,9 @@
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
       doc.setTextColor(30, 41, 59);
-      y = addWrappedText(doc, qa, leftMargin, y, wrapWidth, 5, pageHeight, drawHeader);
+      y = addWrappedText(doc, qa, 15, y, 180, 5, pageHeight, drawHeader);
     }
+    // Footer
     if (y > pageHeight - 20) {
       doc.addPage();
       y = drawHeader(doc);
@@ -459,7 +388,7 @@
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
     doc.text(
-      'This is educational information only and is not medical, billing, or legal advice. Review everything before you act.',
+      'This report is for informational purposes only and is not medical or billing advice.',
       centerX,
       pageHeight - 12,
       { align: 'center' }
