@@ -388,6 +388,11 @@ def insights_slash():
 def insights_index():
     return render_template('insights/index.html')
 
+@app.route('/insights/denial-code-matters-more')
+@app.route('/insights/denial-code-matters-more/')
+def insights_denial_code_matters_more():
+    return render_template('insights/denial-code-matters-more.html')
+
 @app.route('/insights/medical-billing-appeals')
 @app.route('/insights/medical-billing-appeals/')
 def insights_medical_billing_appeals():

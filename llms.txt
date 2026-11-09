@@ -11,6 +11,7 @@
 - [BillClear](https://nexusdocs.ai/billclear.html): Medical bill analysis in plain English
 
 ## Insights articles
+- [Why the Denial Code Matters More Than the Patient Responsibility Amount](https://nexusdocs.ai/insights/denial-code-matters-more)
 - [Medical Billing Appeals: What to Do After a Denial](https://nexusdocs.ai/insights/medical-billing-appeals)
 - [How to Read the Denial Reason on an EOB — and What to Do Next](https://nexusdocs.ai/insights/how-to-read-eob-denial-reasons)
 - [What “Patient Responsibility” Really Means on a Medical Bill](https://nexusdocs.ai/insights/patient-responsibility-medical-bill)

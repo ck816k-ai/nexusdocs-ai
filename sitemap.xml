@@ -55,6 +55,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://nexusdocs.ai/insights/denial-code-matters-more</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
     <url>
     <loc>https://nexusdocs.ai/insights/medical-billing-appeals</loc>
     <lastmod>2026-11-08</lastmod>
