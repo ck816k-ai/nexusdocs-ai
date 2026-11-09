@@ -99,46 +99,54 @@
       </p>
     </section>
 
-    <section class="space-y-4">
-      <div id="emptyState" class="bg-white rounded-2xl border border-red-100 p-8 text-center text-slate-500">
-        <i class="fas fa-notes-medical text-3xl text-red-600/40 mb-3"></i>
-        <p class="font-medium text-slate-700">Bill breakdown appears here</p>
-        <p class="text-sm mt-1">Summary, flags, and questions after you analyze a statement.</p>
+<section class="space-y-4">
+  <div id="emptyState" class="bg-white rounded-2xl border border-red-100 p-8 text-center text-slate-500">
+    <i class="fas fa-notes-medical text-3xl text-red-600/40 mb-3"></i>
+    <p class="font-medium text-slate-700">Bill breakdown appears here</p>
+    <p class="text-sm mt-1">Summary, flags, and questions after you analyze a statement.</p>
+  </div>
+  <div id="results" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl border border-red-100 p-5">
+      <h3 class="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">Bill summary</h3>
+      <div id="summaryOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
+    </div>
+    <div class="bg-white rounded-2xl border border-red-100 p-5">
+      <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2">Flags &amp; questions to ask</h3>
+      <div id="flagsOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
+    </div>
+    <div class="bg-white rounded-2xl border border-red-100 p-5">
+      <h3 class="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">Possible next steps</h3>
+      <div id="nextStepsOut"
+           class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
+      <p class="text-xs text-slate-500 mt-3 italic">
+        This is educational information only and is not medical, billing, or legal advice. Review everything before you act.
+      </p>
+    </div>
+    <div class="bg-white rounded-2xl border border-red-100 p-5">
+      <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Ask about this bill</h3>
+      <div class="flex gap-2">
+        <input id="qaInput" type="text" placeholder="e.g. Why was I billed twice for the same lab?"
+          class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100">
+        <button id="qaBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium">Ask</button>
       </div>
-      <div id="results" class="hidden space-y-4">
-        <div class="bg-white rounded-2xl border border-red-100 p-5">
-          <h3 class="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">Bill summary</h3>
-          <div id="summaryOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
-        </div>
-        <div class="bg-white rounded-2xl border border-red-100 p-5">
-          <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2">Flags &amp; questions to ask</h3>
-          <div id="flagsOut" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto rounded-lg border border-slate-100 p-3 bg-rose-50"></div>
-        </div>
-        <div class="bg-white rounded-2xl border border-red-100 p-5">
-          <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Ask about this bill</h3>
-          <div class="flex gap-2">
-            <input id="qaInput" type="text" placeholder="e.g. Why was I billed twice for the same lab?"
-              class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-100">
-            <button id="qaBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium">Ask</button>
-          </div>
-          <div id="qaOut" class="mt-3 text-sm text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
-        </div>
-        <button id="exportPdfBtn" type="button"
-          class="w-full py-3 rounded-xl border border-red-700 text-red-800 font-semibold hover:bg-red-50">
-          Export PDF
-        </button>
-      </div>
-      <div id="loading" class="hidden bg-white rounded-2xl border border-red-100 p-8 text-center">
-        <i class="fas fa-circle-notch fa-spin text-red-600 text-2xl mb-2"></i>
-        <p class="text-slate-600 text-sm">Reading your bill…</p>
-      </div>
-    </section>
+      <div id="qaOut" class="mt-3 text-sm text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
+    </div>
+    <button id="exportPdfBtn" type="button"
+      class="w-full py-3 rounded-xl border border-red-700 text-red-800 font-semibold hover:bg-red-50">
+      Export PDF
+    </button>
+  </div>
+  <div id="loading" class="hidden bg-white rounded-2xl border border-red-100 p-8 text-center">
+    <i class="fas fa-circle-notch fa-spin text-red-600 text-2xl mb-2"></i>
+    <p class="text-slate-600 text-sm">Reading your bill…</p>
+  </div>
+</section>
+
   </div>
 </main>
 
 <script>
   let billType = 'hospital';
-
   function updateCreditStatus(data) {
     const el = document.getElementById('creditStatus');
     if (!el || !data) return;
@@ -146,7 +154,6 @@
     else if (data.tier === 'credits') el.textContent = 'Pay as you go · ' + data.remaining + ' / ' + data.limit + ' left';
     else el.textContent = 'Free · ' + data.remaining + ' / ' + data.limit + ' left';
   }
-
   document.querySelectorAll('.bill-type').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.bill-type').forEach(b => {
@@ -156,7 +163,6 @@
       billType = btn.dataset.type;
     });
   });
-
   document.getElementById('billFile').addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -187,7 +193,6 @@
       alert('Could not read that file. Try paste instead.');
     }
   });
-
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const text = document.getElementById('billText').value.trim();
     if (!text) { alert('Paste a bill or upload a file first.'); return; }
@@ -216,6 +221,8 @@
       if (!flagsRes.ok) throw new Error(flagsData.error || 'Flags failed');
       document.getElementById('summaryOut').textContent = summaryData.result || '';
       document.getElementById('flagsOut').textContent = flagsData.result || '';
+      document.getElementById('nextStepsOut').textContent =
+        "Confirm the denial reason and related charge line. Check the EOB or insurer site for the exact appeal deadline. Typical evidence: itemized bill, medical records reference, prior authorization if mentioned.";
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('results').classList.remove('hidden');
       analyzeBtn.disabled = false;
@@ -228,7 +235,6 @@
       alert(e.message || 'Could not reach server.');
     }
   });
-
   document.getElementById('qaBtn').addEventListener('click', async () => {
     const text = document.getElementById('billText').value.trim();
     const question = document.getElementById('qaInput').value.trim();
@@ -242,7 +248,6 @@
     const data = await res.json();
     document.getElementById('qaOut').textContent = data.result || data.error || '';
   });
-
   document.getElementById('newAnalysisBtn').addEventListener('click', () => {
     document.getElementById('billFile').value = '';
     document.getElementById('billText').value = '';
@@ -250,12 +255,13 @@
     document.getElementById('qaOut').textContent = '';
     document.getElementById('summaryOut').textContent = '';
     document.getElementById('flagsOut').textContent = '';
+    document.getElementById('nextStepsOut').textContent = '';
     document.getElementById('results').classList.add('hidden');
     document.getElementById('emptyState').classList.remove('hidden');
     document.getElementById('analyzeBtn').disabled = false;
     document.getElementById('analyzeBtn').textContent = 'Explain this bill';
   });
-    function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight, drawHeader) {
+  function addWrappedText(doc, text, x, y, maxWidth, lineHeight, pageHeight, drawHeader) {
     const lines = doc.splitTextToSize(text || '', maxWidth);
     lines.forEach((line) => {
       if (y > pageHeight - 20) {
@@ -267,7 +273,6 @@
     });
     return y;
   }
-
   function loadImageAsDataUrl(url) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -286,7 +291,6 @@
       img.src = url;
     });
   }
-
   document.getElementById('exportPdfBtn').addEventListener('click', async () => {
     const summary = document.getElementById('summaryOut').textContent.trim();
     const flags = document.getElementById('flagsOut').textContent.trim();
@@ -295,22 +299,18 @@
       alert('Analyze a bill first.');
       return;
     }
-
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const centerX = pageWidth / 2;
-
     let logoData = null;
     try {
       logoData = await loadImageAsDataUrl('/static/images/billclear-logo.png');
     } catch (e) {
       console.warn('Logo could not be loaded for PDF', e);
     }
-
     const typeLabel = (typeof billType !== 'undefined') ? billType : 'other';
-
     function drawHeader(docRef) {
       let y = 16;
       if (logoData) {
@@ -336,9 +336,7 @@
       y += 12;
       return y;
     }
-
     let y = drawHeader(doc);
-
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.setTextColor(185, 28, 28);
@@ -349,7 +347,6 @@
     doc.setTextColor(30, 41, 59);
     y = addWrappedText(doc, summary, 15, y, 180, 5, pageHeight, drawHeader);
     y += 10;
-
     if (y > pageHeight - 30) {
       doc.addPage();
       y = drawHeader(doc);
@@ -363,6 +360,26 @@
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
     y = addWrappedText(doc, flags, 15, y, 180, 5, pageHeight, drawHeader);
+    y += 10;
+
+    // Possible next steps
+    if (y > pageHeight - 40) {
+      doc.addPage();
+      y = drawHeader(doc);
+    }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(185, 28, 28);
+    doc.text('Possible Next Steps', centerX, y, { align: 'center' });
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    y = addWrappedText(
+      doc,
+      "Confirm the denial reason and related charge line. Check the EOB or insurer site for the exact appeal deadline. Typical evidence that is often useful: itemized bill, medical records reference, prior authorization if mentioned.",
+      15, y, 180, 5, pageHeight, drawHeader
+    );
     y += 10;
 
     if (qa) {
@@ -380,7 +397,6 @@
       doc.setTextColor(30, 41, 59);
       y = addWrappedText(doc, qa, 15, y, 180, 5, pageHeight, drawHeader);
     }
-
     if (y > pageHeight - 20) {
       doc.addPage();
       y = drawHeader(doc);
@@ -389,14 +405,13 @@
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
     doc.text(
-      'This report is for informational purposes only and is not medical, billing, or legal advice.',
+      'This is educational information only and is not medical, billing, or legal advice. Review everything before you act.',
       centerX,
       pageHeight - 12,
       { align: 'center' }
     );
     doc.save('billclear-bill-report.pdf');
   });
-  
 </script>
 </body>
 </html>

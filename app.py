@@ -1246,7 +1246,8 @@ def analyze_billclear():
             "Do not give medical advice. Do not say a charge is fraud or illegal. "
             "Do not promise a dispute will succeed. "
             "This is not a substitute for the billing office, insurer, or a patient advocate. "
-            "Prefer the document text over the selected document type if they conflict, and mention the mismatch."
+            "Prefer the document text over the selected document type if they conflict, and mention the mismatch. "
+            "When a denial reason or denial code is present, surface it first."
         )
 
         if prompt_type == 'question':
@@ -1267,6 +1268,7 @@ def analyze_billclear():
                 "- Missing itemization\n"
                 "- Gaps between billed, allowed, and patient amounts if shown\n"
                 "- Payment deadlines or collections notes\n"
+                "- Any denial reason or denial code\n"
                 "Use short bullet points. For each flag, say what you see and one question "
                 "to ask billing or the insurer.\n\n"
                 f"Document excerpts:\n{text}"
@@ -1275,11 +1277,23 @@ def analyze_billclear():
         else:
             user_prompt = (
                 f"{bill_hint}\n"
-                "Summarize this medical bill or EOB in plain English. Cover:\n"
-                "- Who billed and for what period (if shown)\n"
-                "- Totals: charges, insurance amounts, patient balance (if shown)\n"
-                "- Main services in everyday language\n"
-                "- Anything incomplete or hard to understand\n\n"
+                "Summarize this medical bill or EOB in plain English.\n\n"
+                "Structure your response exactly like this:\n\n"
+                "**Denial Reason (if any)**\n"
+                "[If a denial code or reason exists, quote it and explain in one or two sentences what it usually means. "
+                "If none is visible, say “No denial reason is shown on this document.”]\n\n"
+                "**Plain-English Summary**\n"
+                "[2–4 short paragraphs covering who billed, the period if shown, totals, main services, and anything incomplete]\n\n"
+                "**Possible Next Steps**\n"
+                "- Confirm the denial reason and the related charge line\n"
+                "- Check the EOB or insurer site for the exact appeal deadline\n"
+                "- Typical evidence that is often useful: itemized bill, medical records reference, prior authorization (if mentioned)\n"
+                "- Questions you can ask:\n"
+                "  - “Can you explain the denial code [code] on this line?”\n"
+                "  - “Is this charge covered under my plan or is it patient responsibility?”\n"
+                "  - “What is the deadline to request a review of this denial?”\n\n"
+                "End with this exact disclaimer:\n"
+                "This is educational information only and is not medical, billing, or legal advice. Review everything before you act.\n\n"
                 f"Document excerpts:\n{text}"
             )
             credit_cost = 1
@@ -1372,7 +1386,6 @@ def analyze_billclear():
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
 # ===================== Clinical Trials ==========================
 
 ALLOWED_PHASES = {"EARLY_PHASE1", "PHASE1", "PHASE2", "PHASE3", "PHASE4", "NA"}
