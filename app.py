@@ -1289,7 +1289,6 @@ def analyze_billclear():
                 f"Document excerpts:\n{text}"
             )
             credit_cost = 1
-            credit_cost = 1
 
         if credit_cost > 0 and analyses_used >= limit:
             return jsonify({
