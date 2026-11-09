@@ -1278,13 +1278,14 @@ def analyze_billclear():
             user_prompt = (
                 f"{bill_hint}\n"
                 "Summarize this medical bill or EOB in plain English.\n\n"
-                "Structure your response exactly like this:\n\n"
+                "Output ONLY these two sections, in this order, and nothing else:\n\n"
                 "**Denial Reason (if any)**\n"
                 "[If a denial code or reason exists, quote it and explain in one or two sentences what it usually means. "
                 "If none is visible, say “No denial reason is shown on this document.”]\n\n"
                 "**Plain-English Summary**\n"
                 "[2–4 short paragraphs covering who billed, the period if shown, totals, main services, and anything incomplete]\n\n"
-                "Do not include a “Possible Next Steps” section.\n"
+                "Stop after the Plain-English Summary. "
+                "Do not add Possible Next Steps, questions, or a disclaimer. "
                 "Do not give medical or billing advice.\n\n"
                 f"Document excerpts:\n{text}"
             )
