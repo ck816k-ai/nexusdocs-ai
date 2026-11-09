@@ -294,21 +294,30 @@
     });
   }
 
-  document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+    document.getElementById('exportPdfBtn').addEventListener('click', async () => {
     const summary = document.getElementById('summaryOut').textContent.trim();
-    const flags = document.getElementById('flagsOut').textContent.trim();
+    let flags = document.getElementById('flagsOut').textContent.trim();
     const qa = document.getElementById('qaOut').textContent.trim();
     if (!summary && !flags) {
       alert('Analyze a bill first.');
       return;
     }
+
+    // Clean markdown so the PDF wraps cleanly
+    flags = flags
+      .replace(/\*\*/g, '')
+      .replace(/!/g, ' / ')
+      .replace(/\s+/g, ' ')
+      .replace(/ - /g, '\n- ')
+      .trim();
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const centerX = pageWidth / 2;
     const leftMargin = 18;
-    const wrapWidth = pageWidth - (leftMargin * 2); // ~174 on A4
+    const wrapWidth = pageWidth - 42; // safer margin
 
     let logoData = null;
     try {
