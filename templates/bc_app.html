@@ -303,7 +303,7 @@
       return;
     }
 
-    // Force structure so each flag and question starts on its own line
+    // Force each flag section onto its own block
     flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
@@ -312,13 +312,16 @@
       .replace(/!/g, ' / ')
       .replace(/What you see:/gi, '\n\nWhat you see:')
       .replace(/Question:/gi, '\nQuestion:')
-      .replace(/Other (practical )?flags[^\n]*/gi, '\n\nOther flags')
-      .replace(/ - /g, '\n- ')
+      .replace(/Other flags[^\n]*/gi, '\n\nOther flags')
       .replace(/Denial \/ denial code[^\n]*/gi, '\n\n$&')
       .replace(/Patient responsibility total[^\n]*/gi, '\n\n$&')
+      .replace(/ER copay[^\n]*/gi, '\n\n$&')
+      .replace(/CT scan[^\n]*/gi, '\n\n$&')
       .replace(/Billed vs\.[^\n]*/gi, '\n\n$&')
       .replace(/Appeal deadline[^\n]*/gi, '\n\n$&')
       .replace(/Itemization[^\n]*/gi, '\n\n$&')
+      .replace(/Not clearly shown[^\n]*/gi, '\n\n$&')
+      .replace(/ - /g, '\n- ')
       .replace(/\s{2,}/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
