@@ -363,20 +363,26 @@
     doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
 
-    // Split flags into separate sections and render each one
-    const flagSections = flags
+// Force structure, then split into sections
+    flags = flags
       .replace(/\*\*/g, '')
       .replace(/[“”]/g, '"')
       .replace(/[‘’]/g, "'")
       .replace(/[—–]/g, '-')
       .replace(/!/g, ' / ')
-      .split(/\n\s*\n|(?=What you see:)|(?=Question:)|(?=Other flags)|(?=Denial)|(?=Patient responsibility)|(?=ER copay)|(?=Billed vs)|(?=Deadlines)|(?=Itemization)|(?=Prior authorization)/i)
+      .replace(/What you see:/gi, '\n\nWhat you see:')
+      .replace(/Question:/gi, '\nQuestion:')
+      .replace(/ - /g, '\n- ')
+      .replace(/(Denial|Prior authorization|Patient responsibility|ER copay|Payment and appeal|Billed vs|Itemization|No clear duplicates)/gi, '\n\n$1');
+
+    const flagSections = flags
+      .split(/\n\s*\n/)
       .map(s => s.trim())
-      .filter(s => s.length > 10);
+      .filter(s => s.length > 15);
 
     doc.setFontSize(9);
     flagSections.forEach((section, i) => {
-      if (i > 0) y += 4;
+      if (i > 0) y += 5;
       y = addWrappedText(doc, section, leftMargin, y, wrapWidth - 4, 4.6, pageHeight, drawHeader);
     });
     doc.setFontSize(10);
