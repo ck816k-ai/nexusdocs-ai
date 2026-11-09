@@ -303,13 +303,17 @@
       return;
     }
 
-    // Clean markdown and restore line breaks so wrapping works
+    // Clean markdown and special characters so wrapping works
     flags = flags
       .replace(/\*\*/g, '')
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[—–]/g, '-')
       .replace(/!/g, ' / ')
       .replace(/ - /g, '\n- ')
-      .replace(/What you see:/g, '\nWhat you see:')
-      .replace(/Question:/g, '\nQuestion:')
+      .replace(/What you see:/gi, '\nWhat you see:')
+      .replace(/Question:/gi, '\nQuestion:')
+      .replace(/\s{2,}/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
@@ -319,7 +323,7 @@
     const pageHeight = doc.internal.pageSize.getHeight();
     const centerX = pageWidth / 2;
     const leftMargin = 18;
-    const wrapWidth = pageWidth - 48; // safer margin
+    const wrapWidth = pageWidth - 50; // safer margin
 
     let logoData = null;
     try {
